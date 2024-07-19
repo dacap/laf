@@ -9,6 +9,7 @@
 #pragma once
 
 #include "os/screen.h"
+#include "os/system.h"
 #include "os/x11/monitor.h"
 #include "os/x11/x11.h"
 
@@ -21,7 +22,7 @@ public:
   ScreenX11(int monitorNum) : m_monitorNum(monitorNum)
   {
     MonitorsX11* monitors = X11::instance()->monitors();
-    const XRRMonitorInfo& monitor = monitors->monitor(monitorNum);
+    const XRRMonitorInfo& monitor = monitors->monitorInfo(monitorNum);
 
     m_bounds.x = monitor.x;
     m_bounds.y = monitor.y;
