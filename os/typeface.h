@@ -12,16 +12,17 @@
 
 namespace os {
 
-  class Typeface;
-  using TypefaceRef = base::Ref<Typeface>;
+class Typeface;
+using TypefaceRef = base::Ref<Typeface>;
 
-  class Typeface : public RefCount {
-  protected:
-    virtual ~Typeface() { }
-  public:
-    virtual FontStyle fontStyle() const = 0;
-  };
+class Typeface : public RefCount {
+protected:
+  virtual ~Typeface() { }
 
-} // namespace os
+public:
+  virtual FontStyle fontStyle() const = 0;
+};
+
+}  // namespace os
 
 #endif

@@ -17,7 +17,8 @@
 class LogWindow {
 public:
   LogWindow(os::System* system)
-    : m_window(system->makeWindow(800, 600)) {
+    : m_window(system->makeWindow(800, 600))
+  {
     m_window->setTitle("All Events");
 
     recalcMaxLines();
@@ -25,43 +26,53 @@ public:
     logLine("-- Events Log --");
   }
 
-  bool processEvent(const os::Event& ev) {
+  bool processEvent(const os::Event& ev)
+  {
     switch (ev.type()) {
-
       case os::Event::CloseApp:
       case os::Event::CloseWindow:
         return false;
 
       case os::Event::ResizeWindow:
-        logLine("ResizeWindow size=%d,%d",
-                m_window->width(),
-                m_window->height());
+        logLine(
+          "ResizeWindow size=%d,%d", m_window->width(), m_window->height());
         recalcMaxLines();
         break;
 
       case os::Event::DropFiles:
-        logLine("DropFiles pos=%d,%d files={",
-                ev.position().x,
-                ev.position().y);
+        logLine(
+          "DropFiles pos=%d,%d files={", ev.position().x, ev.position().y);
         for (const auto& file : ev.files()) {
           logLine("  \"%s\"", file.c_str());
         }
         logLine("}");
         break;
 
-      case os::Event::MouseEnter: logMouseEvent(ev, "MouseEnter"); break;
-      case os::Event::MouseLeave: logMouseEvent(ev, "MouseLeave"); break;
-      case os::Event::MouseMove: logMouseEvent(ev, "MouseMove"); break;
-      case os::Event::MouseDown: logMouseEvent(ev, "MouseDown"); break;
-      case os::Event::MouseUp: logMouseEvent(ev, "MouseUp"); break;
-      case os::Event::MouseDoubleClick: logMouseEvent(ev, "MouseDoubleClick"); break;
+      case os::Event::MouseEnter:
+        logMouseEvent(ev, "MouseEnter");
+        break;
+      case os::Event::MouseLeave:
+        logMouseEvent(ev, "MouseLeave");
+        break;
+      case os::Event::MouseMove:
+        logMouseEvent(ev, "MouseMove");
+        break;
+      case os::Event::MouseDown:
+        logMouseEvent(ev, "MouseDown");
+        break;
+      case os::Event::MouseUp:
+        logMouseEvent(ev, "MouseUp");
+        break;
+      case os::Event::MouseDoubleClick:
+        logMouseEvent(ev, "MouseDoubleClick");
+        break;
 
       case os::Event::MouseWheel:
         m_mousePos = ev.position();
         logLine("MouseWheel pos=%d,%d %s=%d,%d%s",
                 ev.position().x,
                 ev.position().y,
-                ev.preciseWheel() ? " preciseWheel": "wheel",
+                ev.preciseWheel() ? " preciseWheel" : "wheel",
                 ev.wheelDelta().x,
                 ev.wheelDelta().y,
                 modifiersToString(ev.modifiers()).c_str());
@@ -82,7 +93,7 @@ public:
       case os::Event::KeyUp: {
         wchar_t wideUnicode[2] = { ev.unicodeChar(), 0 };
         logLine("%s repeat=%d scancode=%d unicode=%d (%s)%s",
-                (ev.type() == os::Event::KeyDown ? "KeyDown": "KeyUp"),
+                (ev.type() == os::Event::KeyDown ? "KeyDown" : "KeyUp"),
                 ev.repeat(),
                 ev.scancode(),
                 ev.unicodeChar(),
@@ -92,9 +103,8 @@ public:
       }
 
       case os::Event::TouchMagnify:
-        logLine("TouchMagnify %.4g",
-                ev.magnification());
-        m_brushSize += 32*ev.magnification();
+        logLine("TouchMagnify %.4g", ev.magnification());
+        m_brushSize += 32 * ev.magnification();
         m_brushSize = std::clamp(m_brushSize, 1.0, 500.0);
         break;
 
@@ -105,7 +115,8 @@ public:
     return true;
   }
 
-  void flush() {
+  void flush()
+  {
     if (m_oldLogSize != m_textLog.size()) {
       int newlines = m_textLog.size() - m_oldLogSize;
       while (m_textLog.size() > m_maxlines)
@@ -118,11 +129,13 @@ public:
   }
 
 private:
-  void recalcMaxLines() {
+  void recalcMaxLines()
+  {
     m_maxlines = (m_window->height() - m_lineHeight) / m_lineHeight;
   }
 
-  void scrollAndDrawLog(const int newlines) {
+  void scrollAndDrawLog(const int newlines)
+  {
     os::Surface* surface = m_window->surface();
     os::SurfaceLock lock(surface);
     const gfx::Rect rc = surface->bounds();
@@ -134,26 +147,29 @@ private:
     // Scroll old lines
     int i;
     if (m_textLog.size() >= m_maxlines) {
-      int h = m_lineHeight*newlines;
+      int h = m_lineHeight * newlines;
       surface->scrollTo(rc, 0, -h);
 
-      surface->drawRect(gfx::Rect(rc.x, rc.y, rc.w, rc.h-h), p);
+      surface->drawRect(gfx::Rect(rc.x, rc.y, rc.w, rc.h - h), p);
       p.color(gfx::rgba(0, 0, 0));
-      surface->drawRect(gfx::Rect(rc.x, rc.y+rc.h-h, rc.w, h), p);
+      surface->drawRect(gfx::Rect(rc.x, rc.y + rc.h - h, rc.w, h), p);
 
-      i = (m_textLog.size()-newlines);
+      i = (m_textLog.size() - newlines);
     }
     // First lines without scroll
     else {
       i = m_oldLogSize;
-      surface->drawRect(gfx::Rect(rc.x, rc.y, rc.w, i*m_lineHeight), p);
+      surface->drawRect(gfx::Rect(rc.x, rc.y, rc.w, i * m_lineHeight), p);
     }
 
     os::Paint paint;
     paint.color(gfx::rgba(255, 255, 255));
-    for (; i<m_textLog.size(); ++i)
-      os::draw_text(surface, nullptr, m_textLog[i],
-                    gfx::Point(0, (1+i)*m_lineHeight), &paint);
+    for (; i < m_textLog.size(); ++i)
+      os::draw_text(surface,
+                    nullptr,
+                    m_textLog[i],
+                    gfx::Point(0, (1 + i) * m_lineHeight),
+                    &paint);
 
     gfx::Rgb rgb(gfx::Hsv(m_hue, 1.0, 1.0));
     paint.color(gfx::rgba(rgb.red(), rgb.green(), rgb.blue()));
@@ -167,7 +183,8 @@ private:
       m_window->setVisible(true);
   }
 
-  void logMouseEvent(const os::Event& ev, const char* eventName) {
+  void logMouseEvent(const os::Event& ev, const char* eventName)
+  {
     const os::Event::MouseButton mb = ev.button();
     const os::PointerType pt = ev.pointerType();
 
@@ -176,21 +193,24 @@ private:
             eventName,
             ev.position().x,
             ev.position().y,
-            (mb == os::Event::LeftButton ? " LeftButton":
-             mb == os::Event::RightButton ? " RightButton":
-             mb == os::Event::MiddleButton ? " MiddleButton":
-             mb == os::Event::X1Button ? " X1Button":
-             mb == os::Event::X2Button ? " X2Button": ""),
-            (pt == os::PointerType::Mouse ? " Mouse":
-             pt == os::PointerType::Touchpad ? " Touchpad":
-             pt == os::PointerType::Touch ? " Touch":
-             pt == os::PointerType::Pen ? " Pen":
-             pt == os::PointerType::Cursor ? " Cursor":
-             pt == os::PointerType::Eraser ? " Eraser": ""),
+            (mb == os::Event::LeftButton   ? " LeftButton" :
+             mb == os::Event::RightButton  ? " RightButton" :
+             mb == os::Event::MiddleButton ? " MiddleButton" :
+             mb == os::Event::X1Button     ? " X1Button" :
+             mb == os::Event::X2Button     ? " X2Button" :
+                                             ""),
+            (pt == os::PointerType::Mouse    ? " Mouse" :
+             pt == os::PointerType::Touchpad ? " Touchpad" :
+             pt == os::PointerType::Touch    ? " Touch" :
+             pt == os::PointerType::Pen      ? " Pen" :
+             pt == os::PointerType::Cursor   ? " Cursor" :
+             pt == os::PointerType::Eraser   ? " Eraser" :
+                                               ""),
             modifiersToString(ev.modifiers()).c_str());
   }
 
-  void logLine(const char* str, ...) {
+  void logLine(const char* str, ...)
+  {
     va_list ap;
     va_start(ap, str);
     char buf[4096];
@@ -200,14 +220,21 @@ private:
     m_textLog.push_back(buf);
   }
 
-  static std::string modifiersToString(os::KeyModifiers mods) {
+  static std::string modifiersToString(os::KeyModifiers mods)
+  {
     std::string s;
-    if (mods & os::kKeyShiftModifier) s += " Shift";
-    if (mods & os::kKeyCtrlModifier ) s += " Ctrl";
-    if (mods & os::kKeyAltModifier  ) s += " Alt";
-    if (mods & os::kKeyCmdModifier  ) s += " Command";
-    if (mods & os::kKeySpaceModifier) s += " Space";
-    if (mods & os::kKeyWinModifier  ) s += " Win";
+    if (mods & os::kKeyShiftModifier)
+      s += " Shift";
+    if (mods & os::kKeyCtrlModifier)
+      s += " Ctrl";
+    if (mods & os::kKeyAltModifier)
+      s += " Alt";
+    if (mods & os::kKeyCmdModifier)
+      s += " Command";
+    if (mods & os::kKeySpaceModifier)
+      s += " Space";
+    if (mods & os::kKeyWinModifier)
+      s += " Win";
     return s;
   }
 

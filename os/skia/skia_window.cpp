@@ -6,17 +6,17 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/skia/skia_window.h"
 
 #include "base/debug.h"
-#include "os/window_spec.h"
 #include "os/event.h"
 #include "os/event_queue.h"
 #include "os/skia/skia_surface.h"
 #include "os/system.h"
+#include "os/window_spec.h"
 
 namespace os {
 
@@ -50,4 +50,4 @@ bool SkiaWindow::setCursor(NativeCursor cursor)
   return SkiaWindowPlatform::setCursor(cursor);
 }
 
-} // namespace os
+}  // namespace os

@@ -16,51 +16,51 @@
 
 namespace gfx {
 
-  // TODO add support for rotations
-  class PackingRects {
-  public:
-    PackingRects(int borderPadding = 0, int shapePadding = 0) :
-      m_borderPadding(borderPadding),
-      m_shapePadding(shapePadding) {
-    }
+// TODO add support for rotations
+class PackingRects {
+public:
+  PackingRects(int borderPadding = 0, int shapePadding = 0)
+    : m_borderPadding(borderPadding)
+    , m_shapePadding(shapePadding)
+  {
+  }
 
-    typedef std::vector<Rect> Rects;
-    typedef Rects::const_iterator const_iterator;
+  typedef std::vector<Rect> Rects;
+  typedef Rects::const_iterator const_iterator;
 
-    // Iterate over all given rectangles (in the same order they where
-    // given in addSize() calls).
-    const_iterator begin() const { return m_rects.begin(); }
-    const_iterator end() const { return m_rects.end(); }
+  // Iterate over all given rectangles (in the same order they where
+  // given in addSize() calls).
+  const_iterator begin() const { return m_rects.begin(); }
+  const_iterator end() const { return m_rects.end(); }
 
-    std::size_t size() const { return m_rects.size(); }
-    const Rect& operator[](int i) const { return m_rects[i]; }
+  std::size_t size() const { return m_rects.size(); }
+  const Rect& operator[](int i) const { return m_rects[i]; }
 
-    // Adds a new rectangle.
-    void add(const Size& sz);
-    void add(const Rect& rc);
+  // Adds a new rectangle.
+  void add(const Size& sz);
+  void add(const Rect& rc);
 
-    // Returns the best size for the texture.
-    Size bestFit(base::task_token& token,
-                 const int fixedWidth = 0,
-                 const int fixedHeight = 0);
+  // Returns the best size for the texture.
+  Size bestFit(base::task_token& token,
+               const int fixedWidth = 0,
+               const int fixedHeight = 0);
 
-    // Rearrange all given rectangles to best fit a texture size.
-    // Returns true if all rectangles were correctly arranged or false
-    // if there is not enough space.
-    bool pack(const Size& size,
-              base::task_token& token);
+  // Rearrange all given rectangles to best fit a texture size.
+  // Returns true if all rectangles were correctly arranged or false
+  // if there is not enough space.
+  bool pack(const Size& size, base::task_token& token);
 
-    // Returns the bounds of the packed area.
-    const Rect& bounds() const { return m_bounds; }
+  // Returns the bounds of the packed area.
+  const Rect& bounds() const { return m_bounds; }
 
-  private:
-    int m_borderPadding;
-    int m_shapePadding;
+private:
+  int m_borderPadding;
+  int m_shapePadding;
 
-    Rect m_bounds;
-    Rects m_rects;
-  };
+  Rect m_bounds;
+  Rects m_rects;
+};
 
-} // namespace gfx
+}  // namespace gfx
 
 #endif

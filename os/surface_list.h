@@ -15,8 +15,8 @@
 
 namespace os {
 
-  using SurfaceList = std::vector<SurfaceRef>;
+using SurfaceList = std::vector<SurfaceRef>;
 
-} // namespace os
+}  // namespace os
 
 #endif

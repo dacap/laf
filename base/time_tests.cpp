@@ -12,16 +12,13 @@ using namespace base;
 
 namespace base {
 
-  std::ostream& operator<<(std::ostream& os, const Time& t) {
-    return os << t.year << '-'
-              << t.month << '-'
-              << t.day << ' '
-              << t.hour << ':'
-              << t.minute << ':'
-              << t.second;
-  }
-
+std::ostream& operator<<(std::ostream& os, const Time& t)
+{
+  return os << t.year << '-' << t.month << '-' << t.day << ' ' << t.hour << ':'
+            << t.minute << ':' << t.second;
 }
+
+}  // namespace base
 
 TEST(Time, Cmp)
 {

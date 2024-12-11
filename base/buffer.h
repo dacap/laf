@@ -15,6 +15,6 @@ namespace base {
 
 typedef std::vector<uint8_t> buffer;
 
-} // namespace base
+}  // namespace base
 
 #endif

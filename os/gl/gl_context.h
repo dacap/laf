@@ -21,6 +21,6 @@ public:
   virtual void swapBuffers() { }
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

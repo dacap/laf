@@ -15,17 +15,22 @@
 
 namespace base {
 
-  using FileHandle = std::shared_ptr<FILE>;
+using FileHandle = std::shared_ptr<FILE>;
 
-  FILE* open_file_raw(const std::string& filename, const std::string& mode);
-  FILE* reopen_file_raw(const std::string& filename, const std::string& mode, FILE* stream);
-  FileHandle open_file(const std::string& filename, const std::string& mode);
-  FileHandle open_file_with_exception(const std::string& filename, const std::string& mode);
-  FileHandle open_file_with_exception_sync_on_close(const std::string& filename, const std::string& mode);
-  int open_file_descriptor_with_exception(const std::string& filename, const std::string& mode);
-  void sync_file_descriptor(int fd);
-  void close_file_and_sync(FILE* file);
+FILE* open_file_raw(const std::string& filename, const std::string& mode);
+FILE* reopen_file_raw(const std::string& filename,
+                      const std::string& mode,
+                      FILE* stream);
+FileHandle open_file(const std::string& filename, const std::string& mode);
+FileHandle open_file_with_exception(const std::string& filename,
+                                    const std::string& mode);
+FileHandle open_file_with_exception_sync_on_close(const std::string& filename,
+                                                  const std::string& mode);
+int open_file_descriptor_with_exception(const std::string& filename,
+                                        const std::string& mode);
+void sync_file_descriptor(int fd);
+void close_file_and_sync(FILE* file);
 
-}
+}  // namespace base
 
 #endif

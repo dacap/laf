@@ -6,16 +6,16 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include <gtest/gtest.h>
 
 #if LAF_WITH_REGION
 
-#include "gfx/packing_rects.h"
-#include "gfx/rect_io.h"
-#include "gfx/size.h"
+  #include "gfx/packing_rects.h"
+  #include "gfx/rect_io.h"
+  #include "gfx/size.h"
 
 using namespace gfx;
 

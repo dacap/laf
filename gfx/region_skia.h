@@ -17,121 +17,140 @@
 
 namespace gfx {
 
-  template<typename T> class PointT;
+template<typename T>
+class PointT;
 
-  class Region;
+class Region;
 
-  namespace details {
+namespace details {
 
-    using Region = SkRegion;
+using Region = SkRegion;
 
-    template<typename T>
-    class RegionIterator {
-    public:
-      using iterator_category = std::forward_iterator_tag;
-      using value_type = T;
-      using difference_type = std::ptrdiff_t;
-      using pointer = T*;
-      using reference = T&;
+template<typename T>
+class RegionIterator {
+public:
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = T;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T*;
+  using reference = T&;
 
-      RegionIterator() { }
-      RegionIterator(const RegionIterator& o) : m_it(o.m_it) { }
-      template<typename T2>
-      RegionIterator(const RegionIterator<T2>& o) : m_it(o.m_it) { }
-      RegionIterator& operator=(const RegionIterator& o) { m_it = o.m_it; return *this; }
-      RegionIterator& operator++() { m_it.next(); return *this; }
-      bool operator==(const RegionIterator& o) const {
-        return (m_it.done() == o.m_it.done());
-      }
-      bool operator!=(const RegionIterator& o) const {
-        return (m_it.done() != o.m_it.done());
-      }
-      reference operator*() {
-        const SkIRect& rc = m_it.rect();
-        m_rect.x = rc.x();
-        m_rect.y = rc.y();
-        m_rect.w = rc.width();
-        m_rect.h = rc.height();
-        return m_rect;
-      }
-    private:
-      SkRegion::Iterator m_it;
-      mutable Rect m_rect;
-      template<typename> friend class RegionIterator;
-      friend class ::gfx::Region;
-    };
+  RegionIterator() { }
+  RegionIterator(const RegionIterator& o)
+    : m_it(o.m_it)
+  {
+  }
+  template<typename T2>
+  RegionIterator(const RegionIterator<T2>& o)
+    : m_it(o.m_it)
+  {
+  }
+  RegionIterator& operator=(const RegionIterator& o)
+  {
+    m_it = o.m_it;
+    return *this;
+  }
+  RegionIterator& operator++()
+  {
+    m_it.next();
+    return *this;
+  }
+  bool operator==(const RegionIterator& o) const
+  {
+    return (m_it.done() == o.m_it.done());
+  }
+  bool operator!=(const RegionIterator& o) const
+  {
+    return (m_it.done() != o.m_it.done());
+  }
+  reference operator*()
+  {
+    const SkIRect& rc = m_it.rect();
+    m_rect.x = rc.x();
+    m_rect.y = rc.y();
+    m_rect.w = rc.width();
+    m_rect.h = rc.height();
+    return m_rect;
+  }
 
-  } // namespace details
+private:
+  SkRegion::Iterator m_it;
+  mutable Rect m_rect;
+  template<typename>
+  friend class RegionIterator;
+  friend class ::gfx::Region;
+};
 
-  class Region {
-  public:
-    enum Overlap { Out, In, Part };
+}  // namespace details
 
-    using iterator = details::RegionIterator<Rect>;
-    using const_iterator = details::RegionIterator<const Rect>;
+class Region {
+public:
+  enum Overlap { Out, In, Part };
 
-    Region();
-    Region(const Region& copy);
-    explicit Region(const Rect& rect);
-    Region& operator=(const Rect& rect);
-    Region& operator=(const Region& copy);
+  using iterator = details::RegionIterator<Rect>;
+  using const_iterator = details::RegionIterator<const Rect>;
 
-    iterator begin();
-    iterator end();
-    const_iterator begin() const;
-    const_iterator end() const;
+  Region();
+  Region(const Region& copy);
+  explicit Region(const Rect& rect);
+  Region& operator=(const Rect& rect);
+  Region& operator=(const Region& copy);
 
-    bool isEmpty() const { return m_region.isEmpty(); }
-    bool isRect() const { return m_region.isRect(); }
-    bool isComplex() const { return m_region.isComplex(); }
+  iterator begin();
+  iterator end();
+  const_iterator begin() const;
+  const_iterator end() const;
 
-    std::size_t size() const {
-      return m_region.computeRegionComplexity();
-    }
+  bool isEmpty() const { return m_region.isEmpty(); }
+  bool isRect() const { return m_region.isRect(); }
+  bool isComplex() const { return m_region.isComplex(); }
 
-    Rect bounds() const;
+  std::size_t size() const { return m_region.computeRegionComplexity(); }
 
-    void clear() {
-      m_region.setEmpty();
-    }
+  Rect bounds() const;
 
-    void offset(int dx, int dy) {
-      m_region.translate(dx, dy);
-    }
+  void clear() { m_region.setEmpty(); }
 
-    void offset(const PointT<int>& delta) {
-      m_region.translate(delta.x, delta.y);
-    }
+  void offset(int dx, int dy) { m_region.translate(dx, dy); }
 
-    Region& createIntersection(const Region& a, const Region& b) {
-      m_region.op(a.m_region, b.m_region, SkRegion::kIntersect_Op);
-      return *this;
-    }
+  void offset(const PointT<int>& delta)
+  {
+    m_region.translate(delta.x, delta.y);
+  }
 
-    Region& createUnion(const Region& a, const Region& b) {
-      m_region.op(a.m_region, b.m_region, SkRegion::kUnion_Op);
-      return *this;
-    }
+  Region& createIntersection(const Region& a, const Region& b)
+  {
+    m_region.op(a.m_region, b.m_region, SkRegion::kIntersect_Op);
+    return *this;
+  }
 
-    Region& createSubtraction(const Region& a, const Region& b) {
-      m_region.op(a.m_region, b.m_region, SkRegion::kDifference_Op);
-      return *this;
-    }
+  Region& createUnion(const Region& a, const Region& b)
+  {
+    m_region.op(a.m_region, b.m_region, SkRegion::kUnion_Op);
+    return *this;
+  }
 
-    bool contains(const PointT<int>& pt) const {
-      return m_region.contains(pt.x, pt.y);
-    }
-    Overlap contains(const Rect& rect) const;
+  Region& createSubtraction(const Region& a, const Region& b)
+  {
+    m_region.op(a.m_region, b.m_region, SkRegion::kDifference_Op);
+    return *this;
+  }
 
-    Region& operator+=(const Region& b) { return createUnion(*this, b); }
-    Region& operator|=(const Region& b) { return createUnion(*this, b); }
-    Region& operator&=(const Region& b) { return createIntersection(*this, b); }
-    Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
+  bool contains(const PointT<int>& pt) const
+  {
+    return m_region.contains(pt.x, pt.y);
+  }
+  Overlap contains(const Rect& rect) const;
 
-  private:
-    mutable details::Region m_region;
-  };
+  Region& operator+=(const Region& b) { return createUnion(*this, b); }
+  Region& operator|=(const Region& b) { return createUnion(*this, b); }
+  Region& operator&=(const Region& b) { return createIntersection(*this, b); }
+  Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
 
-} // namespace gfx
+private:
+  mutable details::Region m_region;
+};
+
+}  // namespace gfx
 
 #endif

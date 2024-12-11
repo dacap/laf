@@ -44,6 +44,6 @@ private:
   os::ColorSpaceRef m_dstCS;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

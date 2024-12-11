@@ -6,16 +6,16 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include <gtest/gtest.h>
 
 #if LAF_WITH_REGION
 
-#include "gfx/point.h"
-#include "gfx/rect_io.h"
-#include "gfx/region.h"
+  #include "gfx/point.h"
+  #include "gfx/rect_io.h"
+  #include "gfx/region.h"
 
 using namespace std;
 using namespace gfx;
@@ -23,8 +23,7 @@ using namespace gfx;
 ostream& operator<<(ostream& os, const Region& rgn)
 {
   os << "{";
-  for (Region::const_iterator it=rgn.begin(), end=rgn.end();
-       it != end; ) {
+  for (Region::const_iterator it = rgn.begin(), end = rgn.end(); it != end;) {
     os << *it;
     ++it;
     if (it != end)
@@ -95,13 +94,13 @@ TEST(Region, ContainsPoint)
 {
   Region a(Rect(2, 3, 4, 5));
   EXPECT_TRUE(a.contains(Point(2, 3)));
-  EXPECT_FALSE(a.contains(Point(2-1, 3-1)));
-  EXPECT_FALSE(a.contains(Point(2+4, 3)));
-  EXPECT_FALSE(a.contains(Point(2, 3+5)));
-  EXPECT_FALSE(a.contains(Point(2+4, 3+5)));
-  EXPECT_TRUE(a.contains(Point(2+4-1, 3)));
-  EXPECT_TRUE(a.contains(Point(2, 3+5-1)));
-  EXPECT_TRUE(a.contains(Point(2+4-1, 3+5-1)));
+  EXPECT_FALSE(a.contains(Point(2 - 1, 3 - 1)));
+  EXPECT_FALSE(a.contains(Point(2 + 4, 3)));
+  EXPECT_FALSE(a.contains(Point(2, 3 + 5)));
+  EXPECT_FALSE(a.contains(Point(2 + 4, 3 + 5)));
+  EXPECT_TRUE(a.contains(Point(2 + 4 - 1, 3)));
+  EXPECT_TRUE(a.contains(Point(2, 3 + 5 - 1)));
+  EXPECT_TRUE(a.contains(Point(2 + 4 - 1, 3 + 5 - 1)));
 }
 
 TEST(Region, Iterators)
@@ -112,13 +111,13 @@ TEST(Region, Iterators)
   EXPECT_TRUE(a.isComplex());
   EXPECT_TRUE(a.size() > 1);
   int c = 0;
-  for (Region::iterator it=a.begin(), end=a.end(); it!=end; ++it) {
+  for (Region::iterator it = a.begin(), end = a.end(); it != end; ++it) {
     ++c;
   }
   EXPECT_EQ(2, c);
 
   c = 0;
-  for (Region::const_iterator it=a.begin(), end=a.end(); it!=end; ++it) {
+  for (Region::const_iterator it = a.begin(), end = a.end(); it != end; ++it) {
     ++c;
   }
   EXPECT_EQ(2, c);

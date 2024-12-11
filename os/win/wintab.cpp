@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/win/wintab.h"
@@ -22,8 +22,8 @@
 #include "base/win/ver_query_values.h"
 #include "os/win/system.h"
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
 #define WINTAB_TRACE(...)
 
@@ -31,14 +31,14 @@ namespace os {
 
 namespace {
 
-typedef UINT (API* WTInfoW_Func)(UINT, UINT, LPVOID);
-typedef HCTX (API* WTOpenW_Func)(HWND, LPLOGCONTEXTW, BOOL);
-typedef BOOL (API* WTClose_Func)(HCTX);
-typedef int (API* WTPacketsGet_Func)(HCTX, int, LPVOID);
-typedef BOOL (API* WTPacket_Func)(HCTX, UINT, LPVOID);
-typedef BOOL (API* WTOverlap_Func)(HCTX, BOOL);
-typedef int (API* WTQueueSizeGet_Func)(HCTX);
-typedef BOOL (API* WTQueueSizeSet_Func)(HCTX, int);
+typedef UINT(API* WTInfoW_Func)(UINT, UINT, LPVOID);
+typedef HCTX(API* WTOpenW_Func)(HWND, LPLOGCONTEXTW, BOOL);
+typedef BOOL(API* WTClose_Func)(HCTX);
+typedef int(API* WTPacketsGet_Func)(HCTX, int, LPVOID);
+typedef BOOL(API* WTPacket_Func)(HCTX, UINT, LPVOID);
+typedef BOOL(API* WTOverlap_Func)(HCTX, BOOL);
+typedef int(API* WTQueueSizeGet_Func)(HCTX);
+typedef BOOL(API* WTQueueSizeSet_Func)(HCTX, int);
 
 WTInfoW_Func WTInfo;
 WTOpenW_Func WTOpen;
@@ -59,22 +59,23 @@ WTQueueSizeSet_Func WTQueueSizeSet;
 // UnhandledExceptionFilter() (e.g. base::MemoryDump handler) because
 // some wintab32.dll will overwrite our callback just loading the dll.
 class HandleSigSegv {
- public:
-  HandleSigSegv() {
+public:
+  HandleSigSegv()
+  {
     m_file = getFilename();
     m_oldHandler = SetUnhandledExceptionFilter(&HandleSigSegv::handler);
   }
 
-  ~HandleSigSegv() {
+  ~HandleSigSegv()
+  {
     SetUnhandledExceptionFilter(m_oldHandler);
     m_file.clear();
   }
 
-  bool crashed() const {
-    return base::is_file(m_file);
-  }
+  bool crashed() const { return base::is_file(m_file); }
 
-  static void deleteFile() {
+  static void deleteFile()
+  {
     try {
       std::string fn = getFilename();
       if (base::is_file(fn))
@@ -86,13 +87,14 @@ class HandleSigSegv {
   }
 
 private:
-  static std::string getFilename() {
+  static std::string getFilename()
+  {
     std::string appName = os::instance()->appName();
-    return base::join_path(base::get_temp_path(),
-                           appName + "-wintab32.crash");
+    return base::join_path(base::get_temp_path(), appName + "-wintab32.crash");
   }
 
-  static LONG API handler(_EXCEPTION_POINTERS* info) {
+  static LONG API handler(_EXCEPTION_POINTERS* info)
+  {
     // Write a "wintab32.lock" file so we don't use wintab32 the next
     // execution.
     {
@@ -114,7 +116,7 @@ private:
 std::string HandleSigSegv::m_file;
 LPTOP_LEVEL_EXCEPTION_FILTER HandleSigSegv::m_oldHandler = nullptr;
 
-} // anonymous namespace
+}  // anonymous namespace
 
 WintabAPI::WintabAPI()
 {
@@ -165,36 +167,50 @@ HCTX WintabAPI::open(HWND hwnd, bool moveMouse)
     logctx.lcOptions &= ~CXO_SYSTEM;
   }
 
-#if 1 // We shouldn't bypass WTOpen() if the return value from
-      // WTInfo() isn't the expected one, WTOpen() should just fail
-      // anyway.
+#if 1  // We shouldn't bypass WTOpen() if the return value from                \
+       // WTInfo() isn't the expected one, WTOpen() should just fail           \
+       // anyway.
   if (infoRes != sizeof(LOGCONTEXTW)) {
     LOG(ERROR,
         "PEN: Invalid size of WTInfo:\n"
         "     Expected context size: %d\n"
         "     Actual context size: %d\n",
-        sizeof(LOGCONTEXTW), infoRes);
+        sizeof(LOGCONTEXTW),
+        infoRes);
   }
 #endif
 
-  LOG("PEN: Context options=%d pktRate=%d in=%d,%d,%d,%d out=%d,%d,%d,%d sys=%d,%d,%d,%d\n",
-      logctx.lcOptions, logctx.lcPktRate,
-      logctx.lcInOrgX, logctx.lcInOrgY, logctx.lcInExtX, logctx.lcInExtY,
-      logctx.lcOutOrgX, logctx.lcOutOrgY, logctx.lcOutExtX, logctx.lcOutExtY,
-      logctx.lcSysOrgX, logctx.lcSysOrgY, logctx.lcSysExtX, logctx.lcSysExtY);
+  LOG(
+    "PEN: Context options=%d pktRate=%d in=%d,%d,%d,%d out=%d,%d,%d,%d sys=%d,%d,%d,%d\n",
+    logctx.lcOptions,
+    logctx.lcPktRate,
+    logctx.lcInOrgX,
+    logctx.lcInOrgY,
+    logctx.lcInExtX,
+    logctx.lcInExtY,
+    logctx.lcOutOrgX,
+    logctx.lcOutOrgY,
+    logctx.lcOutExtX,
+    logctx.lcOutExtY,
+    logctx.lcSysOrgX,
+    logctx.lcSysOrgY,
+    logctx.lcSysExtX,
+    logctx.lcSysExtY);
 
   logctx.lcOptions |= CXO_MESSAGES;
   logctx.lcPktData = PACKETDATA;
   logctx.lcPktMode = PACKETMODE;
   logctx.lcMoveMask = PACKETDATA;
-  m_outBounds = gfx::Rect(logctx.lcOutOrgX, logctx.lcOutOrgY, logctx.lcOutExtX, logctx.lcOutExtY);
+  m_outBounds = gfx::Rect(
+    logctx.lcOutOrgX, logctx.lcOutOrgY, logctx.lcOutExtX, logctx.lcOutExtY);
 
   AXIS pressure;
   infoRes = WTInfo(WTI_DEVICES, DVC_NPRESSURE, &pressure);
   if (infoRes >= sizeof(AXIS)) {
     m_minPressure = pressure.axMin;
     m_maxPressure = pressure.axMax;
-    LOG("PEN: Min/max pressure values [%d,%d]\n", pressure.axMin, pressure.axMax);
+    LOG(
+      "PEN: Min/max pressure values [%d,%d]\n", pressure.axMin, pressure.axMax);
   }
   else {
     m_minPressure = 0;
@@ -207,9 +223,9 @@ HCTX WintabAPI::open(HWND hwnd, bool moveMouse)
   if (!ctx) {
     LOG("PEN: Error attaching pen to window\n");
 
-#if 0 // This is not possible because because we cannot reach this
-      // point: if the WTOpen() segfaults, the program aborts
-      // automatically.
+#if 0  // This is not possible because because we cannot reach this            \
+       // point: if the WTOpen() segfaults, the program aborts                 \
+       // automatically.
     if (handler.crashed()) { // Check if WTOpen() crashed in this run
       m_crashedBefore = true;
       LOG("PEN: WTOpen() crashed!\n");
@@ -232,7 +248,7 @@ HCTX WintabAPI::open(HWND hwnd, bool moveMouse)
   int q = WTQueueSizeGet(ctx);
   LOG("PEN: Original queue size=%d\n", q);
   if (q < 128) {
-    for (int r=128; r>=q; r-=8) {
+    for (int r = 128; r >= q; r -= 8) {
       if (WTQueueSizeSet(ctx, r))
         break;
     }
@@ -261,7 +277,7 @@ void WintabAPI::overlap(HCTX ctx, BOOL state)
 
 bool WintabAPI::packet(HCTX ctx, UINT serial, LPVOID packet)
 {
-  return (WTPacket(ctx, serial, packet) ? true: false);
+  return (WTPacket(ctx, serial, packet) ? true : false);
 }
 
 int WintabAPI::packets(HCTX ctx, int maxPackets, LPVOID packets)
@@ -302,7 +318,6 @@ void WintabAPI::mapCursorButton(const int cursor,
   WTInfo(WTI_CURSORS + cursor, CSR_SYSBTNMAP, &map);
 
   switch (map[logicalButton]) {
-
     case SBN_LDBLCLICK:
       evType = Event::MouseDoubleClick;
     case SBN_LCLICK:
@@ -329,11 +344,12 @@ void WintabAPI::mapCursorButton(const int cursor,
     "  PEN: Button map logicalButton=%d action=%d -> evType=%s mouseButton=%d\n",
     logicalButton,
     map[logicalButton],
-    (evType == Event::None ? "-":
-     evType == Event::MouseMove ? "move":
-     evType == Event::MouseDown ? "DOWN":
-     evType == Event::MouseUp ? "UP":
-     evType == Event::MouseDoubleClick ? "DOUBLE-CLICK": "unknown"),
+    (evType == Event::None             ? "-" :
+     evType == Event::MouseMove        ? "move" :
+     evType == Event::MouseDown        ? "DOWN" :
+     evType == Event::MouseUp          ? "UP" :
+     evType == Event::MouseDoubleClick ? "DOUBLE-CLICK" :
+                                         "unknown"),
     (int)mouseButton);
 }
 
@@ -381,13 +397,16 @@ bool WintabAPI::loadWintab()
   WTInfo = base::get_dll_proc<WTInfoW_Func>(m_wintabLib, "WTInfoW");
   WTOpen = base::get_dll_proc<WTOpenW_Func>(m_wintabLib, "WTOpenW");
   WTClose = base::get_dll_proc<WTClose_Func>(m_wintabLib, "WTClose");
-  WTPacketsGet = base::get_dll_proc<WTPacketsGet_Func>(m_wintabLib, "WTPacketsGet");
+  WTPacketsGet =
+    base::get_dll_proc<WTPacketsGet_Func>(m_wintabLib, "WTPacketsGet");
   WTPacket = base::get_dll_proc<WTPacket_Func>(m_wintabLib, "WTPacket");
   WTOverlap = base::get_dll_proc<WTOverlap_Func>(m_wintabLib, "WTOverlap");
-  WTQueueSizeGet = base::get_dll_proc<WTQueueSizeGet_Func>(m_wintabLib, "WTQueueSizeGet");
-  WTQueueSizeSet = base::get_dll_proc<WTQueueSizeSet_Func>(m_wintabLib, "WTQueueSizeSet");
-  if (!WTInfo || !WTOpen || !WTClose || !WTPacket ||
-      !WTQueueSizeGet || !WTQueueSizeSet) {
+  WTQueueSizeGet =
+    base::get_dll_proc<WTQueueSizeGet_Func>(m_wintabLib, "WTQueueSizeGet");
+  WTQueueSizeSet =
+    base::get_dll_proc<WTQueueSizeSet_Func>(m_wintabLib, "WTQueueSizeSet");
+  if (!WTInfo || !WTOpen || !WTClose || !WTPacket || !WTQueueSizeGet ||
+      !WTQueueSizeSet) {
     LOG(ERROR, "PEN: wintab32.dll does not contain all required functions\n");
     return false;
   }
@@ -407,9 +426,9 @@ bool WintabAPI::loadWintab()
       // workaround to this kind of wintab misinformation is to
       // oversize the buffer to guarantee that for the most common
       // string lenghts it will be enough.
-      std::vector<WCHAR> buf(std::max<UINT>(128, nchars+1), 0);
+      std::vector<WCHAR> buf(std::max<UINT>(128, nchars + 1), 0);
       WTInfo(WTI_INTERFACE, IFC_WINTABID, &buf[0]);
-      buf[buf.size()-1] = 0;
+      buf[buf.size() - 1] = 0;
       std::string id = base::to_utf8(&buf[0]);
       LOG("PEN: Wintab ID \"%s\"\n", id.c_str());
 
@@ -425,8 +444,11 @@ bool WintabAPI::loadWintab()
     WTInfo(WTI_INTERFACE, IFC_IMPLVERSION, &implVer);
     WTInfo(WTI_INTERFACE, IFC_CTXOPTIONS, &options);
     LOG("PEN: Wintab spec v%d.%d impl v%d.%d options 0x%x\n",
-        (specVer & 0xff00) >> 8, (specVer & 0xff),
-        (implVer & 0xff00) >> 8, (implVer & 0xff), options);
+        (specVer & 0xff00) >> 8,
+        (specVer & 0xff),
+        (implVer & 0xff00) >> 8,
+        (implVer & 0xff),
+        options);
   }
 
   LOG("PEN: Wintab library loaded\n");
@@ -443,7 +465,10 @@ bool WintabAPI::checkDll(std::string& checksum)
 
   checksum = base::convert_to<std::string>(base::Sha1::calculateFromFile(fn));
   base::Version ver = base::get_file_version(fn);
-  LOG("PEN: <%s> v%s, sha1 <%s>\n", fn.c_str(), ver.str().c_str(), checksum.c_str());
+  LOG("PEN: <%s> v%s, sha1 <%s>\n",
+      fn.c_str(),
+      ver.str().c_str(),
+      checksum.c_str());
 
   // Ugly hack to bypass the buggy WALTOP International Corp .dll that
   // hangs Aseprite completely when we call its WTInfo function.
@@ -459,4 +484,4 @@ void WintabAPI::resetCrashFileIfPresent()
   HandleSigSegv::deleteFile();
 }
 
-} // namespace os
+}  // namespace os

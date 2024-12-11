@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/debug.h"
@@ -77,4 +77,4 @@ bool Sha1::operator!=(const Sha1& other) const
   return m_digest != other.m_digest;
 }
 
-} // namespace base
+}  // namespace base

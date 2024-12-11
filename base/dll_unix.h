@@ -30,4 +30,4 @@ dll_proc get_dll_proc_base(dll lib, const char* procName)
   return dlsym(lib, procName);
 }
 
-} // namespace base
+}  // namespace base

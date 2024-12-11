@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "gfx/region.h"
@@ -79,9 +79,7 @@ Rect Region::bounds() const
 {
   RECT rc = { 0, 0, 0, 0 };
   int res = GetRgnBox(m_hrgn, &rc);
-  return gfx::Rect(rc.left, rc.top,
-                   rc.right - rc.left,
-                   rc.bottom - rc.top);
+  return gfx::Rect(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
 }
 
 std::size_t Region::size() const
@@ -125,7 +123,7 @@ Region& Region::createSubtraction(const Region& a, const Region& b)
 
 bool Region::contains(const PointT<int>& pt) const
 {
-  return PtInRegion(m_hrgn, pt.x, pt.y) ? true: false;
+  return PtInRegion(m_hrgn, pt.x, pt.y) ? true : false;
 }
 
 Region::Overlap Region::contains(const Rect& rect) const
@@ -137,7 +135,7 @@ Region::Overlap Region::contains(const Rect& rect) const
     int res = CombineRgn(tmp.m_hrgn, rectRgn.m_hrgn, m_hrgn, RGN_AND);
 
     if (res == NULLREGION) {
-      assert(false); // Impossible state? RectInRegion() said true above
+      assert(false);  // Impossible state? RectInRegion() said true above
       return Out;
     }
     if (EqualRgn(tmp.m_hrgn, rectRgn.m_hrgn))
@@ -167,4 +165,4 @@ void Region::fillData() const
     GetRegionData(m_hrgn, n, m_data);
 }
 
-} // namespace gfx
+}  // namespace gfx

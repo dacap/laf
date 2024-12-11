@@ -35,6 +35,6 @@ private:
 
 using EventQueueImpl = EventQueueOSX;
 
-} // namespace os
+}  // namespace os
 
 #endif

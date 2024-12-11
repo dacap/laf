@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/x11/event_queue.h"
@@ -28,40 +28,74 @@ namespace {
 const char* get_event_name(XEvent& event)
 {
   switch (event.type) {
-    case KeyPress: return "KeyPress";
-    case KeyRelease: return "KeyRelease";
-    case ButtonPress: return "ButtonPress";
-    case ButtonRelease: return "ButtonRelease";
-    case MotionNotify: return "MotionNotify";
-    case EnterNotify: return "EnterNotify";
-    case LeaveNotify: return "LeaveNotify";
-    case FocusIn: return "FocusIn";
-    case FocusOut: return "FocusOut";
-    case KeymapNotify: return "KeymapNotify";
-    case Expose: return "Expose";
-    case GraphicsExpose: return "GraphicsExpose";
-    case NoExpose: return "NoExpose";
-    case VisibilityNotify: return "VisibilityNotify";
-    case CreateNotify: return "CreateNotify";
-    case DestroyNotify: return "DestroyNotify";
-    case UnmapNotify: return "UnmapNotify";
-    case MapNotify: return "MapNotify";
-    case MapRequest: return "MapRequest";
-    case ReparentNotify: return "ReparentNotify";
-    case ConfigureNotify: return "ConfigureNotify";
-    case ConfigureRequest: return "ConfigureRequest";
-    case GravityNotify: return "GravityNotify";
-    case ResizeRequest: return "ResizeRequest";
-    case CirculateNotify: return "CirculateNotify";
-    case CirculateRequest: return "CirculateRequest";
-    case PropertyNotify: return "PropertyNotify";
-    case SelectionClear: return "SelectionClear";
-    case SelectionRequest: return "SelectionRequest";
-    case SelectionNotify: return "SelectionNotify";
-    case ColormapNotify: return "ColormapNotify";
-    case ClientMessage: return "ClientMessage";
-    case MappingNotify: return "MappingNotify";
-    case GenericEvent: return "GenericEvent";
+    case KeyPress:
+      return "KeyPress";
+    case KeyRelease:
+      return "KeyRelease";
+    case ButtonPress:
+      return "ButtonPress";
+    case ButtonRelease:
+      return "ButtonRelease";
+    case MotionNotify:
+      return "MotionNotify";
+    case EnterNotify:
+      return "EnterNotify";
+    case LeaveNotify:
+      return "LeaveNotify";
+    case FocusIn:
+      return "FocusIn";
+    case FocusOut:
+      return "FocusOut";
+    case KeymapNotify:
+      return "KeymapNotify";
+    case Expose:
+      return "Expose";
+    case GraphicsExpose:
+      return "GraphicsExpose";
+    case NoExpose:
+      return "NoExpose";
+    case VisibilityNotify:
+      return "VisibilityNotify";
+    case CreateNotify:
+      return "CreateNotify";
+    case DestroyNotify:
+      return "DestroyNotify";
+    case UnmapNotify:
+      return "UnmapNotify";
+    case MapNotify:
+      return "MapNotify";
+    case MapRequest:
+      return "MapRequest";
+    case ReparentNotify:
+      return "ReparentNotify";
+    case ConfigureNotify:
+      return "ConfigureNotify";
+    case ConfigureRequest:
+      return "ConfigureRequest";
+    case GravityNotify:
+      return "GravityNotify";
+    case ResizeRequest:
+      return "ResizeRequest";
+    case CirculateNotify:
+      return "CirculateNotify";
+    case CirculateRequest:
+      return "CirculateRequest";
+    case PropertyNotify:
+      return "PropertyNotify";
+    case SelectionClear:
+      return "SelectionClear";
+    case SelectionRequest:
+      return "SelectionRequest";
+    case SelectionNotify:
+      return "SelectionNotify";
+    case ColormapNotify:
+      return "ColormapNotify";
+    case ClientMessage:
+      return "ClientMessage";
+    case MappingNotify:
+      return "MappingNotify";
+    case GenericEvent:
+      return "GenericEvent";
   }
   return "Unknown";
 }
@@ -79,10 +113,10 @@ void wait_file_descriptor_for_reading(int fd, base::tick_t timeoutMilliseconds)
 
   // First argument must be set to the highest-numbered file
   // descriptor in any of the three sets, plus 1.
-  select(fd+1, &fds, nullptr, nullptr, &timeout);
+  select(fd + 1, &fds, nullptr, nullptr, &timeout);
 }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 void EventQueueX11::queueEvent(const Event& ev)
 {
@@ -133,23 +167,21 @@ void EventQueueX11::getEvent(Event& ev, double timeout)
   // key pressed.
   const bool removeRepeats = (!WindowX11::translateDeadKeys());
 
-  for (int i=0; i<events; ++i) {
+  for (int i = 0; i < events; ++i) {
     XNextEvent(display, &event);
 
     // Here we try to "remove" KeyRelease/KeyPress pairs from
     // autorepeat key events (remove = not delivering/converting
     // XEvent to os::Event)
-    if ((event.type == KeyRelease) &&
-        (removeRepeats) &&
-        (i+1 < events || XEventsQueued(display, QueuedAfterFlush) > 0)) {
-      if (i+1 < events)
+    if ((event.type == KeyRelease) && (removeRepeats) &&
+        (i + 1 < events || XEventsQueued(display, QueuedAfterFlush) > 0)) {
+      if (i + 1 < events)
         ++i;
       XEvent event2;
       XNextEvent(display, &event2);
       // If a KeyPress is just after a KeyRelease with the same time,
       // this is an autorepeat.
-      if (event2.type == KeyPress &&
-          event.xkey.time == event2.xkey.time) {
+      if (event2.type == KeyPress && event.xkey.time == event2.xkey.time) {
         // The KeyRelease/KeyPress are an autorepeat, we can just
         // ignore the KeyRelease XEvent (and process the event2, which
         // is a KeyPress to send a os::Event::KeyDown).
@@ -167,7 +199,7 @@ void EventQueueX11::getEvent(Event& ev, double timeout)
 
   if (!m_events.try_pop(ev)) {
 #pragma push_macro("None")
-#undef None // Undefine the X11 None macro
+#undef None  // Undefine the X11 None macro
     ev.setType(Event::None);
 #pragma pop_macro("None")
   }
@@ -188,4 +220,4 @@ void EventQueueX11::processX11Event(XEvent& event)
     window->processX11Event(event);
 }
 
-} // namespace os
+}  // namespace os

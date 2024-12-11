@@ -10,7 +10,7 @@
 #pragma once
 
 #ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
+  #include <Cocoa/Cocoa.h>
 #endif
 
 #include "gfx/point.h"
@@ -26,10 +26,10 @@
 #include "os/window_spec.h"
 
 namespace os {
-  class Event;
-  class Surface;
-  class WindowOSX;
-}
+class Event;
+class Surface;
+class WindowOSX;
+}  // namespace os
 
 #ifdef __OBJC__
 
@@ -58,7 +58,7 @@ using WindowOSXObjc_id = WindowOSXObjc*;
 
 #else
 
-#include <objc/objc-runtime.h>
+  #include <objc/objc-runtime.h>
 using WindowOSXObjc_id = id;
 
 #endif
@@ -124,9 +124,10 @@ public:
 
 protected:
   WindowOSXObjc_id __strong m_nsWindow = nullptr;
-  gfx::Rect m_restoredFrame; // Cached frame() just before it's maximized/zoomed.
+  gfx::Rect
+    m_restoredFrame;  // Cached frame() just before it's maximized/zoomed.
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

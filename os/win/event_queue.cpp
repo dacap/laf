@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include <queue>
@@ -31,7 +31,7 @@ void EventQueueWin::clearEvents()
 
 void EventQueueWin::getEvent(Event& ev, double timeout)
 {
-  const base::tick_t untilTick = base::current_tick() + timeout*1000.0;
+  const base::tick_t untilTick = base::current_tick() + timeout * 1000.0;
   MSG msg;
 
   ev.setWindow(nullptr);
@@ -46,8 +46,10 @@ void EventQueueWin::getEvent(Event& ev, double timeout)
       const base::tick_t now = base::current_tick();
       if (untilTick > now) {
         const base::tick_t msecs = (untilTick - now);
-        MsgWaitForMultipleObjects(0, nullptr, FALSE,
-                                  (DWORD)msecs, // Milliseconds to wait
+        MsgWaitForMultipleObjects(0,
+                                  nullptr,
+                                  FALSE,
+                                  (DWORD)msecs,  // Milliseconds to wait
                                   QS_ALLINPUT | QS_ALLPOSTMESSAGE);
       }
       res = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
@@ -62,8 +64,7 @@ void EventQueueWin::getEvent(Event& ev, double timeout)
       //   "WM_KEYDOWN and WM_KEYUP combinations produce a WM_CHAR
       //   or WM_DEADCHAR message."
       // https://msdn.microsoft.com/en-us/library/windows/desktop/ms644955.aspx
-      if (msg.message != WM_KEYDOWN &&
-          msg.message != WM_KEYUP) {
+      if (msg.message != WM_KEYDOWN && msg.message != WM_KEYUP) {
         TranslateMessage(&msg);
       }
       DispatchMessage(&msg);
@@ -77,4 +78,4 @@ void EventQueueWin::getEvent(Event& ev, double timeout)
   }
 }
 
-} // namespace os
+}  // namespace os

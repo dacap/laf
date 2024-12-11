@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/draw_text.h"
@@ -20,10 +20,13 @@
 
 namespace os {
 
-gfx::Rect draw_text(Surface* surface, Font* font,
+gfx::Rect draw_text(Surface* surface,
+                    Font* font,
                     const std::string& text,
-                    gfx::Color fg, gfx::Color bg,
-                    int x, int y,
+                    gfx::Color fg,
+                    gfx::Color bg,
+                    int x,
+                    int y,
                     DrawTextDelegate* delegate)
 {
   base::utf8_decode decode(text);
@@ -45,7 +48,7 @@ retry:;
         if (!newFont)
           break;
 
-        y += font->height()/2 - newFont->height()/2;
+        y += font->height() / 2 - newFont->height() / 2;
 
         font = newFont;
         goto retry;
@@ -54,7 +57,6 @@ retry:;
   }
 
   switch (font->type()) {
-
     case FontType::Unknown:
       // Do nothing
       break;
@@ -86,7 +88,8 @@ retry:;
 
         if (!charBounds.isEmpty()) {
           if (surface)
-            surface->drawColoredRgbaSurface(sheet, fg, bg, gfx::Clip(x, y, charBounds));
+            surface->drawColoredRgbaSurface(
+              sheet, fg, bg, gfx::Clip(x, y, charBounds));
         }
 
         textBounds |= outCharBounds;
@@ -120,17 +123,15 @@ retry:;
         gfx::Rect origDstBounds;
         const auto* glyph = feg.glyph();
         if (glyph)
-          origDstBounds = gfx::Rect(
-            x + int(glyph->startX),
-            y + int(glyph->y),
-            int(glyph->endX) - int(glyph->startX),
-            int(glyph->bitmap->rows) ? int(glyph->bitmap->rows): 1);
+          origDstBounds =
+            gfx::Rect(x + int(glyph->startX),
+                      y + int(glyph->y),
+                      int(glyph->endX) - int(glyph->startX),
+                      int(glyph->bitmap->rows) ? int(glyph->bitmap->rows) : 1);
 
         if (delegate) {
           delegate->preProcessChar(
-            feg.charIndex(),
-            feg.unicodeChar(),
-            fg, bg, origDstBounds);
+            feg.charIndex(), feg.unicodeChar(), fg, bg, origDstBounds);
         }
 
         if (!glyph)
@@ -151,13 +152,12 @@ retry:;
           const int clippedRows = dstBounds.y - origDstBounds.y;
           int dst_y = dstBounds.y;
           int t;
-          for (int v=0; v<dstBounds.h; ++v, ++dst_y) {
+          for (int v = 0; v < dstBounds.h; ++v, ++dst_y) {
             int bit = 0;
-            const uint8_t* p = glyph->bitmap->buffer
-              + (v+clippedRows)*glyph->bitmap->pitch;
+            const uint8_t* p =
+              glyph->bitmap->buffer + (v + clippedRows) * glyph->bitmap->pitch;
             int dst_x = dstBounds.x;
-            uint32_t* dst_address =
-              (uint32_t*)surface->getData(dst_x, dst_y);
+            uint32_t* dst_address = (uint32_t*)surface->getData(dst_x, dst_y);
 
             // TODO maybe if we are trying to draw in a SkiaSurface with a nullptr m_bitmap
             //      (when GPU-acceleration is enabled)
@@ -165,7 +165,7 @@ retry:;
               break;
 
             // Skip first clipped pixels
-            for (int u=0; u<dstBounds.x-origDstBounds.x; ++u) {
+            for (int u = 0; u < dstBounds.x - origDstBounds.x; ++u) {
               if (glyph->bitmap->pixel_mode == FT_PIXEL_MODE_GRAY) {
                 ++p;
               }
@@ -177,7 +177,7 @@ retry:;
               }
             }
 
-            for (int u=0; u<dstBounds.w; ++u, ++dst_x) {
+            for (int u = 0; u < dstBounds.w; ++u, ++dst_x) {
               ASSERT(clipBounds.contains(gfx::Point(dst_x, dst_y)));
 
               int alpha;
@@ -185,7 +185,7 @@ retry:;
                 alpha = *(p++);
               }
               else if (glyph->bitmap->pixel_mode == FT_PIXEL_MODE_MONO) {
-                alpha = ((*p) & (1 << (7 - (bit++))) ? 255: 0);
+                alpha = ((*p) & (1 << (7 - (bit++))) ? 255 : 0);
                 if (bit == 8) {
                   bit = 0;
                   ++p;
@@ -194,11 +194,10 @@ retry:;
 
               const uint32_t backdrop = *dst_address;
               const gfx::Color backdropColor =
-                gfx::rgba(
-                  ((backdrop & fd.redMask) >> fd.redShift),
-                  ((backdrop & fd.greenMask) >> fd.greenShift),
-                  ((backdrop & fd.blueMask) >> fd.blueShift),
-                  ((backdrop & fd.alphaMask) >> fd.alphaShift));
+                gfx::rgba(((backdrop & fd.redMask) >> fd.redShift),
+                          ((backdrop & fd.greenMask) >> fd.greenShift),
+                          ((backdrop & fd.blueMask) >> fd.blueShift),
+                          ((backdrop & fd.alphaMask) >> fd.alphaShift));
 
               gfx::Color output = gfx::rgba(gfx::getr(fg),
                                             gfx::getg(fg),
@@ -210,9 +209,9 @@ retry:;
                 output = blend(backdropColor, output);
 
               *dst_address =
-                ((gfx::getr(output) << fd.redShift  ) & fd.redMask  ) |
+                ((gfx::getr(output) << fd.redShift) & fd.redMask) |
                 ((gfx::getg(output) << fd.greenShift) & fd.greenMask) |
-                ((gfx::getb(output) << fd.blueShift ) & fd.blueMask ) |
+                ((gfx::getb(output) << fd.blueShift) & fd.blueMask) |
                 ((gfx::geta(output) << fd.alphaShift) & fd.alphaMask);
 
               ++dst_address;
@@ -220,8 +219,10 @@ retry:;
           }
         }
 
-        if (!origDstBounds.w) origDstBounds.w = 1;
-        if (!origDstBounds.h) origDstBounds.h = 1;
+        if (!origDstBounds.w)
+          origDstBounds.w = 1;
+        if (!origDstBounds.h)
+          origDstBounds.h = 1;
         textBounds |= origDstBounds;
         if (delegate)
           delegate->postDrawChar(origDstBounds);
@@ -231,10 +232,9 @@ retry:;
         surface->unlock();
       break;
     }
-
   }
 
   return textBounds;
 }
 
-} // namespace os
+}  // namespace os

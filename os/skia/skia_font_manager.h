@@ -21,10 +21,12 @@ namespace os {
 class SkiaTypeface : public Typeface {
 public:
   SkiaTypeface(SkTypeface* skTypeface)
-    : m_skTypeface(skTypeface) {
+    : m_skTypeface(skTypeface)
+  {
   }
 
-  FontStyle fontStyle() const override {
+  FontStyle fontStyle() const override
+  {
     SkFontStyle skStyle = m_skTypeface->fontStyle();
     return FontStyle((FontStyle::Weight)skStyle.weight(),
                      (FontStyle::Width)skStyle.width(),
@@ -38,16 +40,14 @@ private:
 class SkiaFontStyleSet : public FontStyleSet {
 public:
   SkiaFontStyleSet(SkFontStyleSet* set)
-    : m_skSet(set) {
+    : m_skSet(set)
+  {
   }
 
-  int count() override {
-    return m_skSet->count();
-  }
+  int count() override { return m_skSet->count(); }
 
-  void getStyle(int index,
-                FontStyle& style,
-                std::string& name) override {
+  void getStyle(int index, FontStyle& style, std::string& name) override
+  {
     SkFontStyle skStyle;
     SkString skName;
     m_skSet->getStyle(index, &skStyle, &skName);
@@ -57,11 +57,13 @@ public:
     name = skName.c_str();
   }
 
-  TypefaceRef typeface(int index) override {
+  TypefaceRef typeface(int index) override
+  {
     return make_ref<SkiaTypeface>(m_skSet->createTypeface(index));
   }
 
-  TypefaceRef matchStyle(const FontStyle& style) override {
+  TypefaceRef matchStyle(const FontStyle& style) override
+  {
     SkFontStyle skStyle((SkFontStyle::Weight)style.weight(),
                         (SkFontStyle::Width)style.width(),
                         (SkFontStyle::Slant)style.slant());
@@ -75,34 +77,36 @@ private:
 class SkiaFontManager : public FontManager {
 public:
   SkiaFontManager()
-    : m_skFontMgr(SkFontMgr::RefDefault()) {
+    : m_skFontMgr(SkFontMgr::RefDefault())
+  {
   }
 
-  ~SkiaFontManager() {
-  }
+  ~SkiaFontManager() { }
 
-  int countFamilies() const override {
-    return m_skFontMgr->countFamilies();
-  }
+  int countFamilies() const override { return m_skFontMgr->countFamilies(); }
 
-  std::string familyName(int i) const override {
+  std::string familyName(int i) const override
+  {
     SkString name;
     m_skFontMgr->getFamilyName(i, &name);
     return std::string(name.c_str());
   }
 
-  Ref<FontStyleSet> familyStyleSet(int i) const override {
+  Ref<FontStyleSet> familyStyleSet(int i) const override
+  {
     return make_ref<SkiaFontStyleSet>(m_skFontMgr->createStyleSet(i));
   }
 
-  Ref<FontStyleSet> matchFamily(const std::string& familyName) const override {
-    return make_ref<SkiaFontStyleSet>(m_skFontMgr->matchFamily(familyName.c_str()));
+  Ref<FontStyleSet> matchFamily(const std::string& familyName) const override
+  {
+    return make_ref<SkiaFontStyleSet>(
+      m_skFontMgr->matchFamily(familyName.c_str()));
   }
 
 private:
   sk_sp<SkFontMgr> m_skFontMgr;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

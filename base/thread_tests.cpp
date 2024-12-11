@@ -41,7 +41,8 @@ TEST(Thread, NameLimits)
   // Limited to 64 chars (including the null char)
   EXPECT_EQ("123456789012345678901234567890"
             "123456789012345678901234567890"
-            "123", this_thread::get_name());
+            "123",
+            this_thread::get_name());
 #else
   // Limited to 16 chars (including the null char)
   EXPECT_EQ("123456789012345", this_thread::get_name());

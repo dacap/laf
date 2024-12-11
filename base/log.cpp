@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/log.h"
@@ -34,7 +34,7 @@ std::ofstream log_stream;
 std::ostream* log_ostream = &std::cerr;
 std::string log_filename;
 
-} // anonymous namespace
+}  // anonymous namespace
 
 void base::set_log_filename(const char* filename)
 {
@@ -70,9 +70,9 @@ static void LOGva(const char* format, va_list ap)
   const int size = std::vsnprintf(nullptr, 0, format, apTmp);
   va_end(apTmp);
   if (size < 1)
-    return;                     // Nothing to log
+    return;  // Nothing to log
 
-  std::vector<char> buf(size+1);
+  std::vector<char> buf(size + 1);
   std::vsnprintf(buf.data(), buf.size(), format, ap);
 
   {

@@ -11,7 +11,7 @@
 #include "os/color_space.h"
 
 #ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
+  #include <Cocoa/Cocoa.h>
 #endif
 
 #include <vector>
@@ -19,11 +19,12 @@
 namespace os {
 
 #ifdef __OBJC__
-os::ColorSpaceRef convert_nscolorspace_to_os_colorspace(NSColorSpace* nsColorSpace);
+os::ColorSpaceRef convert_nscolorspace_to_os_colorspace(
+  NSColorSpace* nsColorSpace);
 #endif
 
 void list_display_colorspaces(std::vector<os::ColorSpaceRef>& list);
 
-} // namespace os
+}  // namespace os
 
 #endif

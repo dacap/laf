@@ -13,28 +13,27 @@
 
 namespace gfx {
 
-  template<typename T>
-  inline std::ostream& operator<<(std::ostream& os, const SizeT<T>& size) {
-    return os << "("
-              << size.w << ", "
-              << size.h << ")";
-  }
-
-  template<typename T>
-  inline std::istream& operator>>(std::istream& in, SizeT<T>& size) {
-    while (in && in.get() != '(')
-      ;
-
-    if (!in)
-      return in;
-
-    char chr;
-    in >> size.w >> chr
-       >> size.h;
-
-    return in;
-  }
-
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const SizeT<T>& size)
+{
+  return os << "(" << size.w << ", " << size.h << ")";
 }
+
+template<typename T>
+inline std::istream& operator>>(std::istream& in, SizeT<T>& size)
+{
+  while (in && in.get() != '(')
+    ;
+
+  if (!in)
+    return in;
+
+  char chr;
+  in >> size.w >> chr >> size.h;
+
+  return in;
+}
+
+}  // namespace gfx
 
 #endif

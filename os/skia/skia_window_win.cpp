@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/skia/skia_window_win.h"
@@ -22,8 +22,8 @@
   #include "os/gl/gl_context_wgl.h"
 #endif
 
-#include <windows.h>
 #include "os/win/window_dde.h"
+#include <windows.h>
 
 #include <algorithm>
 #include <iostream>
@@ -42,7 +42,6 @@ SkiaWindowWin::SkiaWindowWin(const WindowSpec& spec)
 void SkiaWindowWin::onPaint(HDC hdc)
 {
   switch (backend()) {
-
     case Backend::NONE:
       paintHDC(hdc);
       break;
@@ -74,8 +73,8 @@ void SkiaWindowWin::invalidateRegion(const gfx::Region& rgn)
   const int w = bitmap.width();
   const int h = bitmap.height();
   const int s = scale();
-  const int sw = bitmap.width()*s;
-  const int sh = bitmap.height()*s;
+  const int sw = bitmap.width() * s;
+  const int sh = bitmap.height() * s;
 
   HWND hwnd = (HWND)nativeHandle();
   HDC hdc = GetDC(nullptr);
@@ -92,8 +91,7 @@ void SkiaWindowWin::invalidateRegion(const gfx::Region& rgn)
   bf.SourceConstantAlpha = 255;
   bf.AlphaFormat = AC_SRC_ALPHA;
 
-  AlphaBlend(srcHdcScaled, 0, 0, sw, sh,
-             srcHdc, 0, 0, w, h, bf);
+  AlphaBlend(srcHdcScaled, 0, 0, sw, sh, srcHdc, 0, 0, w, h, bf);
 
   const gfx::Rect rect = frame();
   const POINT dstPoint = { rect.x, rect.y };
@@ -101,12 +99,10 @@ void SkiaWindowWin::invalidateRegion(const gfx::Region& rgn)
   POINT srcPos = { 0, 0 };
 
   const gfx::Rect dirtyBounds = rgn.bounds();
-  const RECT dirty = {
-    s*dirtyBounds.x,
-    s*dirtyBounds.y,
-    s*dirtyBounds.x2(),
-    s*dirtyBounds.y2()
-  };
+  const RECT dirty = { s * dirtyBounds.x,
+                       s * dirtyBounds.y,
+                       s * dirtyBounds.x2(),
+                       s * dirtyBounds.y2() };
 
   UPDATELAYEREDWINDOWINFO ulwi;
   memset(&ulwi, 0, sizeof(ulwi));
@@ -161,10 +157,18 @@ void SkiaWindowWin::paintHDC(HDC hdc)
   ASSERT(bitmap.width() * bitmap.bytesPerPixel() == bitmap.rowBytes());
 
   int ret = StretchDIBits(hdc,
-    0, 0, bitmap.width()*scale(), bitmap.height()*scale(),
-    0, 0, bitmap.width(), bitmap.height(),
-    bitmap.getPixels(),
-    &bmi, DIB_RGB_COLORS, SRCCOPY);
+                          0,
+                          0,
+                          bitmap.width() * scale(),
+                          bitmap.height() * scale(),
+                          0,
+                          0,
+                          bitmap.width(),
+                          bitmap.height(),
+                          bitmap.getPixels(),
+                          &bmi,
+                          DIB_RGB_COLORS,
+                          SRCCOPY);
   (void)ret;
 }
 
@@ -188,4 +192,4 @@ void SkiaWindowWin::onChangeColorSpace()
   this->setColorSpace(colorSpace());
 }
 
-} // namespace os
+}  // namespace os

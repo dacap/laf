@@ -13,16 +13,17 @@
 
 namespace base {
 
-  template<typename T>
-  constexpr inline size_t count_bits(const T v) {
-    size_t n = 0;
-    for (size_t b=0; b<sizeof(T)*8; ++b) {
-      if (v & (T(1) << b))
-        ++n;
-    }
-    return n;
+template<typename T>
+constexpr inline size_t count_bits(const T v)
+{
+  size_t n = 0;
+  for (size_t b = 0; b < sizeof(T) * 8; ++b) {
+    if (v & (T(1) << b))
+      ++n;
   }
-
+  return n;
 }
+
+}  // namespace base
 
 #endif

@@ -15,7 +15,11 @@ int dtors = 0;
 
 class A : public RefCountT<A> {
 public:
-  A(int v) : v(v) { ++ctors; }
+  A(int v)
+    : v(v)
+  {
+    ++ctors;
+  }
   ~A() { ++dtors; }
   int v = 0;
 };
@@ -81,14 +85,21 @@ int b_dtors = 0;
 
 class AVirt : public RefCount {
 public:
-  AVirt(int v) : v(v) { ++ctors; }
+  AVirt(int v)
+    : v(v)
+  {
+    ++ctors;
+  }
   ~AVirt() { ++dtors; }
   int v = 0;
 };
 
 class BVirt : public AVirt {
 public:
-  BVirt(int v) : AVirt(v) { }
+  BVirt(int v)
+    : AVirt(v)
+  {
+  }
   ~BVirt() { ++b_dtors; }
 };
 

@@ -22,7 +22,8 @@ public:
     : m_hue(0.0)
     , m_saturation(0.0)
     , m_lightness(0.0)
-  { }
+  {
+  }
 
   Hsl(double hue, double saturation, double lightness);
 
@@ -30,7 +31,8 @@ public:
     : m_hue(hsl.hue())
     , m_saturation(hsl.saturation())
     , m_lightness(hsl.lightness())
-  { }
+  {
+  }
 
   // RGB to HSL conversion
   explicit Hsl(const Rgb& rgb);
@@ -49,29 +51,32 @@ public:
   int saturationInt() const;
   int lightnessInt() const;
 
-  void hue(double hue) {
-    while (hue < 0.0) hue += 360.0;
+  void hue(double hue)
+  {
+    while (hue < 0.0)
+      hue += 360.0;
     m_hue = std::fmod(hue, 360.0);
   }
 
-  void saturation(double saturation) {
+  void saturation(double saturation)
+  {
     m_saturation = std::clamp(saturation, 0.0, 1.0);
   }
 
-  void lightness(double lightness) {
+  void lightness(double lightness)
+  {
     m_lightness = std::clamp(lightness, 0.0, 1.0);
   }
 
   // The comparison is done through the integer value of each component.
-  bool operator==(const Hsl& other) const {
+  bool operator==(const Hsl& other) const
+  {
     return (hueInt() == other.hueInt() &&
             saturationInt() == other.saturationInt() &&
             lightnessInt() == other.lightnessInt());
   }
 
-  bool operator!=(const Hsl& other) const {
-    return !operator==(other);
-  }
+  bool operator!=(const Hsl& other) const { return !operator==(other); }
 
 private:
   double m_hue;
@@ -79,6 +84,6 @@ private:
   double m_lightness;
 };
 
-} // namespace gfx
+}  // namespace gfx
 
 #endif

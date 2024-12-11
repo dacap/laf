@@ -15,7 +15,8 @@
 
 using namespace base;
 
-int count_utf8_codepoints(const std::string& str) {
+int count_utf8_codepoints(const std::string& str)
+{
   int count = 0;
   utf8_decode dec(str);
   while (dec.next())
@@ -25,7 +26,7 @@ int count_utf8_codepoints(const std::string& str) {
 
 TEST(String, Utf8Conversion)
 {
-  std::string a = "\xE6\xBC\xA2\xE5\xAD\x97"; // 漢字
+  std::string a = "\xE6\xBC\xA2\xE5\xAD\x97";  // 漢字
   ASSERT_EQ(6, a.size());
 
   std::wstring b = from_utf8(a);
@@ -54,12 +55,20 @@ TEST(String, Utf8Decode)
   int i = 0;
   d = "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E";
   dec = utf8_decode(d);
-  while (const int ch = dec.next()) { // 日本語
+  while (const int ch = dec.next()) {  // 日本語
     switch (i++) {
-      case 0: EXPECT_EQ(ch, 0x65E5); break;
-      case 1: EXPECT_EQ(ch, 0x672C); break;
-      case 2: EXPECT_EQ(ch, 0x8A9E); break;
-      default: EXPECT_FALSE(true); break;
+      case 0:
+        EXPECT_EQ(ch, 0x65E5);
+        break;
+      case 1:
+        EXPECT_EQ(ch, 0x672C);
+        break;
+      case 2:
+        EXPECT_EQ(ch, 0x8A9E);
+        break;
+      default:
+        EXPECT_FALSE(true);
+        break;
     }
   }
 
@@ -78,7 +87,7 @@ TEST(String, Utf8Decode)
   ASSERT_EQ(11, count_utf8_codepoints(f));
   ASSERT_EQ('C', f_dec.next());
   ASSERT_EQ('o', f_dec.next());
-  for (int i=0; i<8; ++i)       // Skip 8 chars
+  for (int i = 0; i < 8; ++i)  // Skip 8 chars
     f_dec.next();
   ASSERT_EQ(0xA9, f_dec.next());
   ASSERT_EQ(0, f_dec.next());
@@ -124,9 +133,9 @@ TEST(String, StringToLowerByUnicodeCharIssue1065)
   // Required to make old string_to_lower() version fail.
   std::setlocale(LC_ALL, "en-US");
 
-  std::string  a = "\xC2\xBA";
+  std::string a = "\xC2\xBA";
   std::wstring b = from_utf8(a);
-  std::string  c = to_utf8(b);
+  std::string c = to_utf8(b);
 
   ASSERT_EQ(a, c);
   ASSERT_EQ("\xC2\xBA", c);
@@ -151,34 +160,28 @@ TEST(String, StringToLowerByUnicodeCharIssue1065)
 // decoding state as invalid).
 TEST(String, Utf8DecodeDontCrash)
 {
-  auto decodeAllChars =
-    [](const std::string& str, bool shouldBeValid) -> int {
-      utf8_decode decode(str);
-      int chrs = 0;
-      while (int chr = decode.next()) {
-        ++chrs;
-      }
-      if (shouldBeValid)
-        EXPECT_TRUE(decode.is_valid());
-      else
-        EXPECT_FALSE(decode.is_valid());
-      return chrs;
-    };
+  auto decodeAllChars = [](const std::string& str, bool shouldBeValid) -> int {
+    utf8_decode decode(str);
+    int chrs = 0;
+    while (int chr = decode.next()) {
+      ++chrs;
+    }
+    if (shouldBeValid)
+      EXPECT_TRUE(decode.is_valid());
+    else
+      EXPECT_FALSE(decode.is_valid());
+    return chrs;
+  };
 
-  std::string str = "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"; // 日本語
+  std::string str = "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E";  // 日本語
   ASSERT_EQ(9, str.size());
-  bool valid_decoding[10] = { true, // Empty string is decoded correctly
-                              false, false, true,
-                              false, false, true,
-                              false, false, true };
-  int decoded_chars[10] = { 0,
-                            0, 0, 1,
-                            1, 1, 2,
-                            2, 2, 3 };
+  bool valid_decoding[10] = { true,  // Empty string is decoded correctly
+                              false, false, true,  false, false,
+                              true,  false, false, true };
+  int decoded_chars[10] = { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3 };
 
-  for (int n=0; n<=str.size(); ++n) {
-    int chrs = decodeAllChars(str.substr(0, n).c_str(),
-                              valid_decoding[n]);
+  for (int n = 0; n <= str.size(); ++n) {
+    int chrs = decodeAllChars(str.substr(0, n).c_str(), valid_decoding[n]);
     EXPECT_EQ(decoded_chars[n], chrs);
   }
 }

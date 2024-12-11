@@ -25,18 +25,18 @@ class SpriteSheetFont : public Font {
   static constexpr auto kRedColor = gfx::rgba(255, 0, 0);
 
 public:
-  SpriteSheetFont() : m_sheet(nullptr) { }
+  SpriteSheetFont()
+    : m_sheet(nullptr)
+  {
+  }
   ~SpriteSheetFont() { }
 
-  FontType type() override {
-    return FontType::SpriteSheet;
-  }
+  FontType type() override { return FontType::SpriteSheet; }
 
-  int height() const override {
-    return getCharBounds(' ').h;
-  }
+  int height() const override { return getCharBounds(' ').h; }
 
-  int textLength(const std::string& str) const override {
+  int textLength(const std::string& str) const override
+  {
     base::utf8_decode decode(str);
     int x = 0;
     while (int chr = decode.next())
@@ -44,30 +44,29 @@ public:
     return x;
   }
 
-  bool isScalable() const override {
-    return false;
-  }
+  bool isScalable() const override { return false; }
 
-  void setSize(int size) override {
+  void setSize(int size) override
+  {
     // Do nothing
   }
 
-  void setAntialias(bool antialias) override {
+  void setAntialias(bool antialias) override
+  {
     // Do nothing
   }
 
-  bool hasCodePoint(int codepoint) const override {
+  bool hasCodePoint(int codepoint) const override
+  {
     codepoint -= (int)' ';
-    return (codepoint >= 0 &&
-            codepoint < (int)m_chars.size() &&
+    return (codepoint >= 0 && codepoint < (int)m_chars.size() &&
             !m_chars[codepoint].isEmpty());
   }
 
-  Surface* sheetSurface() const {
-    return m_sheet.get();
-  }
+  Surface* sheetSurface() const { return m_sheet.get(); }
 
-  gfx::Rect getCharBounds(int chr) const {
+  gfx::Rect getCharBounds(int chr) const
+  {
     chr -= (int)' ';
     if (chr >= 0 && chr < (int)m_chars.size())
       return m_chars[chr];
@@ -76,7 +75,8 @@ public:
     return gfx::Rect();
   }
 
-  static FontRef fromSurface(const SurfaceRef& sur) {
+  static FontRef fromSurface(const SurfaceRef& sur)
+  {
     auto font = make_ref<SpriteSheetFont>();
     font->m_sheet = sur;
 
@@ -84,7 +84,8 @@ public:
     gfx::Rect bounds(0, 0, 1, 1);
     gfx::Rect charBounds;
 
-    while (font->findChar(sur.get(), sur->width(), sur->height(), bounds, charBounds)) {
+    while (font->findChar(
+      sur.get(), sur->width(), sur->height(), bounds, charBounds)) {
       font->m_chars.push_back(charBounds);
       bounds.x += bounds.w;
     }
@@ -93,9 +94,12 @@ public:
   }
 
 private:
-
-  bool findChar(const Surface* sur, int width, int height,
-                gfx::Rect& bounds, gfx::Rect& charBounds) {
+  bool findChar(const Surface* sur,
+                int width,
+                int height,
+                gfx::Rect& bounds,
+                gfx::Rect& charBounds)
+  {
     gfx::Color keyColor = sur->getPixel(0, 0);
 
     while (sur->getPixel(bounds.x, bounds.y) == keyColor) {
@@ -112,14 +116,14 @@ private:
     gfx::Color firstCharPixel = sur->getPixel(bounds.x, bounds.y);
 
     bounds.w = 0;
-    while ((bounds.x+bounds.w < width) &&
-           (sur->getPixel(bounds.x+bounds.w, bounds.y) != keyColor)) {
+    while ((bounds.x + bounds.w < width) &&
+           (sur->getPixel(bounds.x + bounds.w, bounds.y) != keyColor)) {
       bounds.w++;
     }
 
     bounds.h = 0;
-    while ((bounds.y+bounds.h < height) &&
-           (sur->getPixel(bounds.x, bounds.y+bounds.h) != keyColor)) {
+    while ((bounds.y + bounds.h < height) &&
+           (sur->getPixel(bounds.x, bounds.y + bounds.h) != keyColor)) {
       bounds.h++;
     }
 
@@ -138,6 +142,6 @@ private:
   std::vector<gfx::Rect> m_chars;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

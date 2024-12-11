@@ -17,7 +17,8 @@ namespace os {
 
 class ScreenX11 : public Screen {
 public:
-  ScreenX11(int screen) {
+  ScreenX11(int screen)
+  {
     auto x11 = X11::instance();
     auto x11display = x11->display();
 
@@ -33,12 +34,17 @@ public:
     unsigned long bytes_after;
     unsigned long* prop;
 
-    int res = XGetWindowProperty(x11display, root,
+    int res = XGetWindowProperty(x11display,
+                                 root,
                                  _NET_WORKAREA,
-                                 0, 4,
-                                 False, XA_CARDINAL,
-                                 &actual_type, &actual_format,
-                                 &nitems, &bytes_after,
+                                 0,
+                                 4,
+                                 False,
+                                 XA_CARDINAL,
+                                 &actual_type,
+                                 &actual_format,
+                                 &nitems,
+                                 &bytes_after,
                                  (unsigned char**)&prop);
     if (res == Success && nitems == 4) {
       m_workarea.x = prop[0];
@@ -51,24 +57,28 @@ public:
       m_workarea = m_bounds;
     }
   }
-  bool isMainScreen() const override {
+  bool isMainScreen() const override
+  {
     return (m_screen == XDefaultScreen(X11::instance()->display()));
   }
   gfx::Rect bounds() const override { return m_bounds; }
   gfx::Rect workarea() const override { return m_workarea; }
-  os::ColorSpaceRef colorSpace() const override {
+  os::ColorSpaceRef colorSpace() const override
+  {
     // TODO get screen color space
     return os::instance()->makeColorSpace(gfx::ColorSpace::MakeSRGB());
   }
-  void* nativeHandle() const override {
+  void* nativeHandle() const override
+  {
     return reinterpret_cast<void*>(m_screen);
   }
+
 private:
   int m_screen;
   gfx::Rect m_bounds;
   gfx::Rect m_workarea;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

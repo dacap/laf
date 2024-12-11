@@ -12,10 +12,10 @@
 #include "base/time.h"
 
 #include <dirent.h>
+#include <fnmatch.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fnmatch.h>
 
 #include <cerrno>
 #include <climits>
@@ -39,13 +39,13 @@ namespace base {
 bool is_file(const std::string& path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0 && S_ISREG(sts.st_mode)) ? true: false;
+  return (stat(path.c_str(), &sts) == 0 && S_ISREG(sts.st_mode)) ? true : false;
 }
 
 bool is_directory(const std::string& path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0 && S_ISDIR(sts.st_mode)) ? true: false;
+  return (stat(path.c_str(), &sts) == 0 && S_ISDIR(sts.st_mode)) ? true : false;
 }
 
 void make_directory(const std::string& path)
@@ -60,7 +60,7 @@ void make_directory(const std::string& path)
 size_t file_size(const std::string& path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0) ? sts.st_size: 0;
+  return (stat(path.c_str(), &sts) == 0) ? sts.st_size : 0;
 }
 
 void move_file(const std::string& src, const std::string& dst)
@@ -71,7 +71,8 @@ void move_file(const std::string& src, const std::string& dst)
                              std::string(std::strerror(errno)));
 }
 
-void copy_file(const std::string& src_fn, const std::string& dst_fn,
+void copy_file(const std::string& src_fn,
+               const std::string& dst_fn,
                const bool overwrite)
 {
   // First copy the file content
@@ -146,8 +147,7 @@ Time get_modification_time(const std::string& path)
   std::tm t;
   safe_localtime(sts.st_mtime, &t);
   return Time(
-    t.tm_year+1900, t.tm_mon+1, t.tm_mday,
-    t.tm_hour, t.tm_min, t.tm_sec);
+    t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 void remove_directory(const std::string& path)
@@ -183,7 +183,7 @@ std::string get_app_path()
   size_t size = path.size();
   const int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
   while (sysctl(mib, 4, &path[0], &size, NULL, 0) == -1)
-      path.resize(size);
+    path.resize(size);
 #else  // Linux
   if (readlink("/proc/self/exe", &path[0], path.size()) == -1)
     return std::string();
@@ -215,7 +215,7 @@ std::string get_canonical_path(const std::string& path)
   // Ignore return value as realpath() returns nullptr anyway when the
   // resolved_path parameter is specified.
   if (realpath(full.c_str(), buffer))
-    return buffer;                // No error, the file/dir exists
+    return buffer;  // No error, the file/dir exists
   return std::string();
 }
 
@@ -226,11 +226,13 @@ std::string get_absolute_path(const std::string& path)
     full = join_path(get_current_path(), full);
   full = normalize_path(full);
   if (!full.empty() && full.back() == path_separator)
-    full.erase(full.size()-1);
+    full.erase(full.size() - 1);
   return full;
 }
 
-paths list_files(const std::string& path, ItemType filter, const std::string& match)
+paths list_files(const std::string& path,
+                 ItemType filter,
+                 const std::string& match)
 {
   paths files;
   DIR* handle = opendir(path.c_str());
@@ -251,7 +253,7 @@ paths list_files(const std::string& path, ItemType filter, const std::string& ma
 
     if (fnmatch(match.c_str(), item->d_name, FNM_CASEFOLD) == FNM_NOMATCH)
       continue;
-    
+
     files.push_back(item->d_name);
   }
 
@@ -259,4 +261,4 @@ paths list_files(const std::string& path, ItemType filter, const std::string& ma
   return files;
 }
 
-}
+}  // namespace base

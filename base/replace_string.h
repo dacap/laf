@@ -12,10 +12,9 @@
 
 namespace base {
 
-  void replace_string(
-    std::string& subject,
-    const std::string& replace_this,
-    const std::string& with_that);
+void replace_string(std::string& subject,
+                    const std::string& replace_this,
+                    const std::string& with_that);
 
 }
 

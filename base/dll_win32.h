@@ -26,16 +26,16 @@ void unload_dll(dll lib)
 
 dll_proc get_dll_proc_base(dll lib, const char* procName)
 {
-  return reinterpret_cast<dll_proc>(
-    GetProcAddress((HMODULE)lib, procName));
+  return reinterpret_cast<dll_proc>(GetProcAddress((HMODULE)lib, procName));
 }
 
 static bool get_dll_filename_wchar(dll lib, std::vector<wchar_t>& buf)
 {
   while (true) {
-    DWORD newSize = GetModuleFileNameW((HMODULE)lib, &buf[0], (DWORD)buf.size());
+    DWORD newSize =
+      GetModuleFileNameW((HMODULE)lib, &buf[0], (DWORD)buf.size());
     if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-      ASSERT(buf.size() < newSize); // it cannot fail (?)
+      ASSERT(buf.size() < newSize);  // it cannot fail (?)
       buf.resize(newSize);
     }
     else
@@ -47,8 +47,8 @@ std::string get_dll_filename(dll lib)
 {
   std::vector<wchar_t> buf(MAX_PATH);
   if (get_dll_filename_wchar(lib, buf) &&
-      buf.size() > 1) {           // One char for the null char
-    return to_utf8(&buf[0], buf.size()-1);
+      buf.size() > 1) {  // One char for the null char
+    return to_utf8(&buf[0], buf.size() - 1);
   }
   return std::string();
 }
@@ -61,4 +61,4 @@ Version get_dll_version(dll lib)
   return Version();
 }
 
-} // namespace base
+}  // namespace base

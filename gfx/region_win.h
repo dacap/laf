@@ -17,103 +17,136 @@
 
 namespace gfx {
 
-  template<typename T> class PointT;
+template<typename T>
+class PointT;
 
-  class Region;
+class Region;
 
-  namespace details {
+namespace details {
 
-    template<typename T>
-    class RegionIterator {
-    public:
-      using iterator_category = std::forward_iterator_tag;
-      using value_type = T;
-      using difference_type = std::ptrdiff_t;
-      using pointer = T*;
-      using reference = T&;
+template<typename T>
+class RegionIterator {
+public:
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = T;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T*;
+  using reference = T&;
 
-      RegionIterator() { }
-      RegionIterator(LPRECT prect) : m_prect(prect) { }
-      RegionIterator(const RegionIterator& o) : m_prect(o.m_prect) { }
-      template<typename T2>
-      RegionIterator(const RegionIterator<T2>& o) : m_prect(o.m_prect) { }
-      RegionIterator& operator=(const RegionIterator& o) { m_prect = o.m_prect; return *this; }
-      RegionIterator& operator++() { ++m_prect; return *this; }
-      bool operator==(const RegionIterator& o) const {
-        return (m_prect == o.m_prect);
-      }
-      bool operator!=(const RegionIterator& o) const {
-        return (m_prect != o.m_prect);
-      }
-      reference operator*() {
-        m_rect.x = m_prect->left;
-        m_rect.y = m_prect->top;
-        m_rect.w = m_prect->right - m_prect->left;
-        m_rect.h = m_prect->bottom - m_prect->top;
-        return m_rect;
-      }
-    private:
-      LPRECT m_prect;
-      gfx::Rect m_rect;
-      template<typename> friend class RegionIterator;
-    };
+  RegionIterator() { }
+  RegionIterator(LPRECT prect)
+    : m_prect(prect)
+  {
+  }
+  RegionIterator(const RegionIterator& o)
+    : m_prect(o.m_prect)
+  {
+  }
+  template<typename T2>
+  RegionIterator(const RegionIterator<T2>& o)
+    : m_prect(o.m_prect)
+  {
+  }
+  RegionIterator& operator=(const RegionIterator& o)
+  {
+    m_prect = o.m_prect;
+    return *this;
+  }
+  RegionIterator& operator++()
+  {
+    ++m_prect;
+    return *this;
+  }
+  bool operator==(const RegionIterator& o) const
+  {
+    return (m_prect == o.m_prect);
+  }
+  bool operator!=(const RegionIterator& o) const
+  {
+    return (m_prect != o.m_prect);
+  }
+  reference operator*()
+  {
+    m_rect.x = m_prect->left;
+    m_rect.y = m_prect->top;
+    m_rect.w = m_prect->right - m_prect->left;
+    m_rect.h = m_prect->bottom - m_prect->top;
+    return m_rect;
+  }
 
-  } // namespace details
+private:
+  LPRECT m_prect;
+  gfx::Rect m_rect;
+  template<typename>
+  friend class RegionIterator;
+};
 
-  class Region {
-  public:
-    enum Overlap { Out, In, Part };
+}  // namespace details
 
-    using iterator = details::RegionIterator<Rect>;
-    using const_iterator = details::RegionIterator<const Rect>;
+class Region {
+public:
+  enum Overlap { Out, In, Part };
 
-    Region();
-    Region(const Region& copy);
-    explicit Region(const Rect& rect);
-    Region& operator=(const Rect& rect);
-    Region& operator=(const Region& copy);
-    ~Region();
+  using iterator = details::RegionIterator<Rect>;
+  using const_iterator = details::RegionIterator<const Rect>;
 
-    iterator begin();
-    iterator end();
-    const_iterator begin() const;
-    const_iterator end() const;
+  Region();
+  Region(const Region& copy);
+  explicit Region(const Rect& rect);
+  Region& operator=(const Rect& rect);
+  Region& operator=(const Region& copy);
+  ~Region();
 
-    bool isEmpty() const { RECT rc; return GetRgnBox(m_hrgn, &rc) == NULLREGION; }
-    bool isRect() const { RECT rc; return GetRgnBox(m_hrgn, &rc) == SIMPLEREGION; }
-    bool isComplex() const { RECT rc; return GetRgnBox(m_hrgn, &rc) == COMPLEXREGION; }
+  iterator begin();
+  iterator end();
+  const_iterator begin() const;
+  const_iterator end() const;
 
-    std::size_t size() const;
+  bool isEmpty() const
+  {
+    RECT rc;
+    return GetRgnBox(m_hrgn, &rc) == NULLREGION;
+  }
+  bool isRect() const
+  {
+    RECT rc;
+    return GetRgnBox(m_hrgn, &rc) == SIMPLEREGION;
+  }
+  bool isComplex() const
+  {
+    RECT rc;
+    return GetRgnBox(m_hrgn, &rc) == COMPLEXREGION;
+  }
 
-    Rect bounds() const;
+  std::size_t size() const;
 
-    void clear();
+  Rect bounds() const;
 
-    void offset(int dx, int dy);
-    void offset(const PointT<int>& delta) {
-      offset(delta.x, delta.y);
-    }
+  void clear();
 
-    Region& createIntersection(const Region& a, const Region& b);
-    Region& createUnion(const Region& a, const Region& b);
-    Region& createSubtraction(const Region& a, const Region& b);
+  void offset(int dx, int dy);
+  void offset(const PointT<int>& delta) { offset(delta.x, delta.y); }
 
-    bool contains(const PointT<int>& pt) const;
-    Overlap contains(const Rect& rect) const;
+  Region& createIntersection(const Region& a, const Region& b);
+  Region& createUnion(const Region& a, const Region& b);
+  Region& createSubtraction(const Region& a, const Region& b);
 
-    Region& operator+=(const Region& b) { return createUnion(*this, b); }
-    Region& operator|=(const Region& b) { return createUnion(*this, b); }
-    Region& operator&=(const Region& b) { return createIntersection(*this, b); }
-    Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
+  bool contains(const PointT<int>& pt) const;
+  Overlap contains(const Rect& rect) const;
 
-  private:
-    void resetData() const;
-    void fillData() const;
+  Region& operator+=(const Region& b) { return createUnion(*this, b); }
+  Region& operator|=(const Region& b) { return createUnion(*this, b); }
+  Region& operator&=(const Region& b) { return createIntersection(*this, b); }
+  Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
 
-    HRGN m_hrgn = nullptr;
-    mutable LPRGNDATA m_data = nullptr;
-  };
+private:
+  void resetData() const;
+  void fillData() const;
 
-} // namespace gfx
+  HRGN m_hrgn = nullptr;
+  mutable LPRGNDATA m_data = nullptr;
+};
+
+}  // namespace gfx
 
 #endif

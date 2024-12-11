@@ -15,18 +15,18 @@
 
 namespace base {
 
-  #ifdef LAF_WINDOWS
-    using pid = uint32_t; // DWORD
-  #else
-    using pid = int;
-  #endif
+#ifdef LAF_WINDOWS
+using pid = uint32_t;  // DWORD
+#else
+using pid = int;
+#endif
 
-  pid get_current_process_id();
+pid get_current_process_id();
 
-  bool is_process_running(pid pid);
+bool is_process_running(pid pid);
 
-  std::string get_process_name(pid pid);
+std::string get_process_name(pid pid);
 
-} // namespace base
+}  // namespace base
 
 #endif

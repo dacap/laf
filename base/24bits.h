@@ -15,24 +15,26 @@ namespace base {
 
 #ifdef LAF_LITTLE_ENDIAN
 
-  template<typename PTR, typename VALUE>
-  inline void write24bits(PTR* ptr, VALUE value) {
-    ((uint8_t*)ptr)[0] = value;
-    ((uint8_t*)ptr)[1] = value >> 8;
-    ((uint8_t*)ptr)[2] = value >> 16;
-  }
+template<typename PTR, typename VALUE>
+inline void write24bits(PTR* ptr, VALUE value)
+{
+  ((uint8_t*)ptr)[0] = value;
+  ((uint8_t*)ptr)[1] = value >> 8;
+  ((uint8_t*)ptr)[2] = value >> 16;
+}
 
 #elif defined(LAF_BIG_ENDIAN)
 
-  template<typename PTR, typename VALUE>
-  inline void write24bits(PTR* ptr, VALUE value) {
-    ((uint8_t*)ptr)[0] = value >> 16;
-    ((uint8_t*)ptr)[1] = value >> 8;
-    ((uint8_t*)ptr)[2] = value;
-  }
+template<typename PTR, typename VALUE>
+inline void write24bits(PTR* ptr, VALUE value)
+{
+  ((uint8_t*)ptr)[0] = value >> 16;
+  ((uint8_t*)ptr)[1] = value >> 8;
+  ((uint8_t*)ptr)[2] = value;
+}
 
 #endif
 
-} // namespace base
+}  // namespace base
 
 #endif

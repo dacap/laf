@@ -38,6 +38,6 @@ private:
   DISABLE_COPYING(SkiaWindowWin);
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

@@ -10,7 +10,7 @@
 #pragma once
 
 #include "base/debug.h"
-#include "gfx/color_space.h"    // Include here avoid error with None
+#include "gfx/color_space.h"  // Include here avoid error with None
 #include "os/event_queue.h"
 
 #include <X11/Xlib.h>
@@ -23,6 +23,7 @@ class XInput;
 
 class X11 {
   static X11* m_instance;
+
 public:
   static X11* instance();
 
@@ -39,6 +40,6 @@ private:
   std::unique_ptr<XInput> m_xinput;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

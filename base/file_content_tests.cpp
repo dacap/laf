@@ -14,9 +14,9 @@ TEST(FileContent, ReadWrite)
 {
   const char* fn = "_test_.tmp";
 
-  for (size_t s : { 30, 500, 1024*64, 1024*64*3+4 }) {
+  for (size_t s : { 30, 500, 1024 * 64, 1024 * 64 * 3 + 4 }) {
     buffer buf(s);
-    for (int i=0; i<buf.size(); ++i)
+    for (int i = 0; i < buf.size(); ++i)
       buf[i] = i;
 
     write_file_content(fn, buf);

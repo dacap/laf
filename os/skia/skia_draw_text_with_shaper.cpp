@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/draw_text.h"
@@ -23,13 +23,13 @@
 
 namespace os {
 
-void draw_text_with_shaper(
-  Surface* surface, Font* font,
-  const std::string& text,
-  const gfx::Point& pos,
-  const Paint* paint,
-  const TextAlign textAlign,
-  DrawTextDelegate* delegate)
+void draw_text_with_shaper(Surface* surface,
+                           Font* font,
+                           const std::string& text,
+                           const gfx::Point& pos,
+                           const Paint* paint,
+                           const TextAlign textAlign,
+                           DrawTextDelegate* delegate)
 {
   // SkFont skFont(SkTypeface::MakeFromFile("/Library/Fonts/Arial Unicode.ttf"), SkIntToScalar(24));
   SkFont skFont(SkTypeface::MakeDefault(), SkIntToScalar(24));
@@ -41,16 +41,16 @@ void draw_text_with_shaper(
     textBlob = builder.makeBlob();
   }
   else {
-    textBlob = SkTextBlob::MakeFromText(text.c_str(), text.size(), skFont, SkTextEncoding::kUTF8);
+    textBlob = SkTextBlob::MakeFromText(
+      text.c_str(), text.size(), skFont, SkTextEncoding::kUTF8);
   }
 
   if (textBlob)
-    static_cast<SkiaSurface*>(surface)->canvas()
-      .drawTextBlob(
-        textBlob,
-        SkIntToScalar(pos.x),
-        SkIntToScalar(pos.y),
-        (paint ? paint->skPaint(): SkPaint()));
+    static_cast<SkiaSurface*>(surface)->canvas().drawTextBlob(
+      textBlob,
+      SkIntToScalar(pos.x),
+      SkIntToScalar(pos.y),
+      (paint ? paint->skPaint() : SkPaint()));
 }
 
-} // namespace os
+}  // namespace os

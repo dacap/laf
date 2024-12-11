@@ -16,61 +16,55 @@
 
 namespace base {
 
-  // ~1000 per second
-  typedef uint64_t tick_t;
+// ~1000 per second
+typedef uint64_t tick_t;
 
-  class Time {
-  public:
-    int year, month, day;
-    int hour, minute, second;
+class Time {
+public:
+  int year, month, day;
+  int hour, minute, second;
 
-    Time(int year = 0, int month = 0, int day = 0,
-         int hour = 0, int minute = 0, int second = 0)
-      : year(year), month(month), day(day)
-      , hour(hour), minute(minute), second(second) {
-    }
+  Time(int year = 0,
+       int month = 0,
+       int day = 0,
+       int hour = 0,
+       int minute = 0,
+       int second = 0)
+    : year(year)
+    , month(month)
+    , day(day)
+    , hour(hour)
+    , minute(minute)
+    , second(second)
+  {
+  }
 
-    bool valid() const {
-      return (year != 0 && month != 0 && day != 0);
-    }
+  bool valid() const { return (year != 0 && month != 0 && day != 0); }
 
-    void dateOnly() {
-      hour = minute = second = 0;
-    }
+  void dateOnly() { hour = minute = second = 0; }
 
-    Time& addSeconds(int seconds);
-    Time& addMinutes(const int minutes) {
-      return addSeconds(minutes*60);
-    }
-    Time& addHours(const int hours) {
-      return addSeconds(hours*60*60);
-    }
-    Time& addDays(const int days) {
-      return addSeconds(days*24*60*60);
-    }
+  Time& addSeconds(int seconds);
+  Time& addMinutes(const int minutes) { return addSeconds(minutes * 60); }
+  Time& addHours(const int hours) { return addSeconds(hours * 60 * 60); }
+  Time& addDays(const int days) { return addSeconds(days * 24 * 60 * 60); }
 
-    bool operator==(const Time& other) const {
-      return
-        year == other.year &&
-        month == other.month &&
-        day == other.day &&
-        hour == other.hour &&
-        minute == other.minute &&
-        second == other.second;
-    }
+  bool operator==(const Time& other) const
+  {
+    return year == other.year && month == other.month && day == other.day &&
+           hour == other.hour && minute == other.minute &&
+           second == other.second;
+  }
 
-    bool operator!=(const Time& other) const {
-      return !operator==(other);
-    }
+  bool operator!=(const Time& other) const { return !operator==(other); }
 
-    bool operator<(const Time& other) const;
-  };
+  bool operator<(const Time& other) const;
+};
 
-  bool safe_localtime(std::time_t time, std::tm* result);
+bool safe_localtime(std::time_t time, std::tm* result);
 
-  Time current_time();
-  tick_t current_tick();
+Time current_time();
+tick_t current_tick();
 
-}
+}  // namespace base
 
 #endif

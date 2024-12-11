@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/win/window_dde.h"
@@ -50,37 +50,37 @@ bool parse_dde_command(const std::string& cmd)
 {
   bool result = false;
 
-  for (size_t i=0; i<cmd.size(); ) {
+  for (size_t i = 0; i < cmd.size();) {
     if (cmd[i] == '[') {
       size_t j = ++i;
 
-      for (; j<cmd.size(); ++j) {
+      for (; j < cmd.size(); ++j) {
         if (cmd[j] == '(')
           break;
       }
 
-      std::string cmdName = cmd.substr(i, j-i);
+      std::string cmdName = cmd.substr(i, j - i);
       base::paths cmdParams;
 
-      for (i=j+1; i<cmd.size(); ) {
+      for (i = j + 1; i < cmd.size();) {
         if (cmd[i] == ')') {
-          j = i+1;
+          j = i + 1;
           break;
         }
         else if (cmd[i] == '"') {
           std::string cmdParam;
-          for (j=++i; j<cmd.size(); ++j) {
+          for (j = ++i; j < cmd.size(); ++j) {
             if (cmd[j] == '"')
               break;
             else
               cmdParam.push_back(cmd[j]);
           }
           cmdParams.push_back(cmdParam);
-          i = j+1;
+          i = j + 1;
         }
         else {
           std::string cmdParam;
-          for (j=i; j<cmd.size(); ++j) {
+          for (j = i; j < cmd.size(); ++j) {
             if (cmd[j] == ',' || cmd[j] == ')')
               break;
             else
@@ -115,28 +115,25 @@ union DdeackContainer {
   DDEACK ddeack;
 };
 
-} // anonymous namespace
+}  // anonymous namespace
 
-bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRESULT& result)
+bool handle_dde_messages(
+  HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRESULT& result)
 {
   switch (msg) {
-
     case WM_DDE_INITIATE: {
       HWND clienthwnd = (HWND)wparam;
       UINT_PTR appAtom = 0, topicAtom = 0;
-      if (!UnpackDDElParam(msg, lparam,
-                           &appAtom,
-                           &topicAtom))
+      if (!UnpackDDElParam(msg, lparam, &appAtom, &topicAtom))
         return false;
 
-      bool useUnicode = (IsWindowUnicode(clienthwnd) ? true: false);
+      bool useUnicode = (IsWindowUnicode(clienthwnd) ? true : false);
       std::string app = get_atom_string((ATOM)appAtom, useUnicode);
       std::string topic = get_atom_string((ATOM)topicAtom, useUnicode);
       FreeDDElParam(msg, lparam);
 
       if (auto system = dynamic_cast<SystemWin*>(os::instance())) {
-        if (system->appName().empty() ||
-            app != system->appName())
+        if (system->appName().empty() || app != system->appName())
           return false;
       }
       else {
@@ -149,10 +146,11 @@ bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRES
       //   https://msdn.microsoft.com/en-us/library/windows/desktop/ms648996(v=vs.85).aspx
       //
       // Anyway it looks like Windows returns the same ATOM number.
-      ATOM newApp = (useUnicode ? GlobalAddAtomW(base::from_utf8(app).c_str()):
+      ATOM newApp = (useUnicode ? GlobalAddAtomW(base::from_utf8(app).c_str()) :
                                   GlobalAddAtomA(app.c_str()));
-      ATOM newTopic = (useUnicode ? GlobalAddAtomW(base::from_utf8(topic).c_str()):
-                                    GlobalAddAtomA(topic.c_str()));
+      ATOM newTopic =
+        (useUnicode ? GlobalAddAtomW(base::from_utf8(topic).c_str()) :
+                      GlobalAddAtomA(topic.c_str()));
 
       if (newApp && newTopic) {
         SendMessage(clienthwnd,
@@ -161,8 +159,10 @@ bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRES
                     PackDDElParam(WM_DDE_ACK, newApp, newTopic));
       }
 
-      if (newApp) GlobalDeleteAtom(newApp);
-      if (newTopic) GlobalDeleteAtom(newTopic);
+      if (newApp)
+        GlobalDeleteAtom(newApp);
+      if (newTopic)
+        GlobalDeleteAtom(newTopic);
 
       result = 0;
       return true;
@@ -170,7 +170,7 @@ bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRES
 
     case WM_DDE_EXECUTE: {
       HWND clienthwnd = (HWND)wparam;
-      bool useUnicode = (IsWindowUnicode(clienthwnd) ? true: false);
+      bool useUnicode = (IsWindowUnicode(clienthwnd) ? true : false);
       LPCVOID cmdPtr = (LPCVOID)GlobalLock((HGLOBAL)lparam);
       std::string cmd;
 
@@ -185,11 +185,12 @@ bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRES
       ddeack.value = 0;
       ddeack.ddeack.fAck = 1;
 
-      PostMessage(clienthwnd, WM_DDE_ACK,
-                  (WPARAM)hwnd,
-                  ReuseDDElParam(lparam, msg, WM_DDE_ACK,
-                                 (UINT_PTR)ddeack.value,
-                                 (UINT_PTR)lparam));
+      PostMessage(
+        clienthwnd,
+        WM_DDE_ACK,
+        (WPARAM)hwnd,
+        ReuseDDElParam(
+          lparam, msg, WM_DDE_ACK, (UINT_PTR)ddeack.value, (UINT_PTR)lparam));
 
       if (parse_dde_command(cmd))
         SetForegroundWindow(hwnd);
@@ -204,10 +205,9 @@ bool handle_dde_messages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, LRES
       result = 0;
       return true;
     }
-
   }
 
   return false;
 }
 
-} // namespace os
+}  // namespace os

@@ -15,25 +15,25 @@
 
 namespace os {
 
-  class ColorSpace;
-  using ColorSpaceRef = Ref<ColorSpace>;
+class ColorSpace;
+using ColorSpaceRef = Ref<ColorSpace>;
 
-  class ColorSpace : public RefCount {
-  public:
-    virtual ~ColorSpace() { }
-    virtual const gfx::ColorSpaceRef& gfxColorSpace() const = 0;
-    virtual bool isSRGB() const = 0;
-  };
+class ColorSpace : public RefCount {
+public:
+  virtual ~ColorSpace() { }
+  virtual const gfx::ColorSpaceRef& gfxColorSpace() const = 0;
+  virtual bool isSRGB() const = 0;
+};
 
-  class ColorSpaceConversion : public RefCount {
-  public:
-    virtual ~ColorSpaceConversion() { }
-    // Transform RGBA pixels between two color spaces.
-    virtual bool convertRgba(uint32_t* dst, const uint32_t* src, int n) = 0;
-    // Transform grayscale pixels (without alpha) between two color spaces.
-    virtual bool convertGray(uint8_t* dst, const uint8_t* src, int n) = 0;
-  };
+class ColorSpaceConversion : public RefCount {
+public:
+  virtual ~ColorSpaceConversion() { }
+  // Transform RGBA pixels between two color spaces.
+  virtual bool convertRgba(uint32_t* dst, const uint32_t* src, int n) = 0;
+  // Transform grayscale pixels (without alpha) between two color spaces.
+  virtual bool convertGray(uint8_t* dst, const uint8_t* src, int n) = 0;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

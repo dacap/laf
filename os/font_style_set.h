@@ -13,20 +13,19 @@
 
 namespace os {
 
-  class FontStyle;
+class FontStyle;
 
-  class FontStyleSet : public RefCount {
-  protected:
-    virtual ~FontStyleSet() { }
-  public:
-    virtual int count() = 0;
-    virtual void getStyle(int index,
-                          FontStyle& style,
-                          std::string& name) = 0;
-    virtual Ref<Typeface> typeface(int index) = 0;
-    virtual Ref<Typeface> matchStyle(const FontStyle& style) = 0;
-  };
+class FontStyleSet : public RefCount {
+protected:
+  virtual ~FontStyleSet() { }
 
-} // namespace os
+public:
+  virtual int count() = 0;
+  virtual void getStyle(int index, FontStyle& style, std::string& name) = 0;
+  virtual Ref<Typeface> typeface(int index) = 0;
+  virtual Ref<Typeface> matchStyle(const FontStyle& style) = 0;
+};
+
+}  // namespace os
 
 #endif

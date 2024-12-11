@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/debug.h"
@@ -17,7 +17,7 @@ namespace os {
 
 static System* g_system = nullptr;
 
-System* make_system_impl();   // Defined on each back-end
+System* make_system_impl();  // Defined on each back-end
 
 SystemRef make_system()
 {
@@ -36,4 +36,4 @@ void set_instance(System* system)
   g_system = system;
 }
 
-} // namespace os
+}  // namespace os

@@ -12,8 +12,8 @@
 
 namespace base {
 
-  std::string get_pretty_memory_size(std::size_t memsize);
+std::string get_pretty_memory_size(std::size_t memsize);
 
-} // namespace base
+}  // namespace base
 
 #endif

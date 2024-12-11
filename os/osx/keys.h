@@ -14,12 +14,12 @@
 
 namespace os {
 
-  KeyScancode scancode_from_nsevent(NSEvent* event);
+KeyScancode scancode_from_nsevent(NSEvent* event);
 
-  CFStringRef get_unicode_from_key_code(const UInt16 keyCode,
-                                        const NSEventModifierFlags modifierFlags,
-                                        UInt32* deadKeyState = nullptr);
+CFStringRef get_unicode_from_key_code(const UInt16 keyCode,
+                                      const NSEventModifierFlags modifierFlags,
+                                      UInt32* deadKeyState = nullptr);
 
-}
+}  // namespace os
 
 #endif

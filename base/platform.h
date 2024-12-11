@@ -28,9 +28,9 @@ struct Platform {
   };
 
   enum class Arch {
-    x86,                        // Windows 32-bit, Linux 32-bit
-    x64,                        // Windows 64-bit, Mac Intel
-    arm64,                      // Mac Apple Silicon (M1, M1 Pro), Raspberry Pi?
+    x86,    // Windows 32-bit, Linux 32-bit
+    x64,    // Windows 64-bit, Mac Intel
+    arm64,  // Mac Apple Silicon (M1, M1 Pro), Raspberry Pi?
   };
 
   static constexpr OS os =
@@ -41,7 +41,7 @@ struct Platform {
 #else
     OS::Linux
 #endif
-     ;
+    ;
 
   static constexpr Arch arch =
 #if defined(__arm64__) || defined(__aarch64__)
@@ -54,8 +54,8 @@ struct Platform {
     ;
 
   static_assert((arch == Arch::x86 && sizeof(void*) == 4) ||
-                ((arch == Arch::x64 ||
-                  arch == Arch::arm64) && sizeof(void*) == 8),
+                  ((arch == Arch::x64 || arch == Arch::arm64) &&
+                   sizeof(void*) == 8),
                 "Invalid identification of CPU architecture");
 
   Version osVer;
@@ -63,37 +63,37 @@ struct Platform {
 #if LAF_WINDOWS
   enum class WindowsType { Unknown, Server, NT };
   WindowsType windowsType = WindowsType::Unknown;
-  Version servicePack;  // Service pack version
-  bool isWow64 = false; // 32-bit version running on 64-bit
-  const char* wineVer = nullptr; // Are we running on Wine emulator?
+  Version servicePack;            // Service pack version
+  bool isWow64 = false;           // 32-bit version running on 64-bit
+  const char* wineVer = nullptr;  // Are we running on Wine emulator?
 #elif LAF_MACOS
-  // Nothing extra (macOS version on "osVer" field)
+    // Nothing extra (macOS version on "osVer" field)
 #elif LAF_LINUX
-  std::string distroName;       // Linux distribution name
-  std::string distroVer;        // Distribution version
+  std::string distroName;  // Linux distribution name
+  std::string distroVer;   // Distribution version
 #endif
-
 };
 
 Platform get_platform();
 
 #if LAF_WINDOWS
 
-  bool is_wow64();
-  const char* get_wine_version();
+bool is_wow64();
+const char* get_wine_version();
 
 #elif LAF_MACOS
 
-  Version get_osx_version();
+Version get_osx_version();
 
 #elif LAF_LINUX
 
-  // Reads all the information of the current Linux distro from
-  // /etc/os-release or /etc/lsb-release (you specify the filename)
-  std::map<std::string, std::string> get_linux_release_info(const std::string& fn);
+// Reads all the information of the current Linux distro from
+// /etc/os-release or /etc/lsb-release (you specify the filename)
+std::map<std::string, std::string> get_linux_release_info(
+  const std::string& fn);
 
 #endif
 
-} // namespace base
+}  // namespace base
 
 #endif

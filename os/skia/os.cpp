@@ -6,14 +6,15 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/skia/skia_system.h"
 
 namespace os {
 
-System* make_system_impl() {
+System* make_system_impl()
+{
   return new SkiaSystem;
 }
 
@@ -23,4 +24,4 @@ void error_message(const char* msg)
   // TODO
 }
 
-} // namespace os
+}  // namespace os

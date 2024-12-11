@@ -10,14 +10,12 @@
 
 #include <string>
 
-namespace base {
-namespace launcher {
+namespace base { namespace launcher {
 
 bool open_url(const std::string& url);
 bool open_file(const std::string& file);
 bool open_folder(const std::string& file);
 
-} // namespace launcher
-} // namespace base
+}}  // namespace base::launcher
 
 #endif

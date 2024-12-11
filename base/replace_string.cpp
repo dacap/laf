@@ -5,19 +5,18 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/replace_string.h"
 
 namespace base {
 
-void replace_string(
-  std::string& subject,
-  const std::string& replace_this,
-  const std::string& with_that)
+void replace_string(std::string& subject,
+                    const std::string& replace_this,
+                    const std::string& with_that)
 {
-  if (replace_this.empty())     // Do nothing case
+  if (replace_this.empty())  // Do nothing case
     return;
 
   std::size_t i = 0;
@@ -30,4 +29,4 @@ void replace_string(
   }
 }
 
-} // namespace base
+}  // namespace base

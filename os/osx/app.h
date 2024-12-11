@@ -15,27 +15,27 @@
 
 namespace os {
 
-  class AppOSX {
-  public:
-    static AppOSX* instance();
+class AppOSX {
+public:
+  static AppOSX* instance();
 
-    AppOSX();
-    ~AppOSX();
+  AppOSX();
+  ~AppOSX();
 
-    bool init();
-    void setAppMode(AppMode appMode);
+  bool init();
+  void setAppMode(AppMode appMode);
 
-    bool isHidden() const;
+  bool isHidden() const;
 
-    void markCliFileAsProcessed(const std::string& fn);
-    void finishLaunching();
-    void activateApp();
+  void markCliFileAsProcessed(const std::string& fn);
+  void finishLaunching();
+  void activateApp();
 
-  private:
-    class Impl;
-    Impl* m_impl;
-  };
+private:
+  class Impl;
+  Impl* m_impl;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

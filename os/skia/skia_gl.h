@@ -50,12 +50,12 @@ private:
   DISABLE_COPYING(SkiaGL);
 };
 
-#else // !SK_SUPPORT_GPU
+#else  // !SK_SUPPORT_GPU
 
 class SkiaGL { };
 
 #endif
 
-} // namespace os
+}  // namespace os
 
 #endif

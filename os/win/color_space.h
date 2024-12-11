@@ -19,6 +19,6 @@ os::ColorSpaceRef get_colorspace_from_icc_file(const std::string& iccFilename);
 os::ColorSpaceRef get_hmonitor_colorspace(HMONITOR monitor);
 void list_display_colorspaces(std::vector<os::ColorSpaceRef>& list);
 
-} // namespace os
+}  // namespace os
 
 #endif

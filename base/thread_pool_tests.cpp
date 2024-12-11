@@ -16,8 +16,8 @@ TEST(ThreadPool, Basic)
 {
   thread_pool p(10);
   std::atomic<int> c(0);
-  for (int i=0; i<10000; ++i)
-    p.execute([&c]{ ++c; });
+  for (int i = 0; i < 10000; ++i)
+    p.execute([&c] { ++c; });
   p.wait_all();
 
   EXPECT_EQ(10000, c);

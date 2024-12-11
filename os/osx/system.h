@@ -30,43 +30,48 @@ void osx_set_async_view(bool state);
 
 class SystemOSX : public CommonSystem {
 public:
-  SystemOSX() : m_menus(nullptr) { }
+  SystemOSX()
+    : m_menus(nullptr)
+  {
+  }
   ~SystemOSX();
 
-  void setAppMode(AppMode appMode) override {
+  void setAppMode(AppMode appMode) override
+  {
     AppOSX::instance()->setAppMode(appMode);
   }
 
-  void markCliFileAsProcessed(const std::string& fn) override {
+  void markCliFileAsProcessed(const std::string& fn) override
+  {
     AppOSX::instance()->markCliFileAsProcessed(fn);
   }
 
-  void finishLaunching() override {
+  void finishLaunching() override
+  {
     // Start processing NSApplicationDelegate events. (E.g. after
     // calling this we'll receive application:openFiles: and we'll
     // generate DropFiles events.)  events
     AppOSX::instance()->finishLaunching();
   }
 
-  void activateApp() override {
-    AppOSX::instance()->activateApp();
-  }
+  void activateApp() override { AppOSX::instance()->activateApp(); }
 
-  Logger* logger() override {
-    return new LoggerOSX;
-  }
+  Logger* logger() override { return new LoggerOSX; }
 
-  Menus* menus() override {
+  Menus* menus() override
+  {
     if (!m_menus)
       m_menus = make_ref<MenusOSX>();
     return m_menus.get();
   }
 
-  bool isKeyPressed(KeyScancode scancode) override {
+  bool isKeyPressed(KeyScancode scancode) override
+  {
     return osx_is_key_pressed(scancode);
   }
 
-  int getUnicodeFromScancode(KeyScancode scancode) override {
+  int getUnicodeFromScancode(KeyScancode scancode) override
+  {
     return osx_get_unicode_from_scancode(scancode);
   }
 
@@ -76,7 +81,8 @@ public:
 
   gfx::Point mousePosition() const override;
   void setMousePosition(const gfx::Point& screenPosition) override;
-  gfx::Color getColorFromScreen(const gfx::Point& screenPosition) const override;
+  gfx::Color getColorFromScreen(
+    const gfx::Point& screenPosition) const override;
 
   ScreenRef mainScreen() override;
   void listScreens(ScreenList& list) override;
@@ -85,6 +91,6 @@ private:
   MenusRef m_menus;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

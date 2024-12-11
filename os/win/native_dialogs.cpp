@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/win/native_dialogs.h"
@@ -18,8 +18,8 @@
 #include "os/error.h"
 #include "os/window.h"
 
-#include <windows.h>
 #include <shobjidl.h>
+#include <windows.h>
 
 #include <string>
 #include <vector>
@@ -27,29 +27,32 @@
 namespace os {
 
 // 32k is the limit for Win95/98/Me/NT4/2000/XP with ANSI version
-#define FILENAME_BUFSIZE (1024*32)
+#define FILENAME_BUFSIZE (1024 * 32)
 
 class FileDialogWin32 : public CommonFileDialog {
 public:
   FileDialogWin32()
     : m_filename(FILENAME_BUFSIZE)
-    , m_defFilter(0) {
+    , m_defFilter(0)
+  {
   }
 
-  std::string fileName() override {
-    return base::to_utf8(&m_filename[0]);
-  }
+  std::string fileName() override { return base::to_utf8(&m_filename[0]); }
 
-  void getMultipleFileNames(base::paths& output) override {
+  void getMultipleFileNames(base::paths& output) override
+  {
     output = m_filenames;
   }
 
-  void setFileName(const std::string& filename) override {
-    wcscpy(&m_filename[0], base::from_utf8(base::get_file_name(filename)).c_str());
+  void setFileName(const std::string& filename) override
+  {
+    wcscpy(&m_filename[0],
+           base::from_utf8(base::get_file_name(filename)).c_str());
     m_initialDir = base::from_utf8(base::get_file_path(filename));
   }
 
-  Result show(Window* parent) override {
+  Result show(Window* parent) override
+  {
     Result result = Result::Error;
     bool shown = false;
 
@@ -61,28 +64,26 @@ public:
   }
 
 private:
-
-  HRESULT showWithNewAPI(Window* parent, Result& result) {
+  HRESULT showWithNewAPI(Window* parent, Result& result)
+  {
     base::ComPtr<IFileDialog> dlg;
     HRESULT hr = CoCreateInstance(
-      (m_type == Type::SaveFile ? CLSID_FileSaveDialog:
-                                  CLSID_FileOpenDialog),
-      nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&dlg));
+      (m_type == Type::SaveFile ? CLSID_FileSaveDialog : CLSID_FileOpenDialog),
+      nullptr,
+      CLSCTX_INPROC_SERVER,
+      IID_PPV_ARGS(&dlg));
     if (FAILED(hr))
       return hr;
 
     FILEOPENDIALOGOPTIONS options =
-      FOS_NOCHANGEDIR |
-      FOS_PATHMUSTEXIST |
-      FOS_FORCEFILESYSTEM;
+      FOS_NOCHANGEDIR | FOS_PATHMUSTEXIST | FOS_FORCEFILESYSTEM;
 
     switch (m_type) {
       case Type::OpenFile:
         options |= FOS_FILEMUSTEXIST;
         break;
       case Type::OpenFiles:
-        options |= FOS_FILEMUSTEXIST
-          | FOS_ALLOWMULTISELECT;
+        options |= FOS_FILEMUSTEXIST | FOS_ALLOWMULTISELECT;
         break;
       case Type::OpenFolder:
         options |= FOS_PICKFOLDERS;
@@ -114,8 +115,8 @@ private:
 
       // The SHCreateItemFromParsingName() function is available since
       // Windows Vista in shell32.dll
-      hr = ::SHCreateItemFromParsingName(&m_initialDir[0], nullptr,
-                                         IID_PPV_ARGS(&item));
+      hr = ::SHCreateItemFromParsingName(
+        &m_initialDir[0], nullptr, IID_PPV_ARGS(&item));
       if (FAILED(hr))
         return hr;
 
@@ -140,12 +141,12 @@ private:
       freeFiltersForIFileDialog(specs);
 
       if (SUCCEEDED(hr))
-        hr = dlg->SetFileTypeIndex(m_defFilter+1); // One-based index
+        hr = dlg->SetFileTypeIndex(m_defFilter + 1);  // One-based index
       if (FAILED(hr))
         return hr;
     }
 
-    hr = dlg->Show(parent ? (HWND)parent->nativeHandle(): nullptr);
+    hr = dlg->Show(parent ? (HWND)parent->nativeHandle() : nullptr);
     if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
       result = Result::Cancel;
       return S_OK;
@@ -166,7 +167,7 @@ private:
       if (FAILED(hr))
         return hr;
 
-      for (DWORD i=0; i<nitems; ++i) {
+      for (DWORD i = 0; i < nitems; ++i) {
         base::ComPtr<IShellItem> item;
         hr = items->GetItemAt(i, &item);
         if (FAILED(hr))
@@ -200,7 +201,8 @@ private:
     return S_OK;
   }
 
-  HRESULT showWithOldAPI(Window* parent, Result& result) {
+  HRESULT showWithOldAPI(Window* parent, Result& result)
+  {
     std::wstring title = base::from_utf8(m_title);
     std::wstring defExt = base::from_utf8(m_defExtension);
     std::wstring filtersWStr = getFiltersForGetOpenFileName();
@@ -218,12 +220,8 @@ private:
       ofn.lpstrInitialDir = m_initialDir.c_str();
     ofn.lpstrTitle = title.c_str();
     ofn.lpstrDefExt = defExt.c_str();
-    ofn.Flags =
-      OFN_ENABLESIZING |
-      OFN_EXPLORER |
-      OFN_LONGNAMES |
-      OFN_NOCHANGEDIR |
-      OFN_PATHMUSTEXIST;
+    ofn.Flags = OFN_ENABLESIZING | OFN_EXPLORER | OFN_LONGNAMES |
+                OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
 
     if (m_type == Type::SaveFile) {
       ofn.Flags |= OFN_OVERWRITEPROMPT;
@@ -243,16 +241,15 @@ private:
         WCHAR* p = &m_filename[0];
         std::string path = base::to_utf8(p);
 
-        for (p+=std::wcslen(p)+1; ; ++p) {
+        for (p += std::wcslen(p) + 1;; ++p) {
           if (*p) {
             WCHAR* q = p;
             for (++p; *p; ++p)
               ;
 
-            m_filenames.push_back(
-              base::join_path(path, base::to_utf8(q)));
+            m_filenames.push_back(base::join_path(path, base::to_utf8(q)));
           }
-          else                  // Two null chars in a row
+          else  // Two null chars in a row
             break;
         }
 
@@ -266,20 +263,22 @@ private:
       DWORD err = CommDlgExtendedError();
       if (err) {
         std::vector<char> buf(1024);
-        std::snprintf(
-          buf.data(), buf.size(),
-          "Error using GetOpen/SaveFileName Win32 API. Code: %d", err);
+        std::snprintf(buf.data(),
+                      buf.size(),
+                      "Error using GetOpen/SaveFileName Win32 API. Code: %d",
+                      err);
         os::error_message(&buf[0]);
         return E_FAIL;
       }
     }
 
-    result = (res != FALSE ? Result::OK: Result::Cancel);
+    result = (res != FALSE ? Result::OK : Result::Cancel);
     return S_OK;
   }
 
-  void getFiltersForIFileDialog(std::vector<COMDLG_FILTERSPEC>& specs) const {
-    specs.resize(m_filters.size()+2);
+  void getFiltersForIFileDialog(std::vector<COMDLG_FILTERSPEC>& specs) const
+  {
+    specs.resize(m_filters.size() + 2);
 
     int i = 0, j = 0;
     specs[i].pszName = _wcsdup(L"All formats");
@@ -307,14 +306,16 @@ private:
     ++i;
   }
 
-  void freeFiltersForIFileDialog(std::vector<COMDLG_FILTERSPEC>& specs) const {
+  void freeFiltersForIFileDialog(std::vector<COMDLG_FILTERSPEC>& specs) const
+  {
     for (auto& spec : specs) {
       free((void*)spec.pszName);
       free((void*)spec.pszSpec);
     }
   }
 
-  std::wstring getFiltersForGetOpenFileName() const {
+  std::wstring getFiltersForGetOpenFileName() const
+  {
     std::wstring filters;
 
     // A filter for all known types
@@ -366,4 +367,4 @@ FileDialogRef NativeDialogsWin::makeFileDialog()
   return make_ref<FileDialogWin32>();
 }
 
-} // namespace os
+}  // namespace os

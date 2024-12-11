@@ -12,19 +12,19 @@
 
 namespace os {
 
-  template<typename T>
-  using RefCountT = base::RefCountT<T>;
-  using RefCount = base::RefCount;
+template<typename T>
+using RefCountT = base::RefCountT<T>;
+using RefCount = base::RefCount;
 
-  template<typename T>
-  using Ref = base::Ref<T>;
+template<typename T>
+using Ref = base::Ref<T>;
 
-  template<typename T,
-           typename ...Args>
-  Ref<T> make_ref(Args&&...args) {
-    return base::make_ref<T>(std::forward<Args>(args)...);
-  }
+template<typename T, typename... Args>
+Ref<T> make_ref(Args&&... args)
+{
+  return base::make_ref<T>(std::forward<Args>(args)...);
+}
 
-} // namespace os
+}  // namespace os
 
 #endif

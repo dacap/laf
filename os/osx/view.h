@@ -14,10 +14,10 @@
 
 #ifdef __OBJC__
 
-#include <Cocoa/Cocoa.h>
+  #include <Cocoa/Cocoa.h>
 
 namespace os {
-  class WindowOSX;
+class WindowOSX;
 }
 
 @interface ViewOSX : NSView {

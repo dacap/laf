@@ -14,32 +14,28 @@
 
 namespace gfx {
 
-  template<typename T>
-  inline std::ostream& operator<<(std::ostream& os, const RectT<T>& rect) {
-    return os << "("
-              << rect.x << ", "
-              << rect.y << ", "
-              << rect.w << ", "
-              << rect.h << ")";
-  }
-
-  template<typename T>
-  inline std::istream& operator>>(std::istream& in, RectT<T>& rect) {
-    while (in && in.get() != '(')
-      ;
-
-    if (!in)
-      return in;
-
-    char chr;
-    in >> rect.x >> chr
-       >> rect.y >> chr
-       >> rect.w >> chr
-       >> rect.h >> chr;
-
-    return in;
-  }
-
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const RectT<T>& rect)
+{
+  return os << "(" << rect.x << ", " << rect.y << ", " << rect.w << ", "
+            << rect.h << ")";
 }
+
+template<typename T>
+inline std::istream& operator>>(std::istream& in, RectT<T>& rect)
+{
+  while (in && in.get() != '(')
+    ;
+
+  if (!in)
+    return in;
+
+  char chr;
+  in >> rect.x >> chr >> rect.y >> chr >> rect.w >> chr >> rect.h >> chr;
+
+  return in;
+}
+
+}  // namespace gfx
 
 #endif

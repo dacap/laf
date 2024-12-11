@@ -21,7 +21,8 @@ void unload_dll(dll lib);
 dll_proc get_dll_proc_base(dll lib, const char* procName);
 
 template<typename T>
-inline T get_dll_proc(dll lib, const char* procName) {
+inline T get_dll_proc(dll lib, const char* procName)
+{
   return reinterpret_cast<T>(get_dll_proc_base(lib, procName));
 }
 
@@ -33,6 +34,6 @@ std::string get_dll_filename(dll lib);
 Version get_dll_version(dll lib);
 #endif
 
-} // namespace base
+}  // namespace base
 
 #endif

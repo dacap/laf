@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/x11/window.h"
@@ -42,20 +42,20 @@
 #define LAF_X11_DOUBLE_CLICK_TIMEOUT 250
 
 const int _NET_WM_STATE_REMOVE = 0;
-const int _NET_WM_STATE_ADD    = 1;
+const int _NET_WM_STATE_ADD = 1;
 
-const int _NET_WM_MOVERESIZE_SIZE_TOPLEFT      = 0;
-const int _NET_WM_MOVERESIZE_SIZE_TOP          = 1;
-const int _NET_WM_MOVERESIZE_SIZE_TOPRIGHT     = 2;
-const int _NET_WM_MOVERESIZE_SIZE_RIGHT        = 3;
-const int _NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT  = 4;
-const int _NET_WM_MOVERESIZE_SIZE_BOTTOM       = 5;
-const int _NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT   = 6;
-const int _NET_WM_MOVERESIZE_SIZE_LEFT         = 7;
-const int _NET_WM_MOVERESIZE_MOVE              = 8;
-const int _NET_WM_MOVERESIZE_SIZE_KEYBOARD     = 9;
-const int _NET_WM_MOVERESIZE_MOVE_KEYBOARD    = 10;
-const int _NET_WM_MOVERESIZE_CANCEL           = 11;
+const int _NET_WM_MOVERESIZE_SIZE_TOPLEFT = 0;
+const int _NET_WM_MOVERESIZE_SIZE_TOP = 1;
+const int _NET_WM_MOVERESIZE_SIZE_TOPRIGHT = 2;
+const int _NET_WM_MOVERESIZE_SIZE_RIGHT = 3;
+const int _NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT = 4;
+const int _NET_WM_MOVERESIZE_SIZE_BOTTOM = 5;
+const int _NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT = 6;
+const int _NET_WM_MOVERESIZE_SIZE_LEFT = 7;
+const int _NET_WM_MOVERESIZE_MOVE = 8;
+const int _NET_WM_MOVERESIZE_SIZE_KEYBOARD = 9;
+const int _NET_WM_MOVERESIZE_MOVE_KEYBOARD = 10;
+const int _NET_WM_MOVERESIZE_CANCEL = 11;
 
 namespace os {
 
@@ -119,8 +119,7 @@ std::set<KeySym> g_pressedKeys;
 
 bool is_mouse_wheel_button(int button)
 {
-  return (button == Button4 || button == Button5 ||
-          button == 6 || button == 7);
+  return (button == Button4 || button == Button5 || button == 6 || button == 7);
 }
 
 gfx::Point get_mouse_wheel_delta(int button)
@@ -128,11 +127,19 @@ gfx::Point get_mouse_wheel_delta(int button)
   gfx::Point delta(0, 0);
   switch (button) {
     // Vertical wheel
-    case Button4: delta.y = -1; break;
-    case Button5: delta.y = +1; break;
+    case Button4:
+      delta.y = -1;
+      break;
+    case Button5:
+      delta.y = +1;
+      break;
     // Horizontal wheel
-    case 6: delta.x = -1; break;
-    case 7: delta.x = +1; break;
+    case 6:
+      delta.x = -1;
+      break;
+    case 7:
+      delta.x = +1;
+      break;
   }
   return delta;
 }
@@ -148,11 +155,10 @@ std::string decode_url(const std::string& in)
   else
     i = 0;
 
-  for (; i<in.size(); ++i) {
+  for (; i < in.size(); ++i) {
     auto c = in[i];
-    if (c == '%' && i+2 < in.size()) {
-      c = ((base::hex_to_int(in[i+1]) << 4) |
-           (base::hex_to_int(in[i+2])));
+    if (c == '%' && i + 2 < in.size()) {
+      c = ((base::hex_to_int(in[i + 1]) << 4) | (base::hex_to_int(in[i + 2])));
       i += 2;
     }
     out.push_back(c);
@@ -170,7 +176,7 @@ std::string get_x11_wm_class_name()
   return std::string();
 }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 // static
 bool WindowX11::g_translateDeadKeys = false;
@@ -226,15 +232,19 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   // Cache some atoms (TODO improve this to cache more atoms)
   if (!_NET_FRAME_EXTENTS) {
     _NET_FRAME_EXTENTS = XInternAtom(m_display, "_NET_FRAME_EXTENTS", False);
-    _NET_REQUEST_FRAME_EXTENTS = XInternAtom(m_display, "_NET_REQUEST_FRAME_EXTENTS", False);
+    _NET_REQUEST_FRAME_EXTENTS =
+      XInternAtom(m_display, "_NET_REQUEST_FRAME_EXTENTS", False);
   }
   if (!_NET_WM_STATE) {
     _NET_WM_STATE = XInternAtom(m_display, "_NET_WM_STATE", False);
-    _NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-    _NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+    _NET_WM_STATE_MAXIMIZED_VERT =
+      XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+    _NET_WM_STATE_MAXIMIZED_HORZ =
+      XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
   }
   if (!_NET_WM_ALLOWED_ACTIONS)
-    _NET_WM_ALLOWED_ACTIONS = XInternAtom(m_display, "_NET_WM_ALLOWED_ACTIONS", False);
+    _NET_WM_ALLOWED_ACTIONS =
+      XInternAtom(m_display, "_NET_WM_ALLOWED_ACTIONS", False);
 
   // Initialize special messages (just the first time a WindowX11 is
   // created)
@@ -247,9 +257,7 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   XVisualInfo vi;
   if (m_transparent) {
     Status s =
-      XMatchVisualInfo(m_display,
-                       DefaultScreen(m_display),
-                       32, TrueColor, &vi);
+      XMatchVisualInfo(m_display, DefaultScreen(m_display), 32, TrueColor, &vi);
     if (s == 0) {
       // This X11 server doesn't support transparent windows/RGBA
       // images.
@@ -261,10 +269,10 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
 
   XSetWindowAttributes swa;
   int swa_mask = CWEventMask;
-  swa.event_mask = (StructureNotifyMask | ExposureMask | PropertyChangeMask |
-                    EnterWindowMask | LeaveWindowMask | FocusChangeMask |
-                    ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
-                    KeyPressMask | KeyReleaseMask);
+  swa.event_mask =
+    (StructureNotifyMask | ExposureMask | PropertyChangeMask | EnterWindowMask |
+     LeaveWindowMask | FocusChangeMask | ButtonPressMask | ButtonReleaseMask |
+     PointerMotionMask | KeyPressMask | KeyReleaseMask);
   if (m_transparent) {
     // If one of these attributes is not specified, XCreateWindow()
     // will crash/fail with a BadMatch error.
@@ -286,14 +294,18 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   else
     rc = spec.contentRect();
 
-  m_window = XCreateWindow(
-    m_display, root,
-    rc.x, rc.y, rc.w, rc.h, 0,
-    (m_transparent ? vi.depth: CopyFromParent),
-    InputOutput,
-    (m_transparent ? vi.visual: CopyFromParent),
-    swa_mask, // Do not use CWOverrideRedirect
-    &swa);
+  m_window = XCreateWindow(m_display,
+                           root,
+                           rc.x,
+                           rc.y,
+                           rc.w,
+                           rc.h,
+                           0,
+                           (m_transparent ? vi.depth : CopyFromParent),
+                           InputOutput,
+                           (m_transparent ? vi.visual : CopyFromParent),
+                           swa_mask,  // Do not use CWOverrideRedirect
+                           &swa);
 
   if (!m_window)
     throw std::runtime_error("Cannot create X11 window");
@@ -303,20 +315,26 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   // Special frame for this window
   if (spec.floating()) {
     // We use _NET_WM_WINDOW_TYPE_UTILITY for floating windows
-    const Atom _NET_WM_WINDOW_TYPE = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE", False);
-    const Atom _NET_WM_WINDOW_TYPE_UTILITY = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
-    const Atom _NET_WM_WINDOW_TYPE_NORMAL = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_NORMAL", False);
-    if (_NET_WM_WINDOW_TYPE &&
-        _NET_WM_WINDOW_TYPE_UTILITY &&
+    const Atom _NET_WM_WINDOW_TYPE =
+      XInternAtom(m_display, "_NET_WM_WINDOW_TYPE", False);
+    const Atom _NET_WM_WINDOW_TYPE_UTILITY =
+      XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
+    const Atom _NET_WM_WINDOW_TYPE_NORMAL =
+      XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_NORMAL", False);
+    if (_NET_WM_WINDOW_TYPE && _NET_WM_WINDOW_TYPE_UTILITY &&
         _NET_WM_WINDOW_TYPE_NORMAL) {
       // We've to specify the window types in order of preference (but
       // must include at least one of the basic window type atoms).
       std::vector<Atom> data = { _NET_WM_WINDOW_TYPE_UTILITY,
                                  _NET_WM_WINDOW_TYPE_NORMAL };
-      XChangeProperty(
-        m_display, m_window, _NET_WM_WINDOW_TYPE,
-        XA_ATOM, 32, PropModeReplace,
-        (const unsigned char*)data.data(), data.size());
+      XChangeProperty(m_display,
+                      m_window,
+                      _NET_WM_WINDOW_TYPE,
+                      XA_ATOM,
+                      32,
+                      PropModeReplace,
+                      (const unsigned char*)data.data(),
+                      data.size());
     }
   }
 
@@ -332,19 +350,23 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   {
     MotifHints hints;
     hints.flags = MotifHints::Flags::kDecorations;
-    hints.decorations = (spec.borderless() ? MotifHints::Decorations::kNone:
+    hints.decorations = (spec.borderless() ? MotifHints::Decorations::kNone :
                                              MotifHints::Decorations::kAll);
 
-    const Atom _MOTIF_WM_HINTS = XInternAtom(m_display, "_MOTIF_WM_HINTS", False);
+    const Atom _MOTIF_WM_HINTS =
+      XInternAtom(m_display, "_MOTIF_WM_HINTS", False);
     XChangeProperty(
-      m_display, m_window,
+      m_display,
+      m_window,
       _MOTIF_WM_HINTS,
       _MOTIF_WM_HINTS,  // Instead of XA_CARDINAL here goes _MOTIF_WM_HINTS too
-      32, PropModeReplace,
+      32,
+      PropModeReplace,
       (const unsigned char*)&hints,
       sizeof(hints) / sizeof(long));
 
-    static_assert(sizeof(hints) / sizeof(long) == 5, "Invalid MotifHints struct");
+    static_assert(sizeof(hints) / sizeof(long) == 5,
+                  "Invalid MotifHints struct");
   }
 
   // Receive stylus/eraser events
@@ -353,12 +375,10 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   // Change preferred origin/size for the window (this should be used by the WM)
   {
     XSizeHints* hints = XAllocSizeHints();
-    hints->flags  =
-      PPosition | PSize |
-      PResizeInc | PWinGravity;
+    hints->flags = PPosition | PSize | PResizeInc | PWinGravity;
     hints->x = rc.x;
     hints->y = rc.y;
-    hints->width  = rc.w;
+    hints->width = rc.w;
     hints->height = rc.h;
     hints->width_inc = m_scale;
     hints->height_inc = m_scale;
@@ -384,17 +404,14 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
 
   // Set the window position and size as the position is not correctly
   // used from the XCreateWindow() or XSizeHints.
-  XMoveResizeWindow(m_display, m_window,
-                    rc.x, rc.y, rc.w, rc.h);
+  XMoveResizeWindow(m_display, m_window, rc.x, rc.y, rc.w, rc.h);
 
   XSetWMProtocols(m_display, m_window, &WM_DELETE_WINDOW, 1);
 
   if (spec.floating() && spec.parent()) {
     ASSERT(static_cast<WindowX11*>(spec.parent())->m_window);
     XSetTransientForHint(
-      m_display,
-      m_window,
-      static_cast<WindowX11*>(spec.parent())->m_window);
+      m_display, m_window, static_cast<WindowX11*>(spec.parent())->m_window);
   }
 
   m_gc = XCreateGC(m_display, m_window, 0, nullptr);
@@ -402,9 +419,12 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   XIM xim = X11::instance()->xim();
   if (xim) {
     m_xic = XCreateIC(xim,
-                      XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-                      XNClientWindow, m_window,
-                      XNFocusWindow, m_window,
+                      XNInputStyle,
+                      XIMPreeditNothing | XIMStatusNothing,
+                      XNClientWindow,
+                      m_window,
+                      XNFocusWindow,
+                      m_window,
                       nullptr);
   }
 
@@ -426,11 +446,14 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   }
 
   Atom protocolVersion = 5;
-  XChangeProperty(
-    m_display, m_window,
-    XdndAware, XA_ATOM, 32,
-    PropModeReplace,
-    (const unsigned char*)&protocolVersion, 1);
+  XChangeProperty(m_display,
+                  m_window,
+                  XdndAware,
+                  XA_ATOM,
+                  32,
+                  PropModeReplace,
+                  (const unsigned char*)&protocolVersion,
+                  1);
 
   WindowX11::addWindow(this);
 }
@@ -465,7 +488,7 @@ void WindowX11::setScale(const int scale)
 
   // Adjust increment/decrement of the window to be multiplies of m_scale
   XSizeHints* hints = XAllocSizeHints();
-  hints->flags  = PResizeInc;
+  hints->flags = PResizeInc;
   hints->width_inc = m_scale;
   hints->height_inc = m_scale;
   XSetWMNormalHints(m_display, m_window, hints);
@@ -494,9 +517,10 @@ void WindowX11::setVisible(bool visible)
 
 void WindowX11::activate()
 {
-  const Atom _NET_ACTIVE_WINDOW = XInternAtom(m_display, "_NET_ACTIVE_WINDOW", False);
+  const Atom _NET_ACTIVE_WINDOW =
+    XInternAtom(m_display, "_NET_ACTIVE_WINDOW", False);
   if (!_NET_ACTIVE_WINDOW)
-    return;                     // No atoms?
+    return;  // No atoms?
 
   ::Window root = XDefaultRootWindow(m_display);
   XEvent event;
@@ -505,13 +529,16 @@ void WindowX11::activate()
   event.xclient.window = m_window;
   event.xclient.message_type = _NET_ACTIVE_WINDOW;
   event.xclient.format = 32;
-  event.xclient.data.l[0] = 1; // 1 when the request comes from an application
+  event.xclient.data.l[0] = 1;  // 1 when the request comes from an application
   event.xclient.data.l[1] = CurrentTime;
   event.xclient.data.l[2] = 0;
   event.xclient.data.l[3] = 0;
 
-  XSendEvent(m_display, root, 0,
-             SubstructureNotifyMask | SubstructureRedirectMask, &event);
+  XSendEvent(m_display,
+             root,
+             0,
+             SubstructureNotifyMask | SubstructureRedirectMask,
+             &event);
 }
 
 void WindowX11::maximize()
@@ -523,13 +550,16 @@ void WindowX11::maximize()
   event.xclient.window = m_window;
   event.xclient.message_type = _NET_WM_STATE;
   event.xclient.format = 32;
-  event.xclient.data.l[0] = (isMaximized() ? _NET_WM_STATE_REMOVE:
-                                             _NET_WM_STATE_ADD);
+  event.xclient.data.l[0] =
+    (isMaximized() ? _NET_WM_STATE_REMOVE : _NET_WM_STATE_ADD);
   event.xclient.data.l[1] = _NET_WM_STATE_MAXIMIZED_VERT;
   event.xclient.data.l[2] = _NET_WM_STATE_MAXIMIZED_HORZ;
 
-  XSendEvent(m_display, root, 0,
-             SubstructureNotifyMask | SubstructureRedirectMask, &event);
+  XSendEvent(m_display,
+             root,
+             0,
+             SubstructureNotifyMask | SubstructureRedirectMask,
+             &event);
 }
 
 void WindowX11::minimize()
@@ -545,18 +575,22 @@ bool WindowX11::isMaximized() const
   unsigned long nitems;
   unsigned long bytes_after;
   Atom* prop = nullptr;
-  const int res = XGetWindowProperty(
-    m_display, m_window,
-    _NET_WM_STATE,
-    // TODO is 256 enough?
-    0, 256,
-    False, XA_ATOM,
-    &actual_type, &actual_format,
-    &nitems, &bytes_after,
-    (unsigned char**)&prop);
+  const int res = XGetWindowProperty(m_display,
+                                     m_window,
+                                     _NET_WM_STATE,
+                                     // TODO is 256 enough?
+                                     0,
+                                     256,
+                                     False,
+                                     XA_ATOM,
+                                     &actual_type,
+                                     &actual_format,
+                                     &nitems,
+                                     &bytes_after,
+                                     (unsigned char**)&prop);
 
   if (res == Success) {
-    for (int i=0; i<nitems; ++i) {
+    for (int i = 0; i < nitems; ++i) {
       if (prop[i] == _NET_WM_STATE_MAXIMIZED_VERT ||
           prop[i] == _NET_WM_STATE_MAXIMIZED_HORZ) {
         result = true;
@@ -588,9 +622,10 @@ void WindowX11::setFullscreen(bool state)
   if (isFullscreen() == state)
     return;
 
-  const Atom _NET_WM_STATE_FULLSCREEN = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+  const Atom _NET_WM_STATE_FULLSCREEN =
+    XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
   if (!_NET_WM_STATE || !_NET_WM_STATE_FULLSCREEN)
-    return;                     // No atoms?
+    return;  // No atoms?
 
   // From _NET_WM_STATE section in https://specifications.freedesktop.org/wm-spec/1.3/ar01s05.html#idm46018259875952
   //
@@ -607,14 +642,17 @@ void WindowX11::setFullscreen(bool state)
   event.xclient.message_type = _NET_WM_STATE;
   event.xclient.format = 32;
   // The action
-  event.xclient.data.l[0] = (state ? _NET_WM_STATE_ADD:
-                                     _NET_WM_STATE_REMOVE);
-  event.xclient.data.l[1] = _NET_WM_STATE_FULLSCREEN; // First property to alter
-  event.xclient.data.l[2] = 0;      // Second property to alter
-  event.xclient.data.l[3] = 0;      // Source indication
+  event.xclient.data.l[0] = (state ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE);
+  event.xclient.data.l[1] =
+    _NET_WM_STATE_FULLSCREEN;   // First property to alter
+  event.xclient.data.l[2] = 0;  // Second property to alter
+  event.xclient.data.l[3] = 0;  // Source indication
 
-  XSendEvent(m_display, root, 0,
-             SubstructureNotifyMask | SubstructureRedirectMask, &event);
+  XSendEvent(m_display,
+             root,
+             0,
+             SubstructureNotifyMask | SubstructureRedirectMask,
+             &event);
 
   m_fullscreen = state;
 }
@@ -642,28 +680,30 @@ void WindowX11::setIcons(const SurfaceList& icons)
     SurfaceFormatData format;
     icon->getFormat(&format);
 
-    std::vector<unsigned long> data(w*h+2);
+    std::vector<unsigned long> data(w * h + 2);
     int i = 0;
     data[i++] = w;
     data[i++] = h;
-    for (int y=0; y<h; ++y) {
+    for (int y = 0; y < h; ++y) {
       const uint32_t* p = (const uint32_t*)icon->getData(0, y);
-      for (int x=0; x<w; ++x, ++p) {
+      for (int x = 0; x < w; ++x, ++p) {
         const uint32_t c = *p;
-        data[i++] =
-          (((c & format.blueMask ) >> format.blueShift )      ) |
-          (((c & format.greenMask) >> format.greenShift) <<  8) |
-          (((c & format.redMask  ) >> format.redShift  ) << 16) |
-          (((c & format.alphaMask) >> format.alphaShift) << 24);
+        data[i++] = (((c & format.blueMask) >> format.blueShift)) |
+                    (((c & format.greenMask) >> format.greenShift) << 8) |
+                    (((c & format.redMask) >> format.redShift) << 16) |
+                    (((c & format.alphaMask) >> format.alphaShift) << 24);
       }
     }
 
     const Atom _NET_WM_ICON = XInternAtom(m_display, "_NET_WM_ICON", False);
-    XChangeProperty(
-      m_display, m_window, _NET_WM_ICON, XA_CARDINAL, 32,
-      first ? PropModeReplace:
-              PropModeAppend,
-      (const unsigned char*)data.data(), data.size());
+    XChangeProperty(m_display,
+                    m_window,
+                    _NET_WM_ICON,
+                    XA_CARDINAL,
+                    32,
+                    first ? PropModeReplace : PropModeAppend,
+                    (const unsigned char*)data.data(),
+                    data.size());
 
     first = false;
   }
@@ -682,14 +722,10 @@ void WindowX11::setFrame(const gfx::Rect& bounds)
   gfx::Rect rc = bounds;
   if (!m_borderless) {
     rc.shrink(m_frameExtents);
-    rc.y -= m_frameExtents.top(); // Shrink from top
+    rc.y -= m_frameExtents.top();  // Shrink from top
   }
 
-  XMoveResizeWindow(
-    m_display,
-    m_window,
-    rc.x, rc.y,
-    rc.w, rc.h);
+  XMoveResizeWindow(m_display, m_window, rc.x, rc.y, rc.w, rc.h);
   XFlush(m_display);
 }
 
@@ -698,12 +734,11 @@ gfx::Rect WindowX11::contentRect() const
   ::Window root;
   int x, y;
   unsigned int width, height, border, depth;
-  XGetGeometry(m_display, m_window, &root,
-               &x, &y, &width, &height, &border, &depth);
+  XGetGeometry(
+    m_display, m_window, &root, &x, &y, &width, &height, &border, &depth);
 
   ::Window child_return;
-  XTranslateCoordinates(m_display, m_window, root,
-                        0, 0, &x, &y, &child_return);
+  XTranslateCoordinates(m_display, m_window, root, 0, 0, &x, &y, &child_return);
 
   return gfx::Rect(x, y, int(width), int(height));
 }
@@ -724,8 +759,8 @@ gfx::Size WindowX11::clientSize() const
   ::Window root;
   int x, y;
   unsigned int width, height, border, depth;
-  XGetGeometry(m_display, m_window, &root,
-               &x, &y, &width, &height, &border, &depth);
+  XGetGeometry(
+    m_display, m_window, &root, &x, &y, &width, &height, &border, &depth);
   return gfx::Size(int(width), int(height));
 }
 
@@ -734,17 +769,22 @@ gfx::Rect WindowX11::restoredFrame() const
   ::Window root;
   int x, y;
   unsigned int width, height, border, depth;
-  XGetGeometry(m_display, m_window, &root,
-               &x, &y, &width, &height, &border, &depth);
+  XGetGeometry(
+    m_display, m_window, &root, &x, &y, &width, &height, &border, &depth);
   return gfx::Rect(x, y, int(width), int(height));
 }
 
 void WindowX11::captureMouse()
 {
-  XGrabPointer(m_display, m_window, False,
+  XGrabPointer(m_display,
+               m_window,
+               False,
                PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
-               GrabModeAsync, GrabModeAsync,
-               None, None, CurrentTime);
+               GrabModeAsync,
+               GrabModeAsync,
+               None,
+               None,
+               CurrentTime);
 }
 
 void WindowX11::releaseMouse()
@@ -757,24 +797,31 @@ void WindowX11::setMousePosition(const gfx::Point& position)
   ::Window root;
   int x, y;
   unsigned int w, h, border, depth;
-  XGetGeometry(m_display, m_window, &root,
-               &x, &y, &w, &h, &border, &depth);
-  XWarpPointer(m_display, m_window, m_window, 0, 0, w, h,
-               position.x*m_scale, position.y*m_scale);
+  XGetGeometry(m_display, m_window, &root, &x, &y, &w, &h, &border, &depth);
+  XWarpPointer(m_display,
+               m_window,
+               m_window,
+               0,
+               0,
+               w,
+               h,
+               position.x * m_scale,
+               position.y * m_scale);
 }
 
 void WindowX11::invalidateRegion(const gfx::Region& rgn)
 {
   const gfx::Rect bounds = rgn.bounds();
-  onPaint(gfx::Rect(bounds.x*m_scale,
-                    bounds.y*m_scale,
-                    bounds.w*m_scale,
-                    bounds.h*m_scale));
+  onPaint(gfx::Rect(bounds.x * m_scale,
+                    bounds.y * m_scale,
+                    bounds.w * m_scale,
+                    bounds.h * m_scale));
 }
 
 bool WindowX11::setCursor(NativeCursor nativeCursor)
 {
-  const CursorRef cursor = ((SystemX11*)os::instance())->getNativeCursor(nativeCursor);
+  const CursorRef cursor =
+    ((SystemX11*)os::instance())->getNativeCursor(nativeCursor);
   if (cursor)
     return setX11Cursor((::Cursor)cursor->nativeHandle());
   return false;
@@ -791,12 +838,12 @@ bool WindowX11::setCursor(const CursorRef& cursor)
   return setCursor(NativeCursor::Hidden);
 }
 
-void WindowX11::performWindowAction(const WindowAction action,
-                                    const Event* ev)
+void WindowX11::performWindowAction(const WindowAction action, const Event* ev)
 {
-  const Atom _NET_WM_MOVERESIZE = XInternAtom(m_display, "_NET_WM_MOVERESIZE", False);
+  const Atom _NET_WM_MOVERESIZE =
+    XInternAtom(m_display, "_NET_WM_MOVERESIZE", False);
   if (!_NET_WM_MOVERESIZE)
-    return;                     // No atoms?
+    return;  // No atoms?
 
   int x, y;
   if (ev) {
@@ -807,25 +854,46 @@ void WindowX11::performWindowAction(const WindowAction action,
     int rootx, rooty;
     unsigned int mask;
     ::Window root, child;
-    if (!XQueryPointer(m_display, m_window, &root, &child, &rootx, &rooty, &x, &y, &mask)) {
+    if (!XQueryPointer(
+          m_display, m_window, &root, &child, &rootx, &rooty, &x, &y, &mask)) {
       x = 0;
       y = 0;
     }
   }
 
-  const int button = (ev ? get_x_mouse_button_from_event(ev->button()): 0);
+  const int button = (ev ? get_x_mouse_button_from_event(ev->button()) : 0);
   Atom direction = 0;
   switch (action) {
-    case WindowAction::Cancel:                direction = _NET_WM_MOVERESIZE_CANCEL; break;
-    case WindowAction::Move:                  direction = _NET_WM_MOVERESIZE_MOVE; break;
-    case WindowAction::ResizeFromTopLeft:     direction = _NET_WM_MOVERESIZE_SIZE_TOPLEFT; break;
-    case WindowAction::ResizeFromTop:         direction = _NET_WM_MOVERESIZE_SIZE_TOP; break;
-    case WindowAction::ResizeFromTopRight:    direction = _NET_WM_MOVERESIZE_SIZE_TOPRIGHT; break;
-    case WindowAction::ResizeFromLeft:        direction = _NET_WM_MOVERESIZE_SIZE_LEFT; break;
-    case WindowAction::ResizeFromRight:       direction = _NET_WM_MOVERESIZE_SIZE_RIGHT; break;
-    case WindowAction::ResizeFromBottomLeft:  direction = _NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT; break;
-    case WindowAction::ResizeFromBottom:      direction = _NET_WM_MOVERESIZE_SIZE_BOTTOM; break;
-    case WindowAction::ResizeFromBottomRight: direction = _NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT; break;
+    case WindowAction::Cancel:
+      direction = _NET_WM_MOVERESIZE_CANCEL;
+      break;
+    case WindowAction::Move:
+      direction = _NET_WM_MOVERESIZE_MOVE;
+      break;
+    case WindowAction::ResizeFromTopLeft:
+      direction = _NET_WM_MOVERESIZE_SIZE_TOPLEFT;
+      break;
+    case WindowAction::ResizeFromTop:
+      direction = _NET_WM_MOVERESIZE_SIZE_TOP;
+      break;
+    case WindowAction::ResizeFromTopRight:
+      direction = _NET_WM_MOVERESIZE_SIZE_TOPRIGHT;
+      break;
+    case WindowAction::ResizeFromLeft:
+      direction = _NET_WM_MOVERESIZE_SIZE_LEFT;
+      break;
+    case WindowAction::ResizeFromRight:
+      direction = _NET_WM_MOVERESIZE_SIZE_RIGHT;
+      break;
+    case WindowAction::ResizeFromBottomLeft:
+      direction = _NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT;
+      break;
+    case WindowAction::ResizeFromBottom:
+      direction = _NET_WM_MOVERESIZE_SIZE_BOTTOM;
+      break;
+    case WindowAction::ResizeFromBottomRight:
+      direction = _NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT;
+      break;
   }
 
   // From:
@@ -837,8 +905,7 @@ void WindowX11::performWindowAction(const WindowAction action,
 
   const ::Window root = XDefaultRootWindow(m_display);
   ::Window child;
-  XTranslateCoordinates(m_display, m_window, root,
-                        x, y, &x, &y, &child);
+  XTranslateCoordinates(m_display, m_window, root, x, y, &x, &y, &child);
 
   XEvent event;
   memset(&event, 0, sizeof(event));
@@ -852,8 +919,11 @@ void WindowX11::performWindowAction(const WindowAction action,
   event.xclient.data.l[3] = button;
   event.xclient.data.l[4] = 0;
 
-  XSendEvent(m_display, root, 0,
-             SubstructureNotifyMask | SubstructureRedirectMask, &event);
+  XSendEvent(m_display,
+             root,
+             0,
+             SubstructureNotifyMask | SubstructureRedirectMask,
+             &event);
 }
 
 void WindowX11::setWMClass(const std::string& res_class)
@@ -873,44 +943,48 @@ void WindowX11::setAllowedActions()
   unsigned long nitems;
   unsigned long bytes_after;
   Atom* prop = nullptr;
-  const int res = XGetWindowProperty(
-    m_display, m_window,
-    _NET_WM_ALLOWED_ACTIONS,
-    0, 256,
-    False, XA_ATOM,
-    &actual_type, &actual_format,
-    &nitems, &bytes_after,
-    (unsigned char**)&prop);
+  const int res = XGetWindowProperty(m_display,
+                                     m_window,
+                                     _NET_WM_ALLOWED_ACTIONS,
+                                     0,
+                                     256,
+                                     False,
+                                     XA_ATOM,
+                                     &actual_type,
+                                     &actual_format,
+                                     &nitems,
+                                     &bytes_after,
+                                     (unsigned char**)&prop);
   if (res != Success)
     return;
 
   std::vector<Atom> allowed;
-  for (int i=0; i<nitems; ++i)
+  for (int i = 0; i < nitems; ++i)
     allowed.push_back(prop[i]);
   XFree(prop);
 
   // Auxiliary function to match one allowed action from the "spec"
   // with the specific Atom required in the _NET_WM_ALLOWED_ACTIONS
   // property.
-  auto set_allowed_action =
-    [&allowed, this](const bool expected, const char* atomName) {
-      const Atom atom = XInternAtom(m_display, atomName, False);
-      if (!atom)
-        return;
-      auto it = std::find(allowed.begin(), allowed.end(), atom);
-      if (expected) {
-        // Add missing atom/action
-        if (it == allowed.end()) {
-          allowed.push_back(atom);
-        }
+  auto set_allowed_action = [&allowed, this](const bool expected,
+                                             const char* atomName) {
+    const Atom atom = XInternAtom(m_display, atomName, False);
+    if (!atom)
+      return;
+    auto it = std::find(allowed.begin(), allowed.end(), atom);
+    if (expected) {
+      // Add missing atom/action
+      if (it == allowed.end()) {
+        allowed.push_back(atom);
       }
-      else {
-        // Remove disallowed atom/action
-        if (it != allowed.end()) {
-          allowed.erase(it);
-        }
+    }
+    else {
+      // Remove disallowed atom/action
+      if (it != allowed.end()) {
+        allowed.erase(it);
       }
-    };
+    }
+  };
 
   set_allowed_action(m_resizable, "_NET_WM_ACTION_RESIZE");
   set_allowed_action(m_resizable, "_NET_WM_ACTION_FULLSCREEN");
@@ -919,11 +993,14 @@ void WindowX11::setAllowedActions()
   set_allowed_action(m_maximizable, "_NET_WM_ACTION_MAXIMIZE_HORZ");
   set_allowed_action(m_closable, "_NET_WM_ACTION_CLOSE");
 
-  XChangeProperty(
-    m_display, m_window, _NET_WM_ALLOWED_ACTIONS,
-    XA_ATOM, 32, (nitems == 0 ? PropModeAppend:
-                                PropModeReplace),
-    (const unsigned char*)allowed.data(), allowed.size());
+  XChangeProperty(m_display,
+                  m_window,
+                  _NET_WM_ALLOWED_ACTIONS,
+                  XA_ATOM,
+                  32,
+                  (nitems == 0 ? PropModeAppend : PropModeReplace),
+                  (const unsigned char*)allowed.data(),
+                  allowed.size());
 }
 
 bool WindowX11::setX11Cursor(::Cursor xcursor)
@@ -947,25 +1024,25 @@ bool WindowX11::requestX11FrameExtents()
   event.xclient.window = m_window;
   event.xclient.message_type = _NET_REQUEST_FRAME_EXTENTS;
   event.xclient.format = 32;
-  XSendEvent(m_display, root, 0,
-             SubstructureNotifyMask | SubstructureRedirectMask, &event);
+  XSendEvent(m_display,
+             root,
+             0,
+             SubstructureNotifyMask | SubstructureRedirectMask,
+             &event);
 
   // Now we have to wait the _NET_FRAME_EXTENTS property modification
   // event.
-  auto isFrameExtentsEvent =
-    [](Display* d, XEvent* e, XPointer w) -> Bool {
-      return (e->xany.type == PropertyNotify &&
-              e->xproperty.window == (::Window)w &&
-              e->xproperty.atom == _NET_FRAME_EXTENTS);
-    };
+  auto isFrameExtentsEvent = [](Display* d, XEvent* e, XPointer w) -> Bool {
+    return (e->xany.type == PropertyNotify &&
+            e->xproperty.window == (::Window)w &&
+            e->xproperty.atom == _NET_FRAME_EXTENTS);
+  };
 
   XEvent event2;
-  int wait = 100;        // We're going to wait 100 milliseconds
+  int wait = 100;  // We're going to wait 100 milliseconds
   while (wait > 0) {
-    if (XCheckIfEvent(m_display,
-                      &event2,
-                      isFrameExtentsEvent,
-                      (XPointer)m_window)) {
+    if (XCheckIfEvent(
+          m_display, &event2, isFrameExtentsEvent, (XPointer)m_window)) {
       // Event in queue (the event is not removed from the queue).
       return true;
     }
@@ -985,14 +1062,18 @@ void WindowX11::getX11FrameExtents()
   unsigned long nitems;
   unsigned long bytes_after;
   unsigned long* prop = nullptr;
-  const int res = XGetWindowProperty(
-    m_display, m_window,
-    _NET_FRAME_EXTENTS,
-    0, 4,
-    False, XA_CARDINAL,
-    &actual_type, &actual_format,
-    &nitems, &bytes_after,
-    (unsigned char**)&prop);
+  const int res = XGetWindowProperty(m_display,
+                                     m_window,
+                                     _NET_FRAME_EXTENTS,
+                                     0,
+                                     4,
+                                     False,
+                                     XA_CARDINAL,
+                                     &actual_type,
+                                     &actual_format,
+                                     &nitems,
+                                     &bytes_after,
+                                     (unsigned char**)&prop);
 
   if (res == Success && nitems == 4) {
     // Get the dimension of the title bar + borders (WM decorators)
@@ -1009,17 +1090,17 @@ void WindowX11::processX11Event(XEvent& event)
   auto* xinput = X11::instance()->xinput();
   if (xinput->handleExtensionEvent(event)) {
     Event ev;
-    xinput->convertExtensionEvent(event, ev, m_scale,
-                                  g_lastXInputEventTime);
+    xinput->convertExtensionEvent(event, ev, m_scale, g_lastXInputEventTime);
     queueEvent(ev);
     return;
   }
 
   switch (event.type) {
-
     case ConfigureNotify: {
-      const gfx::Rect rc(event.xconfigure.x, event.xconfigure.y,
-                         event.xconfigure.width, event.xconfigure.height);
+      const gfx::Rect rc(event.xconfigure.x,
+                         event.xconfigure.y,
+                         event.xconfigure.width,
+                         event.xconfigure.height);
 
       if (rc.w > 0 && rc.h > 0 && rc.size() != m_lastClientSize) {
         m_lastClientSize = rc.size();
@@ -1029,8 +1110,10 @@ void WindowX11::processX11Event(XEvent& event)
     }
 
     case Expose: {
-      const gfx::Rect rc(event.xexpose.x, event.xexpose.y,
-                         event.xexpose.width, event.xexpose.height);
+      const gfx::Rect rc(event.xexpose.x,
+                         event.xexpose.y,
+                         event.xexpose.width,
+                         event.xexpose.height);
       onPaint(rc);
       break;
     }
@@ -1038,16 +1121,15 @@ void WindowX11::processX11Event(XEvent& event)
     case KeyPress:
     case KeyRelease: {
       Event ev;
-      ev.setType(event.type == KeyPress ? Event::KeyDown: Event::KeyUp);
+      ev.setType(event.type == KeyPress ? Event::KeyDown : Event::KeyUp);
 
       const KeySym keysym = XLookupKeysym(&event.xkey, 0);
       ev.setScancode(x11_keysym_to_scancode(keysym));
 
       if (m_xic) {
         std::vector<char> buf(16);
-        const size_t len = Xutf8LookupString(m_xic, &event.xkey,
-                                             buf.data(), buf.size(),
-                                             nullptr, nullptr);
+        const size_t len = Xutf8LookupString(
+          m_xic, &event.xkey, buf.data(), buf.size(), nullptr, nullptr);
         if (len < buf.size())
           buf[len] = 0;
         std::wstring wideChars = base::from_utf8(std::string(buf.data()));
@@ -1055,7 +1137,6 @@ void WindowX11::processX11Event(XEvent& event)
           ev.setUnicodeChar(wideChars[0]);
         KEY_TRACE("Xutf8LookupString %s\n", &buf[0]);
       }
-
 
       // Check if the key has been pressed, and if yes - check what's
       // the previous state of the key symbol - if it was previously
@@ -1135,7 +1216,7 @@ void WindowX11::processX11Event(XEvent& event)
       }
       ev.setModifiers((KeyModifiers)modifiers);
       KEY_TRACE("%s state=%04x keycode=%04x\n",
-                (event.type == KeyPress ? "KeyPress": "KeyRelease"),
+                (event.type == KeyPress ? "KeyPress" : "KeyRelease"),
                 event.xkey.state,
                 event.xkey.keycode);
       KEY_TRACE(" > %s\n", XKeysymToString(keysym));
@@ -1164,7 +1245,7 @@ void WindowX11::processX11Event(XEvent& event)
         }
       }
       else {
-        ev.setType(event.type == ButtonPress ? Event::MouseDown:
+        ev.setType(event.type == ButtonPress ? Event::MouseDown :
                                                Event::MouseUp);
 
         const Event::MouseButton button =
@@ -1173,7 +1254,8 @@ void WindowX11::processX11Event(XEvent& event)
 
         if (event.type == ButtonPress) {
           if (m_doubleClickButton == button &&
-              base::current_tick() - m_doubleClickTick < LAF_X11_DOUBLE_CLICK_TIMEOUT) {
+              base::current_tick() - m_doubleClickTick <
+                LAF_X11_DOUBLE_CLICK_TIMEOUT) {
             ev.setType(Event::MouseDoubleClick);
             m_doubleClickButton = Event::NoneButton;
           }
@@ -1184,8 +1266,8 @@ void WindowX11::processX11Event(XEvent& event)
         }
       }
       ev.setModifiers(get_modifiers_from_x(event.xbutton.state));
-      ev.setPosition(gfx::Point(event.xbutton.x / m_scale,
-                                event.xbutton.y / m_scale));
+      ev.setPosition(
+        gfx::Point(event.xbutton.x / m_scale, event.xbutton.y / m_scale));
 
       queueEvent(ev);
       break;
@@ -1224,11 +1306,11 @@ void WindowX11::processX11Event(XEvent& event)
       // (when mouse leaves/enter the X11 window).
       if (event.xcrossing.mode == NotifyNormal) {
         Event ev;
-        ev.setType(event.type == EnterNotify ? Event::MouseEnter:
+        ev.setType(event.type == EnterNotify ? Event::MouseEnter :
                                                Event::MouseLeave);
         ev.setModifiers(get_modifiers_from_x(event.xcrossing.state));
-        ev.setPosition(gfx::Point(event.xcrossing.x / m_scale,
-                                  event.xcrossing.y / m_scale));
+        ev.setPosition(
+          gfx::Point(event.xcrossing.x / m_scale, event.xcrossing.y / m_scale));
         queueEvent(ev);
       }
       break;
@@ -1268,9 +1350,12 @@ void WindowX11::processX11Event(XEvent& event)
 
         // Ask for the XdndSelection, we're going to receive the
         // dropped items in the SelectionNotify.
-        XConvertSelection(m_display, XdndSelection,
-                          URI_LIST, XdndSelection,
-                          m_window, CurrentTime);
+        XConvertSelection(m_display,
+                          XdndSelection,
+                          URI_LIST,
+                          XdndSelection,
+                          m_window,
+                          CurrentTime);
       }
       break;
 
@@ -1282,21 +1367,24 @@ void WindowX11::processX11Event(XEvent& event)
         unsigned long nitems;
         unsigned long bytes_after;
         char* prop = nullptr;
-        const int res = XGetWindowProperty(
-          m_display,
-          m_window,
-          XdndSelection,
-          0, 256,
-          False, URI_LIST,
-          &actual_type, &actual_format,
-          &nitems, &bytes_after,
-          (unsigned char**)&prop);
+        const int res = XGetWindowProperty(m_display,
+                                           m_window,
+                                           XdndSelection,
+                                           0,
+                                           256,
+                                           False,
+                                           URI_LIST,
+                                           &actual_type,
+                                           &actual_format,
+                                           &nitems,
+                                           &bytes_after,
+                                           (unsigned char**)&prop);
 
         if (prop) {
           if (actual_type == URI_LIST) {
             std::vector<std::string> files;
             base::split_string(std::string(prop), files, "\n");
-            for (auto it=files.begin(); it!=files.end(); ) {
+            for (auto it = files.begin(); it != files.end();) {
               const std::string f = decode_url(*it);
               if (f.empty())
                 it = files.erase(it);
@@ -1331,7 +1419,7 @@ void WindowX11::processX11Event(XEvent& event)
         event2.xclient.format = 32;
         event2.xclient.data.l[0] = m_window;
         // Set bit 0 when the drop operation was accepted.
-        event2.xclient.data.l[1] = (successful ? 1: 0);
+        event2.xclient.data.l[1] = (successful ? 1 : 0);
         event2.xclient.data.l[2] = 0;
         event2.xclient.data.l[3] = 0;
         XSendEvent(m_display, root, 0, 0, &event2);
@@ -1344,9 +1432,14 @@ void WindowX11::processX11Event(XEvent& event)
 
         if (m_borderless && m_frameExtents != gfx::Border(0, 0, 0, 0)) {
           std::vector<unsigned long> data(4, 0);
-          XChangeProperty(
-            m_display, m_window, _NET_FRAME_EXTENTS, XA_CARDINAL, 32,
-            PropModeReplace, (const unsigned char*)data.data(), data.size());
+          XChangeProperty(m_display,
+                          m_window,
+                          _NET_FRAME_EXTENTS,
+                          XA_CARDINAL,
+                          32,
+                          PropModeReplace,
+                          (const unsigned char*)data.data(),
+                          data.size());
         }
       }
       else if (event.xproperty.atom == _NET_WM_ALLOWED_ACTIONS) {
@@ -1360,4 +1453,4 @@ void WindowX11::processX11Event(XEvent& event)
   }
 }
 
-} // namespace os
+}  // namespace os

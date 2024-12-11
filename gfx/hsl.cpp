@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "gfx/hsl.h"
@@ -23,7 +23,8 @@ Hsl::Hsl(double hue, double saturation, double lightness)
   : m_hue(hue)
   , m_saturation(std::clamp(saturation, 0.0, 1.0))
   , m_lightness(std::clamp(lightness, 0.0, 1.0))
-{ }
+{
+}
 
 Hsl::Hsl(const Rgb& rgb)
 {
@@ -36,13 +37,13 @@ Hsl::Hsl(const Rgb& rgb)
   double h, s;
 
   if (c == 0) {
-    h = 0.0; // Undefined Hue because max == min
+    h = 0.0;  // Undefined Hue because max == min
     s = 0.0;
   }
   else {
-    const double r = double(rgb.red())   / 255.0;
+    const double r = double(rgb.red()) / 255.0;
     const double g = double(rgb.green()) / 255.0;
-    const double b = double(rgb.blue())  / 255.0;
+    const double b = double(rgb.blue()) / 255.0;
 
     if (M == rgb.red()) {
       hue_prime = (g - b) / chroma;
@@ -59,7 +60,7 @@ Hsl::Hsl(const Rgb& rgb)
     }
 
     h = hue_prime * 60.0;
-    s = chroma / (1-std::fabs(2.0*l-1.0));
+    s = chroma / (1 - std::fabs(2.0 * l - 1.0));
   }
 
   m_hue = h;
@@ -74,12 +75,12 @@ int Hsl::hueInt() const
 
 int Hsl::saturationInt() const
 {
-  return int(std::floor(m_saturation*100.0 + 0.5));
+  return int(std::floor(m_saturation * 100.0 + 0.5));
 }
 
 int Hsl::lightnessInt() const
 {
-  return int(std::floor(m_lightness*100.0 + 0.5));
+  return int(std::floor(m_lightness * 100.0 + 0.5));
 }
 
-} // namespace gfx
+}  // namespace gfx

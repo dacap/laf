@@ -10,7 +10,7 @@
 #pragma once
 
 #ifndef PI
-#define PI            3.14159265358979323846
+  #define PI 3.14159265358979323846
 #endif
 
 #include <cmath>
@@ -18,19 +18,20 @@
 namespace base {
 
 // Puts the angle in the -PI to PI range.
-inline double fmod_radians(double angle) {
+inline double fmod_radians(double angle)
+{
   if (angle < -PI) {
-    if (angle < -2.0*PI)
-      angle = -std::fmod(-angle, 2.0*PI);
-    angle += 2.0*PI;
+    if (angle < -2.0 * PI)
+      angle = -std::fmod(-angle, 2.0 * PI);
+    angle += 2.0 * PI;
   }
-  if (angle > 2.0*PI)
-    angle = std::fmod(angle, 2.0*PI);
+  if (angle > 2.0 * PI)
+    angle = std::fmod(angle, 2.0 * PI);
   if (angle > PI)
-    angle -= 2.0*PI;
+    angle -= 2.0 * PI;
   return angle;
 }
 
-}
+}  // namespace base
 
 #endif

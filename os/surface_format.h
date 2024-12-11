@@ -13,30 +13,30 @@
 
 namespace os {
 
-  enum SurfaceFormat {
-    kRgbaSurfaceFormat,
-  };
+enum SurfaceFormat {
+  kRgbaSurfaceFormat,
+};
 
-  enum class PixelAlpha {
-    kOpaque,
-    kPremultiplied,
-    kStraight,
-  };
+enum class PixelAlpha {
+  kOpaque,
+  kPremultiplied,
+  kStraight,
+};
 
-  struct SurfaceFormatData {
-    SurfaceFormat format;
-    uint32_t bitsPerPixel;
-    uint32_t redShift;
-    uint32_t greenShift;
-    uint32_t blueShift;
-    uint32_t alphaShift;
-    uint32_t redMask;
-    uint32_t greenMask;
-    uint32_t blueMask;
-    uint32_t alphaMask;
-    PixelAlpha pixelAlpha;
-  };
+struct SurfaceFormatData {
+  SurfaceFormat format;
+  uint32_t bitsPerPixel;
+  uint32_t redShift;
+  uint32_t greenShift;
+  uint32_t blueShift;
+  uint32_t alphaShift;
+  uint32_t redMask;
+  uint32_t greenMask;
+  uint32_t blueMask;
+  uint32_t alphaMask;
+  PixelAlpha pixelAlpha;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

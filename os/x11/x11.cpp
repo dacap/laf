@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/x11/x11.h"
@@ -73,4 +73,4 @@ XInput* X11::xinput()
   return m_xinput.get();
 }
 
-} // namespace os
+}  // namespace os

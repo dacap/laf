@@ -24,6 +24,6 @@ private:
   MemoryDumpImpl* m_impl;
 };
 
-} // namespace base
+}  // namespace base
 
-#endif // BASE_MEMORY_DUMP_H_INCLUDED
+#endif  // BASE_MEMORY_DUMP_H_INCLUDED

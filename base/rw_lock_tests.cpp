@@ -18,7 +18,7 @@ using LockResult = RWLock::LockResult;
 #define EXPECT_REENTRANT(a) EXPECT_EQ(LockResult::Reentrant, a)
 #define EXPECT_OK(a)        EXPECT_EQ(LockResult::OK, a)
 
-#define BGTHREAD(code)      std::thread([&a]{ code; }).join();
+#define BGTHREAD(code)      std::thread([&a] { code; }).join();
 
 TEST(RWLock, MultipleReaders)
 {
@@ -90,7 +90,7 @@ TEST(RWLock, WeakLock)
   // We can lock for read-only without timeout and the weak lock
   // should stay locked.
   EXPECT_OK(res[0] = a.lock(RWLock::ReadLock, 0));
-  a.unlock(res[0]);             // Unlock the read-only lock
+  a.unlock(res[0]);  // Unlock the read-only lock
   EXPECT_EQ(RWLock::WeakLocked, flag);
 
   // If we want to lock for writing purposes, it should fail, but the
@@ -102,7 +102,7 @@ TEST(RWLock, WeakLock)
 
   EXPECT_OK(res[0] = a.lock(RWLock::WriteLock, 0));
   EXPECT_FALSE(a.weakLock(&flag));
-  a.unlock(res[0]);             // Unlock the write lock
+  a.unlock(res[0]);  // Unlock the write lock
 }
 
 int main(int argc, char** argv)

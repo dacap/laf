@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/file_content.h"
@@ -23,7 +23,7 @@
 
 namespace base {
 
-const size_t kChunkSize = 1024*64; // 64k
+const size_t kChunkSize = 1024 * 64;  // 64k
 
 buffer read_file_content(FILE* file)
 {
@@ -53,8 +53,8 @@ buffer read_file_content(const std::string& filename)
 
 void write_file_content(FILE* file, const uint8_t* buf, size_t size)
 {
-  for (size_t pos=0; pos < size; ) {
-    const int write_bytes = std::min(kChunkSize, size-pos);
+  for (size_t pos = 0; pos < size;) {
+    const int write_bytes = std::min(kChunkSize, size - pos);
     const size_t written_bytes = std::fwrite(buf, 1, write_bytes, file);
     if (written_bytes < write_bytes)
       throw std::runtime_error("Cannot write all bytes");
@@ -63,7 +63,9 @@ void write_file_content(FILE* file, const uint8_t* buf, size_t size)
   }
 }
 
-void write_file_content(const std::string& filename, const uint8_t* buf, size_t size)
+void write_file_content(const std::string& filename,
+                        const uint8_t* buf,
+                        size_t size)
 {
   const FileHandle f(open_file(filename, "wb"));
   if (f)
@@ -77,4 +79,4 @@ void set_write_binary_file_content(FILE* file)
 #endif
 }
 
-} // namespace base
+}  // namespace base

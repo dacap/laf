@@ -10,21 +10,19 @@
 
 int app_main(int argc, char* argv[])
 {
-  base::Platform p =  base::get_platform();
+  base::Platform p = base::get_platform();
   switch (p.os) {
 #if LAF_WINDOWS
     case base::Platform::OS::Windows:
       std::printf(
         "Windows v%s%s%s",
         p.osVer.str().c_str(),
-        p.isWow64 ? " WoW64": "",
-        (p.wineVer ? (std::string(" WINE v") + p.wineVer).c_str(): ""));
+        p.isWow64 ? " WoW64" : "",
+        (p.wineVer ? (std::string(" WINE v") + p.wineVer).c_str() : ""));
       break;
 #endif
     case base::Platform::OS::macOS:
-      std::printf(
-        "macOS v%s",
-        p.osVer.str().c_str());
+      std::printf("macOS v%s", p.osVer.str().c_str());
       break;
 #if LAF_LINUX
     case base::Platform::OS::Linux:

@@ -12,24 +12,24 @@
 
 namespace os {
 
-  class Shortcut {
-  public:
-    Shortcut(int unicode = 0,
-             KeyModifiers modifiers = kKeyNoneModifier)
-      : m_unicode(unicode)
-      , m_modifiers(modifiers) {
-    }
+class Shortcut {
+public:
+  Shortcut(int unicode = 0, KeyModifiers modifiers = kKeyNoneModifier)
+    : m_unicode(unicode)
+    , m_modifiers(modifiers)
+  {
+  }
 
-    int unicode() const { return m_unicode; }
-    KeyModifiers modifiers() const { return m_modifiers; }
+  int unicode() const { return m_unicode; }
+  KeyModifiers modifiers() const { return m_modifiers; }
 
-    bool isEmpty() const { return m_unicode == 0; }
+  bool isEmpty() const { return m_unicode == 0; }
 
-  private:
-    int m_unicode;
-    KeyModifiers m_modifiers;
-  };
+private:
+  int m_unicode;
+  KeyModifiers m_modifiers;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

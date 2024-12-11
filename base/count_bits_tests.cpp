@@ -6,8 +6,8 @@
 
 #include <gtest/gtest.h>
 
-#include "base/ints.h"
 #include "base/count_bits.h"
+#include "base/ints.h"
 
 using namespace base;
 

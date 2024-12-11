@@ -7,8 +7,8 @@
 
 #include "ft/stream.h"
 
-#include "base/file_handle.h"
 #include "base/debug.h"
+#include "base/file_handle.h"
 
 #include <ft2build.h>
 
@@ -41,7 +41,7 @@ FT_Stream open_stream(const std::string& utf8Filename)
 {
   FT_Stream stream = nullptr;
   stream = (FT_Stream)malloc(sizeof(*stream));
-  if(!stream)
+  if (!stream)
     return nullptr;
   memset(stream, 0, sizeof(*stream));
 
@@ -74,4 +74,4 @@ FT_Stream open_stream(const std::string& utf8Filename)
   return stream;
 }
 
-} // namespace ft
+}  // namespace ft

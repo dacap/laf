@@ -37,12 +37,14 @@ public:
 
   gfx::Point mousePosition() const override;
   void setMousePosition(const gfx::Point& screenPosition) override;
-  gfx::Color getColorFromScreen(const gfx::Point& screenPosition) const override;
+  gfx::Color getColorFromScreen(
+    const gfx::Point& screenPosition) const override;
 
   ScreenRef mainScreen() override;
   void listScreens(ScreenList& list) override;
 
-  void setWintabDelegate(void* delegate) override {
+  void setWintabDelegate(void* delegate) override
+  {
     m_wintabApi.setDelegate((WintabAPI::Delegate*)delegate);
   }
 
@@ -60,6 +62,6 @@ private:
   AppMode m_appMode;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

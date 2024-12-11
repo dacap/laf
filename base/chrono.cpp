@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/chrono.h"
@@ -19,19 +19,24 @@
 
 namespace base {
 
-  Chrono::Chrono() : m_impl(new ChronoImpl) {
-  }
+Chrono::Chrono()
+  : m_impl(new ChronoImpl)
+{
+}
 
-  Chrono::~Chrono() {
-    delete m_impl;
-  }
+Chrono::~Chrono()
+{
+  delete m_impl;
+}
 
-  void Chrono::reset() {
-    m_impl->reset();
-  }
+void Chrono::reset()
+{
+  m_impl->reset();
+}
 
-  double Chrono::elapsed() const {
-    return m_impl->elapsed();
-  }
+double Chrono::elapsed() const
+{
+  return m_impl->elapsed();
+}
 
-} // namespace base
+}  // namespace base

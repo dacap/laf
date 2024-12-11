@@ -18,7 +18,9 @@
 TEST(Tok, SplitTokens)
 {
   int i = 0;
-  auto a_result = std::vector<std::string>{ "This", "is", "a", "phrase.", "Several", "whitespaces", "are", "ignored." };
+  auto a_result =
+    std::vector<std::string>{ "This",    "is",          "a",   "phrase.",
+                              "Several", "whitespaces", "are", "ignored." };
   std::string a = "This is a phrase.   Several whitespaces are ignored.";
   for (auto& tok : base::tok::split_tokens(a, ' ')) {
     std::cout << "\"" << tok << "\"\n";
@@ -29,7 +31,9 @@ TEST(Tok, SplitTokens)
 TEST(Tok, Csv)
 {
   int i = 0;
-  auto b_result = std::vector<std::string>{ "In comma", "separated", "", "values", "", "", "empties are included" };
+  auto b_result = std::vector<std::string>{
+    "In comma", "separated", "", "values", "", "", "empties are included"
+  };
   std::string b = "In comma,separated,,values,,,empties are included";
   for (auto& tok : base::tok::csv(b, ',')) {
     std::cout << "\"" << tok << "\"\n";

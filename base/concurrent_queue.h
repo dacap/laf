@@ -15,72 +15,78 @@
 
 namespace base {
 
-  template<typename T>
-  class concurrent_queue {
-  public:
-    concurrent_queue() { }
-    concurrent_queue(const concurrent_queue&) = delete;
-    concurrent_queue& operator=(const concurrent_queue&) = delete;
-    ~concurrent_queue() { }
+template<typename T>
+class concurrent_queue {
+public:
+  concurrent_queue() { }
+  concurrent_queue(const concurrent_queue&) = delete;
+  concurrent_queue& operator=(const concurrent_queue&) = delete;
+  ~concurrent_queue() { }
 
-    bool empty() const {
-      bool result;
-      {
-        const std::lock_guard lock(m_mutex);
-        result = m_queue.empty();
-      }
-      return result;
-    }
-
-    void clear() {
+  bool empty() const
+  {
+    bool result;
+    {
       const std::lock_guard lock(m_mutex);
-      m_queue.clear();
+      result = m_queue.empty();
     }
+    return result;
+  }
 
-    size_t size() const {
-      size_t result;
-      {
-        const std::lock_guard lock(m_mutex);
-        result = m_queue.size();
-      }
-      return result;
-    }
+  void clear()
+  {
+    const std::lock_guard lock(m_mutex);
+    m_queue.clear();
+  }
 
-    void push(const T& value) {
+  size_t size() const
+  {
+    size_t result;
+    {
       const std::lock_guard lock(m_mutex);
-      m_queue.push_back(value);
+      result = m_queue.size();
     }
+    return result;
+  }
 
-    bool try_pop(T& value) {
-      if (!m_mutex.try_lock())
-        return false;
+  void push(const T& value)
+  {
+    const std::lock_guard lock(m_mutex);
+    m_queue.push_back(value);
+  }
 
-      const std::lock_guard unlock(m_mutex, std::adopt_lock);
-      if (m_queue.empty())
-        return false;
+  bool try_pop(T& value)
+  {
+    if (!m_mutex.try_lock())
+      return false;
 
-      value = m_queue.front();
-      m_queue.pop_front();
-      return true;
+    const std::lock_guard unlock(m_mutex, std::adopt_lock);
+    if (m_queue.empty())
+      return false;
+
+    value = m_queue.front();
+    m_queue.pop_front();
+    return true;
+  }
+
+  template<typename UnaryPredicate>
+  void prioritize(UnaryPredicate p)
+  {
+    const std::lock_guard lock(m_mutex);
+
+    auto it = std::find_if(m_queue.begin(), m_queue.end(), p);
+    if (it != m_queue.end()) {
+      T value(std::move(*it));
+      m_queue.erase(it);
+      m_queue.push_front(std::move(value));
     }
+  }
 
-    template<typename UnaryPredicate>
-    void prioritize(UnaryPredicate p) {
-      const std::lock_guard lock(m_mutex);
+private:
+  std::deque<T> m_queue;
+  mutable std::mutex m_mutex;
+};
 
-      auto it = std::find_if(m_queue.begin(), m_queue.end(), p);
-      if (it != m_queue.end()) {
-        T value(std::move(*it));
-        m_queue.erase(it);
-        m_queue.push_front(std::move(value));
-      }
-    }
-
-  private:
-    std::deque<T> m_queue;
-    mutable std::mutex m_mutex;
-  };
-
-} // namespace base
+}  // namespace base
 
 #endif

@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/rw_lock.h"
@@ -40,8 +40,7 @@ bool RWLock::canWriteLockFromRead() const
 
   // If this thread already have a writer lock, we can upgrade any
   // reader lock to writer in the same thread (re-entrant locks).
-  if (m_write_lock &&
-      m_write_thread == std::this_thread::get_id()) {
+  if (m_write_lock && m_write_thread == std::this_thread::get_id()) {
     return true;
   }
   // If only we are reading (one lock) and nobody is writing, we can
@@ -56,8 +55,7 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
   // if (lockType == WriteLock) {
   {
     const std::lock_guard lock(m_mutex);
-    if (m_write_lock &&
-        m_write_thread == std::this_thread::get_id()) {
+    if (m_write_lock && m_write_thread == std::this_thread::get_id()) {
       return LockResult::Reentrant;
     }
   }
@@ -67,7 +65,6 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
       const std::lock_guard lock(m_mutex);
 
       switch (lockType) {
-
         case ReadLock:
           // If no body is writing the object...
           if (!m_write_lock) {
@@ -101,7 +98,6 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
             return LockResult::OK;
           }
           break;
-
       }
 
     go_wait:;
@@ -122,8 +118,12 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
   }
 
 #ifdef DEBUG_OBJECT_LOCKS
-  TRACE("LCK: lock: Cannot lock <%p> to %s (has %d read locks and %d write locks)\n",
-    this, (lockType == ReadLock ? "read": "write"), m_read_locks, m_write_lock);
+  TRACE(
+    "LCK: lock: Cannot lock <%p> to %s (has %d read locks and %d write locks)\n",
+    this,
+    (lockType == ReadLock ? "read" : "write"),
+    m_read_locks,
+    m_write_lock);
 #endif
 
   return LockResult::Fail;
@@ -132,7 +132,7 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
 void RWLock::downgradeToRead(LockResult lockResult)
 {
   if (lockResult != LockResult::OK)
-    return; // Do nothing for failed or reentrant locks
+    return;  // Do nothing for failed or reentrant locks
 
   const std::lock_guard lock(m_mutex);
 
@@ -147,7 +147,7 @@ void RWLock::downgradeToRead(LockResult lockResult)
 void RWLock::unlock(LockResult lockResult)
 {
   if (lockResult != LockResult::OK)
-    return; // Do nothing for failed or reentrant locks
+    return;  // Do nothing for failed or reentrant locks
 
   const std::lock_guard lock(m_mutex);
 
@@ -167,8 +167,7 @@ bool RWLock::weakLock(std::atomic<WeakLock>* weak_lock_flag)
 {
   const std::lock_guard lock(m_mutex);
 
-  if (m_weak_lock ||
-      m_write_lock)
+  if (m_weak_lock || m_write_lock)
     return false;
 
   m_weak_lock = weak_lock_flag;
@@ -196,8 +195,7 @@ RWLock::LockResult RWLock::upgradeToWrite(int timeout)
   // same thread are allowed).
   {
     const std::lock_guard lock(m_mutex);
-    if (m_write_lock &&
-        m_write_thread == std::this_thread::get_id()) {
+    if (m_write_lock && m_write_thread == std::this_thread::get_id()) {
       return LockResult::Reentrant;
     }
   }
@@ -250,11 +248,14 @@ RWLock::LockResult RWLock::upgradeToWrite(int timeout)
   }
 
 #ifdef DEBUG_OBJECT_LOCKS
-  TRACE("LCK: upgradeToWrite: Cannot lock <%p> to write (has %d read locks and %d write locks)\n",
-    this, m_read_locks, m_write_lock);
+  TRACE(
+    "LCK: upgradeToWrite: Cannot lock <%p> to write (has %d read locks and %d write locks)\n",
+    this,
+    m_read_locks,
+    m_write_lock);
 #endif
 
   return LockResult::Fail;
 }
 
-} // namespace base
+}  // namespace base

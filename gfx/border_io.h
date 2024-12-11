@@ -13,38 +13,34 @@
 
 namespace gfx {
 
-  template<typename T>
-  inline std::ostream& operator<<(std::ostream& os, const BorderT<T>& border) {
-    return os << "("
-              << border.left() << ", "
-              << border.top() << ", "
-              << border.right() << ", "
-              << border.bottom() << ")";
-  }
-
-  template<typename T>
-  inline std::istream& operator>>(std::istream& in, BorderT<T>& border) {
-    while (in && in.get() != '(')
-      ;
-
-    if (!in)
-      return in;
-
-    T l, t, r, b;
-    char chr;
-    in >> l >> chr
-       >> t >> chr
-       >> r >> chr
-       >> b >> chr;
-
-    border.left(l);
-    border.top(t);
-    border.right(r);
-    border.bottom(b);
-
-    return in;
-  }
-
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const BorderT<T>& border)
+{
+  return os << "(" << border.left() << ", " << border.top() << ", "
+            << border.right() << ", " << border.bottom() << ")";
 }
+
+template<typename T>
+inline std::istream& operator>>(std::istream& in, BorderT<T>& border)
+{
+  while (in && in.get() != '(')
+    ;
+
+  if (!in)
+    return in;
+
+  T l, t, r, b;
+  char chr;
+  in >> l >> chr >> t >> chr >> r >> chr >> b >> chr;
+
+  border.left(l);
+  border.top(t);
+  border.right(r);
+  border.bottom(b);
+
+  return in;
+}
+
+}  // namespace gfx
 
 #endif

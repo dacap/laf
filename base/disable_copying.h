@@ -9,8 +9,8 @@
 #define BASE_DISABLE_COPYING_H_INCLUDED
 #pragma once
 
-#define DISABLE_COPYING(ClassName)                       \
-  ClassName(const ClassName&) = delete;                  \
+#define DISABLE_COPYING(ClassName)                                             \
+  ClassName(const ClassName&) = delete;                                        \
   ClassName& operator=(const ClassName&) = delete;
 
 #endif

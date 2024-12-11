@@ -9,8 +9,8 @@
 #pragma once
 
 #include "gfx/rect.h"
-#include <vector>
 #include <iterator>
+#include <vector>
 
 #if LAF_SKIA
   // There is a header file on Skia (SkTFitsIn.h) that uses

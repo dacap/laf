@@ -29,6 +29,6 @@ private:
 
 using EventQueueImpl = EventQueueWin;
 
-} // namespace os
+}  // namespace os
 
 #endif

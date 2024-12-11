@@ -36,6 +36,6 @@ private:
   DISABLE_COPYING(SkiaWindowX11);
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

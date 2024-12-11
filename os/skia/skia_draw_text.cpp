@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/draw_text.h"
@@ -19,23 +19,24 @@
 
 namespace os {
 
-void draw_text(
-  Surface* surface, Font* font,
-  const std::string& text,
-  const gfx::Point& pos,
-  const Paint* paint,
-  const TextAlign textAlign,
-  DrawTextDelegate* delegate)
+void draw_text(Surface* surface,
+               Font* font,
+               const std::string& text,
+               const gfx::Point& pos,
+               const Paint* paint,
+               const TextAlign textAlign,
+               DrawTextDelegate* delegate)
 {
-  SkFont skFont;                // wrap SkFont with os::Font
-  SkTextUtils::Draw(
-    &static_cast<SkiaSurface*>(surface)->canvas(),
-    text.c_str(), text.size(),
-    SkTextEncoding::kUTF8,
-    SkIntToScalar(pos.x),
-    SkIntToScalar(pos.y),
-    skFont, (paint ? paint->skPaint(): SkPaint()),
-    (SkTextUtils::Align)textAlign);
+  SkFont skFont;  // wrap SkFont with os::Font
+  SkTextUtils::Draw(&static_cast<SkiaSurface*>(surface)->canvas(),
+                    text.c_str(),
+                    text.size(),
+                    SkTextEncoding::kUTF8,
+                    SkIntToScalar(pos.x),
+                    SkIntToScalar(pos.y),
+                    skFont,
+                    (paint ? paint->skPaint() : SkPaint()),
+                    (SkTextUtils::Align)textAlign);
 }
 
-} // namespace os
+}  // namespace os

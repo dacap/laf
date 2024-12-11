@@ -13,14 +13,14 @@
 
 namespace os {
 
-  class MenusOSX : public Menus {
-  public:
-    MenusOSX();
-    MenuRef makeMenu() override;
-    MenuItemRef makeMenuItem(const MenuItemInfo& info) override;
-    void setAppMenu(const MenuRef& menu) override;
-  };
+class MenusOSX : public Menus {
+public:
+  MenusOSX();
+  MenuRef makeMenu() override;
+  MenuItemRef makeMenuItem(const MenuItemInfo& info) override;
+  void setAppMenu(const MenuRef& menu) override;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

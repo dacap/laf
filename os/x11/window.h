@@ -11,7 +11,7 @@
 
 #include "base/time.h"
 #include "gfx/border.h"
-#include "gfx/color_space.h"    // Include here avoid error with None
+#include "gfx/color_space.h"  // Include here avoid error with None
 #include "gfx/fwd.h"
 #include "gfx/size.h"
 #include "os/color_space.h"
@@ -35,8 +35,7 @@ class WindowSpec;
 
 class WindowX11 : public Window {
 public:
-  WindowX11(::Display* display,
-            const WindowSpec& spec);
+  WindowX11(::Display* display, const WindowSpec& spec);
   ~WindowX11();
 
   os::ScreenRef screen() const override;
@@ -75,22 +74,20 @@ public:
   bool setCursor(NativeCursor cursor) override;
   bool setCursor(const CursorRef& cursor) override;
 
-  void performWindowAction(WindowAction action,
-                           const Event* event) override;
+  void performWindowAction(WindowAction action, const Event* event) override;
 
   ::Display* x11display() const { return m_display; }
   ::Window x11window() const { return m_window; }
   ::GC gc() const { return m_gc; }
 
-  NativeHandle nativeHandle() const override { return (NativeHandle)x11window(); }
-
-  void setTranslateDeadKeys(bool state) {
-    g_translateDeadKeys = state;
+  NativeHandle nativeHandle() const override
+  {
+    return (NativeHandle)x11window();
   }
 
-  static bool translateDeadKeys() {
-    return g_translateDeadKeys;
-  }
+  void setTranslateDeadKeys(bool state) { g_translateDeadKeys = state; }
+
+  static bool translateDeadKeys() { return g_translateDeadKeys; }
 
   void processX11Event(XEvent& event);
   static WindowX11* getPointerFromHandle(::Window handle);
@@ -135,6 +132,6 @@ private:
   static bool g_translateDeadKeys;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

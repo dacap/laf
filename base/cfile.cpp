@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include <cstdio>
@@ -84,13 +84,9 @@ long long fgetq(FILE* file)
     return EOF;
 
   // Little endian.
-  return (((long long)b8 << 56) |
-          ((long long)b7 << 48) |
-          ((long long)b6 << 40) |
-          ((long long)b5 << 32) |
-          ((long long)b4 << 24) |
-          ((long long)b3 << 16) |
-          ((long long)b2 << 8) |
+  return (((long long)b8 << 56) | ((long long)b7 << 48) |
+          ((long long)b6 << 40) | ((long long)b5 << 32) |
+          ((long long)b4 << 24) | ((long long)b3 << 16) | ((long long)b2 << 8) |
           (long long)b1);
 }
 
@@ -148,14 +144,10 @@ double fgetd(FILE* file)
     return EOF;
 
   // Little endian.
-  long long v = (((long long)b8 << 56) |
-                 ((long long)b7 << 48) |
-                 ((long long)b6 << 40) |
-                 ((long long)b5 << 32) |
-                 ((long long)b4 << 24) |
-                 ((long long)b3 << 16) |
-                 ((long long)b2 << 8) |
-                 (long long)b1);
+  long long v =
+    (((long long)b8 << 56) | ((long long)b7 << 48) | ((long long)b6 << 40) |
+     ((long long)b5 << 32) | ((long long)b4 << 24) | ((long long)b3 << 16) |
+     ((long long)b2 << 8) | (long long)b1);
   return *reinterpret_cast<double*>(&v);
 }
 
@@ -280,4 +272,4 @@ int fputd(double l, FILE* file)
   return -1;
 }
 
-} // namespace base
+}  // namespace base

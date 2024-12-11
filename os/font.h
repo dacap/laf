@@ -16,41 +16,40 @@
 
 namespace os {
 
-  class Font;
-  class FontStyle;
-  class Typeface;
-  using FontRef = Ref<Font>;
+class Font;
+class FontStyle;
+class Typeface;
+using FontRef = Ref<Font>;
 
-  enum class FontType {
-    Unknown,
-    SpriteSheet,                // SpriteSheet
-    FreeType,                   // FreeType
-    Native,                     // Skia
-  };
+enum class FontType {
+  Unknown,
+  SpriteSheet,  // SpriteSheet
+  FreeType,     // FreeType
+  Native,       // Skia
+};
 
-  class Font : public RefCount {
-  public:
-    Font() : m_fallback(nullptr) { }
-    virtual ~Font() { }
-    virtual FontType type() = 0;
-    virtual int height() const = 0;
-    virtual int textLength(const std::string& str) const = 0;
-    virtual bool isScalable() const = 0;
-    virtual void setSize(int size) = 0;
-    virtual void setAntialias(bool antialias) = 0;
-    virtual bool hasCodePoint(int codepoint) const = 0;
+class Font : public RefCount {
+public:
+  Font()
+    : m_fallback(nullptr)
+  {
+  }
+  virtual ~Font() { }
+  virtual FontType type() = 0;
+  virtual int height() const = 0;
+  virtual int textLength(const std::string& str) const = 0;
+  virtual bool isScalable() const = 0;
+  virtual void setSize(int size) = 0;
+  virtual void setAntialias(bool antialias) = 0;
+  virtual bool hasCodePoint(int codepoint) const = 0;
 
-    Font* fallback() const {
-      return m_fallback;
-    }
-    void setFallback(Font* font) {
-      m_fallback = font;
-    }
+  Font* fallback() const { return m_fallback; }
+  void setFallback(Font* font) { m_fallback = font; }
 
-  private:
-    Font* m_fallback;
-  };
+private:
+  Font* m_fallback;
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

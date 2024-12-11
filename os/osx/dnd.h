@@ -10,35 +10,38 @@
 
 #ifdef __OBJC__
 
-#include "base/paths.h"
-#include "gfx/point.h"
-#include "os/dnd.h"
-#include "os/surface.h"
+  #include "base/paths.h"
+  #include "gfx/point.h"
+  #include "os/dnd.h"
+  #include "os/surface.h"
 
-#include <Cocoa/Cocoa.h>
+  #include <Cocoa/Cocoa.h>
 
 namespace os {
-  class DragDataProviderOSX : public DragDataProvider {
-  public:
-    DragDataProviderOSX(NSPasteboard* pasteboard) : m_pasteboard(pasteboard) {}
+class DragDataProviderOSX : public DragDataProvider {
+public:
+  DragDataProviderOSX(NSPasteboard* pasteboard)
+    : m_pasteboard(pasteboard)
+  {
+  }
 
-  private:
-    NSPasteboard* m_pasteboard;
+private:
+  NSPasteboard* m_pasteboard;
 
-    base::paths getPaths() override;
+  base::paths getPaths() override;
 
-    SurfaceRef getImage() override;
+  SurfaceRef getImage() override;
 
-    std::string getUrl() override;
+  std::string getUrl() override;
 
-    bool contains(DragDataItemType type) override;
-  };
+  bool contains(DragDataItemType type) override;
+};
 
-  NSDragOperation as_nsdragoperation(const os::DropOperation op);
-  os::DropOperation as_dropoperation(const NSDragOperation nsdop);
-  gfx::Point drag_position(id<NSDraggingInfo> sender);
+NSDragOperation as_nsdragoperation(const os::DropOperation op);
+os::DropOperation as_dropoperation(const NSDragOperation nsdop);
+gfx::Point drag_position(id<NSDraggingInfo> sender);
 
-} // namespace os
+}  // namespace os
 
 #endif
 

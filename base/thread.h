@@ -11,8 +11,7 @@
 
 #include <string>
 
-namespace base {
-namespace this_thread {
+namespace base { namespace this_thread {
 
 void yield();
 
@@ -25,7 +24,6 @@ void sleep_for(double seconds);
 void set_name(const std::string& name);
 std::string get_name();
 
-} // this_thread
-} // base
+}}  // namespace base::this_thread
 
 #endif

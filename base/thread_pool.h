@@ -17,32 +17,32 @@
 
 namespace base {
 
-  class thread_pool {
-  public:
-    thread_pool(const size_t n);
-    ~thread_pool();
+class thread_pool {
+public:
+  thread_pool(const size_t n);
+  ~thread_pool();
 
-    void execute(std::function<void()>&& func);
+  void execute(std::function<void()>&& func);
 
-    // Waits until the queue is empty.
-    void wait_all();
+  // Waits until the queue is empty.
+  void wait_all();
 
-  private:
-    // Joins all threads without waiting the queue to be processed.
-    void join_all();
+private:
+  // Joins all threads without waiting the queue to be processed.
+  void join_all();
 
-    // Called for each worker thread.
-    void worker();
+  // Called for each worker thread.
+  void worker();
 
-    bool m_running;
-    std::vector<std::thread> m_threads;
-    std::mutex m_mutex;
-    std::condition_variable m_cv;
-    std::condition_variable m_cvWait;
-    std::queue<std::function<void()>> m_work;
-    int m_doingWork;
-  };
+  bool m_running;
+  std::vector<std::thread> m_threads;
+  std::mutex m_mutex;
+  std::condition_variable m_cv;
+  std::condition_variable m_cvWait;
+  std::queue<std::function<void()>> m_work;
+  int m_doingWork;
+};
 
-}
+}  // namespace base
 
 #endif

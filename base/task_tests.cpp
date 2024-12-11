@@ -17,7 +17,7 @@ TEST(Task, Basic)
   std::atomic<int> c(0);
   thread_pool p(10);
   for (task& t : tasks) {
-    t.on_execute([&c](task_token&){ ++c; });
+    t.on_execute([&c](task_token&) { ++c; });
     t.start(p);
   }
   p.wait_all();
@@ -34,12 +34,12 @@ TEST(Task, MultiplePools)
 
   std::atomic<int> c(0);
 
-  for (int i=0; i<100; ++i) {
-    tasks1[i].on_execute([&c](task_token&){ c += 2; });
-    tasks2[i].on_execute([&c](task_token&){ --c; });
+  for (int i = 0; i < 100; ++i) {
+    tasks1[i].on_execute([&c](task_token&) { c += 2; });
+    tasks2[i].on_execute([&c](task_token&) { --c; });
   }
 
-  for (int i=0; i<100; ++i) {
+  for (int i = 0; i < 100; ++i) {
     tasks1[i].start(p1);
     tasks2[i].start(p2);
   }
@@ -48,7 +48,7 @@ TEST(Task, MultiplePools)
   p2.wait_all();
   EXPECT_EQ(100, c);
 
-  for (int i=0; i<100; ++i)
+  for (int i = 0; i < 100; ++i)
     tasks2[i].start(p2);
   p2.wait_all();
   EXPECT_EQ(0, c);

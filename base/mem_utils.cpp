@@ -6,11 +6,11 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
-#include <string>
 #include <cstdio>
+#include <string>
 
 namespace base {
 
@@ -23,14 +23,14 @@ string get_pretty_memory_size(size_t memsize)
   if (memsize < 1000) {
     std::snprintf(buf, sizeof(buf), "%zu bytes", memsize);
   }
-  else if (memsize < 1000*1000) {
-    std::snprintf(buf, sizeof(buf), "%0.1fK", memsize/1024.0f);
+  else if (memsize < 1000 * 1000) {
+    std::snprintf(buf, sizeof(buf), "%0.1fK", memsize / 1024.0f);
   }
   else {
-    std::snprintf(buf, sizeof(buf), "%0.1fM", memsize/(1024.0f*1024.0f));
+    std::snprintf(buf, sizeof(buf), "%0.1fM", memsize / (1024.0f * 1024.0f));
   }
 
   return buf;
 }
 
-} // namespace base
+}  // namespace base

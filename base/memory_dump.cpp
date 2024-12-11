@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/memory_dump.h"
@@ -34,4 +34,4 @@ void MemoryDump::setFileName(const std::string& fileName)
   m_impl->setFileName(fileName);
 }
 
-} // namespace base
+}  // namespace base

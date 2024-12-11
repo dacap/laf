@@ -14,22 +14,22 @@
 
 namespace base {
 
-  class Exception : public std::exception {
-  public:
-    Exception() throw();
-    Exception(const char* format, ...) throw();
-    Exception(const std::string& msg) throw();
-    virtual ~Exception() throw();
+class Exception : public std::exception {
+public:
+  Exception() throw();
+  Exception(const char* format, ...) throw();
+  Exception(const std::string& msg) throw();
+  virtual ~Exception() throw();
 
-    const char* what() const throw() override;
+  const char* what() const throw() override;
 
-  protected:
-    void setMessage(const char* msg) throw();
+protected:
+  void setMessage(const char* msg) throw();
 
-  private:
-    std::string m_msg;
-  };
+private:
+  std::string m_msg;
+};
 
-}
+}  // namespace base
 
 #endif

@@ -6,15 +6,14 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/win/winapi.h"
 
 namespace os {
 
-#define GET_PROC(dll, name)                             \
-  name = base::get_dll_proc<name##_Func>(dll, #name)
+#define GET_PROC(dll, name) name = base::get_dll_proc<name##_Func>(dll, #name)
 
 WinAPI::WinAPI()
 {
@@ -42,7 +41,8 @@ WinAPI::WinAPI()
   // Set this process as DPI aware (in this way we can position
   // windows using real pixel units)
   if (SetProcessDpiAwarenessContext) {
-    if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+    if (!SetProcessDpiAwarenessContext(
+          DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
       SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
   }
 }
@@ -59,4 +59,4 @@ WinAPI::~WinAPI()
   }
 }
 
-} // namespace os
+}  // namespace os

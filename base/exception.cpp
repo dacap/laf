@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/exception.h"
@@ -71,4 +71,4 @@ const char* Exception::what() const throw()
   return m_msg.c_str();
 }
 
-} // namespace base
+}  // namespace base

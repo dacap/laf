@@ -42,20 +42,18 @@ namespace os {
 class SkiaSystem final : public SkiaSystemBase {
 public:
   SkiaSystem()
-    : m_defaultWindow(nullptr) {
+    : m_defaultWindow(nullptr)
+  {
     SkGraphics::Init();
   }
 
-  ~SkiaSystem() {
-    destroyInstance();
-  }
+  ~SkiaSystem() { destroyInstance(); }
 
-  Capabilities capabilities() const override {
+  Capabilities capabilities() const override
+  {
     return Capabilities(
-      int(Capabilities::MultipleWindows) |
-      int(Capabilities::CanResizeWindow) |
-      int(Capabilities::WindowScale) |
-      int(Capabilities::CustomMouseCursor) |
+      int(Capabilities::MultipleWindows) | int(Capabilities::CanResizeWindow) |
+      int(Capabilities::WindowScale) | int(Capabilities::CustomMouseCursor) |
       int(Capabilities::ColorSpaces)
 #ifndef __APPLE__
       | int(Capabilities::CanStartWindowResize)
@@ -63,10 +61,11 @@ public:
 #if SK_SUPPORT_GPU
       | int(Capabilities::GpuAccelerationSwitch)
 #endif
-      );
+    );
   }
 
-  void setTabletOptions(const TabletOptions& options) override {
+  void setTabletOptions(const TabletOptions& options) override
+  {
     SkiaSystemBase::setTabletOptions(options);
 #if LAF_WINDOWS
     if (SkiaWindow* window = dynamic_cast<SkiaWindow*>(defaultWindow())) {
@@ -76,11 +75,10 @@ public:
 #endif
   }
 
-  Window* defaultWindow() override {
-    return m_defaultWindow;
-  }
+  Window* defaultWindow() override { return m_defaultWindow; }
 
-  WindowRef makeWindow(const WindowSpec& spec) override {
+  WindowRef makeWindow(const WindowSpec& spec) override
+  {
     auto window = make_ref<SkiaWindow>(spec);
     if (!m_defaultWindow)
       m_defaultWindow = window.get();
@@ -89,40 +87,49 @@ public:
     return window;
   }
 
-  SurfaceRef makeSurface(int width, int height,
-                         const os::ColorSpaceRef& colorSpace) override {
+  SurfaceRef makeSurface(int width,
+                         int height,
+                         const os::ColorSpaceRef& colorSpace) override
+  {
     auto sur = make_ref<SkiaSurface>();
     sur->create(width, height, colorSpace);
     return sur;
   }
 
-  SurfaceRef makeRgbaSurface(int width, int height,
-                             const os::ColorSpaceRef& colorSpace) override {
+  SurfaceRef makeRgbaSurface(int width,
+                             int height,
+                             const os::ColorSpaceRef& colorSpace) override
+  {
     auto sur = make_ref<SkiaSurface>();
     sur->createRgba(width, height, colorSpace);
     return sur;
   }
 
-  SurfaceRef loadSurface(const char* filename) override {
+  SurfaceRef loadSurface(const char* filename) override
+  {
     return SkiaSurface::loadSurface(filename);
   }
 
-  SurfaceRef loadRgbaSurface(const char* filename) override {
+  SurfaceRef loadRgbaSurface(const char* filename) override
+  {
     return loadSurface(filename);
   }
 
-  FontManager* fontManager() override {
+  FontManager* fontManager() override
+  {
     if (!m_fontManager)
       m_fontManager.reset(new SkiaFontManager);
     return m_fontManager.get();
   }
 
-  void setTranslateDeadKeys(bool state) override {
+  void setTranslateDeadKeys(bool state) override
+  {
     if (m_defaultWindow)
       m_defaultWindow->setTranslateDeadKeys(state);
   }
 
-  void listColorSpaces(std::vector<os::ColorSpaceRef>& list) override {
+  void listColorSpaces(std::vector<os::ColorSpaceRef>& list) override
+  {
     list.push_back(makeColorSpace(gfx::ColorSpace::MakeNone()));
     list.push_back(makeColorSpace(gfx::ColorSpace::MakeSRGB()));
 
@@ -131,17 +138,19 @@ public:
 #endif
   }
 
-  os::ColorSpaceRef makeColorSpace(const gfx::ColorSpaceRef& cs) override {
+  os::ColorSpaceRef makeColorSpace(const gfx::ColorSpaceRef& cs) override
+  {
     return os::make_ref<SkiaColorSpace>(cs);
   }
 
   Ref<ColorSpaceConversion> convertBetweenColorSpace(
-    const os::ColorSpaceRef& src,
-    const os::ColorSpaceRef& dst) override {
+    const os::ColorSpaceRef& src, const os::ColorSpaceRef& dst) override
+  {
     return os::make_ref<SkiaColorSpaceConversion>(src, dst);
   }
 
-  void setWindowsColorSpace(const os::ColorSpaceRef& cs) override {
+  void setWindowsColorSpace(const os::ColorSpaceRef& cs) override
+  {
     m_windowCS = cs;
 
     if (m_defaultWindow)
@@ -150,9 +159,7 @@ public:
     // TODO change the color space of all windows
   }
 
-  os::ColorSpaceRef windowsColorSpace() override {
-    return m_windowCS;
-  }
+  os::ColorSpaceRef windowsColorSpace() override { return m_windowCS; }
 
 private:
   SkiaWindow* m_defaultWindow;
@@ -160,6 +167,6 @@ private:
   ColorSpaceRef m_windowCS;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

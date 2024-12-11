@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/log.h"
@@ -13,9 +13,9 @@
 
 #if SK_SUPPORT_GPU
 
-#include "include/core/SkSurface.h"
-#include "include/core/SkSurfaceCharacterization.h"
-#include "src/gpu/gl/GrGLDefines.h"
+  #include "include/core/SkSurface.h"
+  #include "include/core/SkSurfaceCharacterization.h"
+  #include "src/gpu/gl/GrGLDefines.h"
 
 namespace os {
 
@@ -83,12 +83,12 @@ bool SkiaGL::createRenderTarget(const gfx::Size& size,
 
   m_surface.reset(nullptr);
   m_backbufferSurface =
-    SkSurface::MakeFromBackendRenderTarget(
-      m_grCtx.get(), target,
-      kBottomLeft_GrSurfaceOrigin,
-      kRGBA_8888_SkColorType,
-      colorSpace,
-      nullptr);
+    SkSurface::MakeFromBackendRenderTarget(m_grCtx.get(),
+                                           target,
+                                           kBottomLeft_GrSurfaceOrigin,
+                                           kRGBA_8888_SkColorType,
+                                           colorSpace,
+                                           nullptr);
 
   if (!m_backbufferSurface)
     return false;
@@ -97,25 +97,22 @@ bool SkiaGL::createRenderTarget(const gfx::Size& size,
     m_surface = m_backbufferSurface;
   }
   else {
-    SkImageInfo info = SkImageInfo::Make(
-      std::max(1, size.w / scale),
-      std::max(1, size.h / scale),
-      kN32_SkColorType,
-      kOpaque_SkAlphaType,
-      colorSpace);
+    SkImageInfo info = SkImageInfo::Make(std::max(1, size.w / scale),
+                                         std::max(1, size.h / scale),
+                                         kN32_SkColorType,
+                                         kOpaque_SkAlphaType,
+                                         colorSpace);
 
     SkSurfaceCharacterization ch;
     m_backbufferSurface->characterize(&ch);
 
-    m_surface =
-      SkSurface::MakeRenderTarget(
-        m_grCtx.get(), SkBudgeted::kNo,
-        info, ch.sampleCount(), nullptr);
+    m_surface = SkSurface::MakeRenderTarget(
+      m_grCtx.get(), SkBudgeted::kNo, info, ch.sampleCount(), nullptr);
   }
 
   return true;
 }
 
-} // namespace os
+}  // namespace os
 
 #endif

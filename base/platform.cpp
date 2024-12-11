@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/platform.h"
@@ -13,7 +13,7 @@
 #if LAF_WINDOWS
   #include <windows.h>
 
-  typedef LONG (WINAPI* RtlGetVersion_Func)(OSVERSIONINFOEX*);
+typedef LONG(WINAPI* RtlGetVersion_Func)(OSVERSIONINFOEX*);
 #elif LAF_LINUX  // Unix-like system
   #include <sys/utsname.h>
 #endif
@@ -36,23 +36,19 @@ Platform get_platform()
   // after Windows 8 and RtlGetVersion() returns the correct version
   // and build number for Windows 10 and 11.
   static const auto fnRtlGetVersion = reinterpret_cast<RtlGetVersion_Func>(
-    GetProcAddress(GetModuleHandle(L"ntdll.dll"),
-                   "RtlGetVersion"));
-  if (!fnRtlGetVersion ||
-      !fnRtlGetVersion(&osv) ||
-      !osv.dwMajorVersion) {
+    GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlGetVersion"));
+  if (!fnRtlGetVersion || !fnRtlGetVersion(&osv) || !osv.dwMajorVersion) {
     OSVERSIONINFOEX osv;
     osv.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
     // Ignore deprecated function warning
-#pragma warning(push)
-#pragma warning(disable : 4996)
+  #pragma warning(push)
+  #pragma warning(disable : 4996)
     GetVersionEx((OSVERSIONINFO*)&osv);
-#pragma warning(pop)
+  #pragma warning(pop)
   }
 
-  p.osVer = Version(osv.dwMajorVersion,
-                    osv.dwMinorVersion,
-                    osv.dwBuildNumber, 0);
+  p.osVer =
+    Version(osv.dwMajorVersion, osv.dwMinorVersion, osv.dwBuildNumber, 0);
   switch (osv.wProductType) {
     case VER_NT_DOMAIN_CONTROLLER:
     case VER_NT_SERVER:
@@ -126,4 +122,4 @@ Platform get_platform()
   return p;
 }
 
-} // namespace base
+}  // namespace base

@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/memory.h"
@@ -23,13 +23,16 @@
 extern int app_main(int argc, char* argv[]);
 
 #if LAF_WINDOWS
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PWSTR lpCmdLine, int nCmdShow) {
+int WINAPI wWinMain(HINSTANCE hInstance,
+                    HINSTANCE hPrevInstance,
+                    PWSTR lpCmdLine,
+                    int nCmdShow)
+{
   int argc = __argc;
   char** argv;
   if (__wargv && argc > 0) {
     argv = new char*[argc];
-    for (int i=0; i<argc; ++i)
+    for (int i = 0; i < argc; ++i)
       argv[i] = base_strdup(base::to_utf8(std::wstring(__wargv[i])).c_str());
   }
   else {
@@ -40,11 +43,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   return app_main(argc, argv);
 }
 
-int wmain(int argc, wchar_t* wargv[], wchar_t* envp[]) {
+int wmain(int argc, wchar_t* wargv[], wchar_t* envp[])
+{
   char** argv;
   if (wargv && argc > 0) {
     argv = new char*[argc];
-    for (int i=0; i<argc; ++i)
+    for (int i = 0; i < argc; ++i)
       argv[i] = base_strdup(base::to_utf8(std::wstring(wargv[i])).c_str());
   }
   else {
@@ -56,7 +60,8 @@ int wmain(int argc, wchar_t* wargv[], wchar_t* envp[]) {
 }
 #endif
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 #if LAF_MACOS
   os::AppOSX app;
   if (!app.init())

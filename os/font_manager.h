@@ -15,16 +15,18 @@
 
 namespace os {
 
-  class FontManager : public RefCount {
-  protected:
-    virtual ~FontManager() { }
-  public:
-    virtual int countFamilies() const = 0;
-    virtual std::string familyName(int index) const = 0;
-    virtual Ref<FontStyleSet> familyStyleSet(int index) const = 0;
-    virtual Ref<FontStyleSet> matchFamily(const std::string& familyName) const = 0;
-  };
+class FontManager : public RefCount {
+protected:
+  virtual ~FontManager() { }
 
-} // namespace os
+public:
+  virtual int countFamilies() const = 0;
+  virtual std::string familyName(int index) const = 0;
+  virtual Ref<FontStyleSet> familyStyleSet(int index) const = 0;
+  virtual Ref<FontStyleSet> matchFamily(
+    const std::string& familyName) const = 0;
+};
+
+}  // namespace os
 
 #endif

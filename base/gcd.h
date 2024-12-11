@@ -10,28 +10,29 @@
 
 namespace base {
 
-  template<typename T>
-  T gcd(T a, T b) {
-    a = (a < 0 ? -a: a);
-    b = (b < 0 ? -b: b);
-    if (a > 1 && b > 1) {
-      if (a == b)
+template<typename T>
+T gcd(T a, T b)
+{
+  a = (a < 0 ? -a : a);
+  b = (b < 0 ? -b : b);
+  if (a > 1 && b > 1) {
+    if (a == b)
+      return a;
+    while (a != b) {
+      if (a > b) {
+        a = a - b;
+      }
+      else if (a < b) {
+        b = b - a;
+      }
+      if (a == b) {
         return a;
-      while (a != b) {
-        if (a > b) {
-          a = a - b;
-        }
-        else if (a < b) {
-          b = b - a;
-        }
-        if (a == b) {
-          return a;
-        }
       }
     }
-    return T(1);
   }
+  return T(1);
+}
 
-} // namespace base
+}  // namespace base
 
 #endif

@@ -12,10 +12,10 @@
 #include "base/version.h"
 #include "base/win/win32_exception.h"
 
-#include <stdexcept>
-#include <windows.h>
 #include <shlobj.h>
+#include <stdexcept>
 #include <sys/stat.h>
+#include <windows.h>
 
 namespace base {
 
@@ -40,7 +40,7 @@ bool is_directory(const std::string& path)
 size_t file_size(const std::string& path)
 {
   struct _stat sts;
-  return (_wstat(from_utf8(path).c_str(), &sts) == 0) ? sts.st_size: 0;
+  return (_wstat(from_utf8(path).c_str(), &sts) == 0) ? sts.st_size : 0;
 }
 
 void move_file(const std::string& src, const std::string& dst)
@@ -52,7 +52,8 @@ void move_file(const std::string& src, const std::string& dst)
 
 void copy_file(const std::string& src, const std::string& dst, bool overwrite)
 {
-  BOOL result = ::CopyFile(from_utf8(src).c_str(), from_utf8(dst).c_str(), !overwrite);
+  BOOL result =
+    ::CopyFile(from_utf8(src).c_str(), from_utf8(dst).c_str(), !overwrite);
   if (result == 0)
     throw Win32Exception("Error copying file");
 }
@@ -96,9 +97,12 @@ Time get_modification_time(const std::string& path)
   FileTimeToSystemTime(&data.ftLastWriteTime, &utc);
   SystemTimeToTzSpecificLocalTime(NULL, &utc, &local);
 
-  return Time(
-    local.wYear, local.wMonth, local.wDay,
-    local.wHour, local.wMinute, local.wSecond);
+  return Time(local.wYear,
+              local.wMonth,
+              local.wDay,
+              local.wHour,
+              local.wMinute,
+              local.wSecond);
 }
 
 void make_directory(const std::string& path)
@@ -117,8 +121,8 @@ void remove_directory(const std::string& path)
 
 std::string get_current_path()
 {
-  TCHAR buffer[MAX_PATH+1];
-  if (::GetCurrentDirectory(sizeof(buffer)/sizeof(TCHAR), buffer))
+  TCHAR buffer[MAX_PATH + 1];
+  if (::GetCurrentDirectory(sizeof(buffer) / sizeof(TCHAR), buffer))
     return to_utf8(buffer);
   return std::string();
 }
@@ -130,25 +134,24 @@ void set_current_path(const std::string& path)
 
 std::string get_app_path()
 {
-  TCHAR buffer[MAX_PATH+1];
-  if (::GetModuleFileName(NULL, buffer, sizeof(buffer)/sizeof(TCHAR)))
+  TCHAR buffer[MAX_PATH + 1];
+  if (::GetModuleFileName(NULL, buffer, sizeof(buffer) / sizeof(TCHAR)))
     return to_utf8(buffer);
   return std::string();
 }
 
 std::string get_temp_path()
 {
-  TCHAR buffer[MAX_PATH+1];
-  DWORD result = ::GetTempPath(sizeof(buffer)/sizeof(TCHAR), buffer);
+  TCHAR buffer[MAX_PATH + 1];
+  DWORD result = ::GetTempPath(sizeof(buffer) / sizeof(TCHAR), buffer);
   return to_utf8(buffer);
 }
 
 std::string get_user_docs_folder()
 {
-  TCHAR buffer[MAX_PATH+1];
-  HRESULT hr = SHGetFolderPath(
-    NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT,
-    buffer);
+  TCHAR buffer[MAX_PATH + 1];
+  HRESULT hr =
+    SHGetFolderPath(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, buffer);
   if (hr == S_OK)
     return to_utf8(buffer);
   return std::string();
@@ -171,12 +174,9 @@ std::string get_absolute_path(const std::string& path)
   else
     full = path;
 
-  TCHAR buffer[MAX_PATH+1];
+  TCHAR buffer[MAX_PATH + 1];
   GetFullPathName(
-    from_utf8(full).c_str(),
-    sizeof(buffer)/sizeof(TCHAR),
-    buffer,
-    nullptr);
+    from_utf8(full).c_str(), sizeof(buffer) / sizeof(TCHAR), buffer, nullptr);
   return to_utf8(buffer);
 }
 
@@ -224,7 +224,8 @@ Version get_file_version(const std::string& filename)
 
 Version get_file_version(const wchar_t* filename)
 {
-  DWORD handle; // From MS docs, this is set to zero by GetFileVersionInfoSizeW()
+  DWORD
+  handle;  // From MS docs, this is set to zero by GetFileVersionInfoSizeW()
   DWORD size = GetFileVersionInfoSizeW(filename, &handle);
   if (size == 0)
     return Version();
@@ -237,13 +238,14 @@ Version get_file_version(const wchar_t* filename)
   VS_FIXEDFILEINFO* fi = nullptr;
   UINT fiLen = 0;
   if (!VerQueryValueW(&data[0], L"\\", (LPVOID*)&fi, &fiLen) ||
-      fiLen < sizeof(VS_FIXEDFILEINFO) ||
-      fi->dwSignature != 0xfeef04bd) {
+      fiLen < sizeof(VS_FIXEDFILEINFO) || fi->dwSignature != 0xfeef04bd) {
     return Version();
   }
 
-  return Version(fi->dwFileVersionMS >> 16, fi->dwFileVersionMS & 0xffff,
-                 fi->dwFileVersionLS >> 16, fi->dwFileVersionLS & 0xffff);
+  return Version(fi->dwFileVersionMS >> 16,
+                 fi->dwFileVersionMS & 0xffff,
+                 fi->dwFileVersionLS >> 16,
+                 fi->dwFileVersionLS & 0xffff);
 }
 
-}
+}  // namespace base

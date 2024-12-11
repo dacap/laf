@@ -14,6 +14,6 @@ namespace base {
 
 std::string get_errno_string(int errnum);
 
-} // namespace base
+}  // namespace base
 
 #endif

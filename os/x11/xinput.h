@@ -28,7 +28,10 @@ class XInput {
   typedef void (*XFreeDeviceList_Func)(XDeviceInfo*);
   typedef XDevice* (*XOpenDevice_Func)(::Display*, XID);
   typedef int (*XCloseDevice_Func)(::Display*, XDevice*);
-  typedef int (*XSelectExtensionEvent_Func)(::Display*, ::Window, XEventClass*, int);
+  typedef int (*XSelectExtensionEvent_Func)(::Display*,
+                                            ::Window,
+                                            XEventClass*,
+                                            int);
 
   XListInputDevices_Func XListInputDevices;
   XFreeDeviceList_Func XFreeDeviceList;
@@ -65,6 +68,6 @@ private:
   std::vector<Event::Type> m_eventTypes;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

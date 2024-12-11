@@ -14,36 +14,34 @@
 #include "os/font.h"
 
 namespace os {
-  class Font;
+class Font;
 
-  class FreeTypeFont : public Font {
-  public:
-    using Face = ft::Face;
+class FreeTypeFont : public Font {
+public:
+  using Face = ft::Face;
 
-    FreeTypeFont(ft::Lib& lib,
-                 const char* filename,
-                 const int height);
-    ~FreeTypeFont();
+  FreeTypeFont(ft::Lib& lib, const char* filename, const int height);
+  ~FreeTypeFont();
 
-    bool isValid() const;
-    FontType type() override;
-    int height() const override;
-    int textLength(const std::string& str) const override;
-    bool isScalable() const override;
-    void setSize(int size) override;
-    void setAntialias(bool antialias) override;
-    bool hasCodePoint(int codepoint) const override;
+  bool isValid() const;
+  FontType type() override;
+  int height() const override;
+  int textLength(const std::string& str) const override;
+  bool isScalable() const override;
+  void setSize(int size) override;
+  void setAntialias(bool antialias) override;
+  bool hasCodePoint(int codepoint) const override;
 
-    Face& face() { return m_face; }
+  Face& face() { return m_face; }
 
-  private:
-    mutable Face m_face;
-  };
+private:
+  mutable Face m_face;
+};
 
-  Ref<FreeTypeFont> load_free_type_font(ft::Lib& lib,
-                                        const char* filename,
-                                        const int height);
+Ref<FreeTypeFont> load_free_type_font(ft::Lib& lib,
+                                      const char* filename,
+                                      const int height);
 
-} // namespace os
+}  // namespace os
 
 #endif

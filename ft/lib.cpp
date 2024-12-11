@@ -43,4 +43,4 @@ FT_Face Lib::open(const std::string& filename)
   return face;
 }
 
-} // namespace ft
+}  // namespace ft

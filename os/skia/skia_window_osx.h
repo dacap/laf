@@ -57,6 +57,6 @@ private:
   DISABLE_COPYING(SkiaWindowOSX);
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

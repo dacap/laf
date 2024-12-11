@@ -11,34 +11,33 @@
 
 namespace base {
 
-  // Changes the value of "instance" with "inValue" in the
-  // ScopedValue's lifespan, then restore its value (or restore
-  // another value as specified by "outValue").
-  template<typename T,
-           typename U = T>
-  class ScopedValue {
-  public:
-    ScopedValue(T& instance, const U inValue)
-      : m_instance(instance)
-      , m_outValue(instance) { // Restore the current value
-      m_instance = inValue;
-    }
+// Changes the value of "instance" with "inValue" in the
+// ScopedValue's lifespan, then restore its value (or restore
+// another value as specified by "outValue").
+template<typename T, typename U = T>
+class ScopedValue {
+public:
+  ScopedValue(T& instance, const U inValue)
+    : m_instance(instance)
+    , m_outValue(instance)
+  {  // Restore the current value
+    m_instance = inValue;
+  }
 
-    ScopedValue(T& instance, const U inValue, const U outValue)
-      : m_instance(instance)
-      , m_outValue(outValue) {
-      m_instance = inValue;
-    }
+  ScopedValue(T& instance, const U inValue, const U outValue)
+    : m_instance(instance)
+    , m_outValue(outValue)
+  {
+    m_instance = inValue;
+  }
 
-    ~ScopedValue() {
-      m_instance = m_outValue;
-    }
+  ~ScopedValue() { m_instance = m_outValue; }
 
-  private:
-    T& m_instance;
-    U m_outValue;
-  };
+private:
+  T& m_instance;
+  U m_outValue;
+};
 
-} // namespace base
+}  // namespace base
 
 #endif

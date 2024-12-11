@@ -22,24 +22,27 @@
 
 namespace base {
 
-  // A universally unique identifier.
-  class Uuid {
-  public:
-    enum { HashSize = 36 };
+// A universally unique identifier.
+class Uuid {
+public:
+  enum { HashSize = 36 };
 
-    static Uuid Generate();
+  static Uuid Generate();
 
-    uint8_t operator[](int i) const { return m_data[i]; }
-    bool operator==(const Uuid& b) const { return std::memcmp(m_data, b.m_data, 16) == 0; }
-    bool operator!=(const Uuid& b) const { return !operator==(b); }
+  uint8_t operator[](int i) const { return m_data[i]; }
+  bool operator==(const Uuid& b) const
+  {
+    return std::memcmp(m_data, b.m_data, 16) == 0;
+  }
+  bool operator!=(const Uuid& b) const { return !operator==(b); }
 
-    const uint8_t* bytes() const { return &m_data[0]; }
-    uint8_t* bytes() { return &m_data[0]; }
+  const uint8_t* bytes() const { return &m_data[0]; }
+  uint8_t* bytes() { return &m_data[0]; }
 
-  private:
-    uint8_t m_data[16] = { };
-  };
+private:
+  uint8_t m_data[16] = {};
+};
 
-} // namespace base
+}  // namespace base
 
 #endif

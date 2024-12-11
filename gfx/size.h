@@ -22,128 +22,129 @@ class SizeT {
 public:
   T w, h;
 
-  SizeT() : w(0), h(0) {
+  SizeT()
+    : w(0)
+    , h(0)
+  {
   }
 
-  SizeT(const T& w, const T& h) : w(w), h(h) {
+  SizeT(const T& w, const T& h)
+    : w(w)
+    , h(h)
+  {
   }
 
-  SizeT(const SizeT& size) : w(size.w), h(size.h) {
+  SizeT(const SizeT& size)
+    : w(size.w)
+    , h(size.h)
+  {
   }
 
   template<typename U>
-  explicit SizeT(const SizeT<U>& size) : w(static_cast<T>(size.w)),
-                                         h(static_cast<T>(size.h)) {
+  explicit SizeT(const SizeT<U>& size)
+    : w(static_cast<T>(size.w))
+    , h(static_cast<T>(size.h))
+  {
   }
 
-  explicit SizeT(const PointT<T>& point) : w(point.x), h(point.y)  {
+  explicit SizeT(const PointT<T>& point)
+    : w(point.x)
+    , h(point.y)
+  {
   }
 
-  SizeT createUnion(const SizeT& sz) const {
-    return SizeT(std::max(w, sz.w),
-                 std::max(h, sz.h));
+  SizeT createUnion(const SizeT& sz) const
+  {
+    return SizeT(std::max(w, sz.w), std::max(h, sz.h));
   }
 
-  SizeT createIntersection(const SizeT& sz) const {
-    return SizeT(std::min(w, sz.w),
-                 std::min(h, sz.h));
+  SizeT createIntersection(const SizeT& sz) const
+  {
+    return SizeT(std::min(w, sz.w), std::min(h, sz.h));
   }
 
-  SizeT& operator=(const SizeT& sz) {
+  SizeT& operator=(const SizeT& sz)
+  {
     w = sz.w;
     h = sz.h;
     return *this;
   }
 
-  const SizeT& operator+=(const SizeT& sz) {
+  const SizeT& operator+=(const SizeT& sz)
+  {
     w += sz.w;
     h += sz.h;
     return *this;
   }
 
-  const SizeT& operator-=(const SizeT& sz) {
+  const SizeT& operator-=(const SizeT& sz)
+  {
     w -= sz.w;
     h -= sz.h;
     return *this;
   }
 
-  const SizeT& operator+=(const T& value) {
+  const SizeT& operator+=(const T& value)
+  {
     w += value;
     h += value;
     return *this;
   }
 
-  const SizeT& operator-=(const T& value) {
+  const SizeT& operator-=(const T& value)
+  {
     w -= value;
     h -= value;
     return *this;
   }
 
-  const SizeT& operator*=(const T& value) {
+  const SizeT& operator*=(const T& value)
+  {
     w *= value;
     h *= value;
     return *this;
   }
 
-  const SizeT& operator/=(const T& value) {
+  const SizeT& operator/=(const T& value)
+  {
     w /= value;
     h /= value;
     return *this;
   }
 
-  const SizeT& operator|=(const SizeT& sz) {
-    return *this = createUnion(sz);
-  }
+  const SizeT& operator|=(const SizeT& sz) { return *this = createUnion(sz); }
 
-  const SizeT& operator&=(const SizeT& sz) {
+  const SizeT& operator&=(const SizeT& sz)
+  {
     return *this = createIntersection(sz);
   }
 
-  SizeT operator+(const SizeT& sz) const {
-    return SizeT(w+sz.w, h+sz.h);
-  }
+  SizeT operator+(const SizeT& sz) const { return SizeT(w + sz.w, h + sz.h); }
 
-  SizeT operator-(const SizeT& sz) const {
-    return SizeT(w-sz.w, h-sz.h);
-  }
+  SizeT operator-(const SizeT& sz) const { return SizeT(w - sz.w, h - sz.h); }
 
-  SizeT operator+(const T& value) const {
-    return SizeT(w+value, h+value);
-  }
+  SizeT operator+(const T& value) const { return SizeT(w + value, h + value); }
 
-  SizeT operator-(const T& value) const {
-    return SizeT(w-value, h-value);
-  }
+  SizeT operator-(const T& value) const { return SizeT(w - value, h - value); }
 
-  SizeT operator*(const T& value) const {
-    return SizeT(w*value, h*value);
-  }
+  SizeT operator*(const T& value) const { return SizeT(w * value, h * value); }
 
-  SizeT operator/(const T& value) const {
-    return SizeT(w/value, h/value);
-  }
+  SizeT operator/(const T& value) const { return SizeT(w / value, h / value); }
 
-  SizeT operator-() const {
-    return SizeT(-w, -h);
-  }
+  SizeT operator-() const { return SizeT(-w, -h); }
 
-  bool operator==(const SizeT& sz) const {
-    return w == sz.w && h == sz.h;
-  }
+  bool operator==(const SizeT& sz) const { return w == sz.w && h == sz.h; }
 
-  bool operator!=(const SizeT& sz) const {
-    return w != sz.w || h != sz.h;
-  }
-
+  bool operator!=(const SizeT& sz) const { return w != sz.w || h != sz.h; }
 };
 
 typedef SizeT<int> Size;
 typedef SizeT<double> SizeF;
 
-} // namespace gfx
+}  // namespace gfx
 
 #ifdef _DEBUG
-#include "gfx/size_io.h"
+  #include "gfx/size_io.h"
 #endif
 
 #endif

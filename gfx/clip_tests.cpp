@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include <gtest/gtest.h>
@@ -18,16 +18,12 @@ namespace gfx {
 
 inline std::ostream& operator<<(std::ostream& os, const Clip& area)
 {
-  return os << "("
-            << area.dst.x << ", "
-            << area.dst.y << ", "
-            << area.src.x << ", "
-            << area.src.y << ", "
-            << area.size.w << ", "
-            << area.size.h << ")";
+  return os << "(" << area.dst.x << ", " << area.dst.y << ", " << area.src.x
+            << ", " << area.src.y << ", " << area.size.w << ", " << area.size.h
+            << ")";
 }
 
-}
+}  // namespace gfx
 
 TEST(ScaledClip, WithoutClip)
 {

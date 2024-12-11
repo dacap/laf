@@ -56,8 +56,10 @@ TEST(ProgramOptions, Parse)
 {
   ProgramOptions po;
   ProgramOptions::Option& help = po.add("help").mnemonic('?');
-  ProgramOptions::Option& input = po.add("input").mnemonic('i').requiresValue("INPUT");
-  ProgramOptions::Option& output = po.add("output").mnemonic('o').requiresValue("OUTPUT");
+  ProgramOptions::Option& input =
+    po.add("input").mnemonic('i').requiresValue("INPUT");
+  ProgramOptions::Option& output =
+    po.add("output").mnemonic('o').requiresValue("OUTPUT");
 
   const char* argv1[] = { "program.exe", "-?" };
   po.parse(2, argv1);
@@ -68,7 +70,9 @@ TEST(ProgramOptions, Parse)
   po.parse(2, argv2);
   EXPECT_TRUE(po.enabled(help));
 
-  const char* argv3[] = { "program.exe", "--input", "hello.cpp", "--output", "hello.exe" };
+  const char* argv3[] = {
+    "program.exe", "--input", "hello.cpp", "--output", "hello.exe"
+  };
   po.reset();
   po.parse(5, argv3);
   EXPECT_FALSE(po.enabled(help));
@@ -86,7 +90,8 @@ TEST(ProgramOptions, Parse)
   EXPECT_EQ("hi.c", po.value_of(input));
   EXPECT_EQ("out.exe", po.value_of(output));
 
-  const char* argv5[] = { "program.exe", "-?i", "input.md", "-o", "output.html", "extra-file.txt" };
+  const char* argv5[] = { "program.exe", "-?i",         "input.md",
+                          "-o",          "output.html", "extra-file.txt" };
   po.reset();
   po.parse(6, argv5);
   EXPECT_TRUE(po.enabled(help));
@@ -104,7 +109,8 @@ TEST(ProgramOptions, Parse)
   EXPECT_EQ("output.html", po.values()[2].value());
   EXPECT_EQ("extra-file.txt", po.values()[3].value());
 
-  const char* argv6[] = { "program.exe", "value1", "value2", "-o", "output", "value3", "--input=input", "value4" };
+  const char* argv6[] = { "program.exe", "value1", "value2",        "-o",
+                          "output",      "value3", "--input=input", "value4" };
   po.reset();
   po.parse(8, argv6);
   ASSERT_EQ(6, po.values().size());
@@ -120,8 +126,10 @@ TEST(ProgramOptions, ParseErrors)
 {
   ProgramOptions po;
   ProgramOptions::Option& help = po.add("help").mnemonic('?');
-  ProgramOptions::Option& input = po.add("input").mnemonic('i').requiresValue("INPUT");
-  ProgramOptions::Option& output = po.add("output").mnemonic('o').requiresValue("OUTPUT");
+  ProgramOptions::Option& input =
+    po.add("input").mnemonic('i').requiresValue("INPUT");
+  ProgramOptions::Option& output =
+    po.add("output").mnemonic('o').requiresValue("OUTPUT");
 
   const char* argv1[] = { "program.exe", "--input" };
   EXPECT_THROW(po.parse(2, argv1), ProgramOptionNeedsValue);
@@ -136,7 +144,8 @@ TEST(ProgramOptions, ParseErrors)
   po.reset();
   EXPECT_FALSE(po.enabled(help));
   EXPECT_THROW(po.parse(2, argv4), InvalidProgramOption);
-  EXPECT_TRUE(po.enabled(help));  // -? is parsed anyway, -a is the invalid option
+  EXPECT_TRUE(
+    po.enabled(help));  // -? is parsed anyway, -a is the invalid option
 
   const char* argv5[] = { "program.exe", "-io", "input-and-output.txt" };
   po.reset();
@@ -154,8 +163,10 @@ TEST(ProgramOptions, LongOptionWithSingleDash)
   ProgramOptions po;
   ProgramOptions::Option& help = po.add("help").mnemonic('?');
   ProgramOptions::Option& verbose = po.add("verbose").mnemonic('v');
-  ProgramOptions::Option& input = po.add("input").mnemonic('i').requiresValue("INPUT");
-  ProgramOptions::Option& output = po.add("output").mnemonic('o').requiresValue("OUTPUT");
+  ProgramOptions::Option& input =
+    po.add("input").mnemonic('i').requiresValue("INPUT");
+  ProgramOptions::Option& output =
+    po.add("output").mnemonic('o').requiresValue("OUTPUT");
 
   const char* argv1[] = { "program.exe", "-input", "input.txt" };
   po.reset();
@@ -169,7 +180,8 @@ TEST(ProgramOptions, LongOptionWithSingleDash)
   EXPECT_TRUE(po.enabled(verbose));
   EXPECT_EQ("input.txt", po.value_of(input));
 
-  const char* argv3[] = { "program.exe", "-?v", "-input", "input.txt", "-output", "output.txt" };
+  const char* argv3[] = { "program.exe", "-?v",     "-input",
+                          "input.txt",   "-output", "output.txt" };
   po.reset();
   po.parse(6, argv3);
   EXPECT_TRUE(po.enabled(help));

@@ -25,7 +25,6 @@ Rgb::Rgb(const Hsv& hsv)
   r = g = b = 0.0;
 
   switch (int(hue_prime)) {
-
     case 6:
     case 0:
       r = chroma;
@@ -60,14 +59,15 @@ Rgb::Rgb(const Hsv& hsv)
   g += m;
   b += m;
 
-  m_red   = int(r*255.0+0.5);
-  m_green = int(g*255.0+0.5);
-  m_blue  = int(b*255.0+0.5);
+  m_red = int(r * 255.0 + 0.5);
+  m_green = int(g * 255.0 + 0.5);
+  m_blue = int(b * 255.0 + 0.5);
 }
 
 Rgb::Rgb(const Hsl& hsl)
 {
-  const double chroma = (1.0 - std::fabs(2.0*hsl.lightness() - 1.0)) * hsl.saturation();
+  const double chroma =
+    (1.0 - std::fabs(2.0 * hsl.lightness() - 1.0)) * hsl.saturation();
   const double hue_prime = hsl.hue() / 60.0;
   const double x = chroma * (1.0 - std::fabs(std::fmod(hue_prime, 2.0) - 1.0));
   double r, g, b;
@@ -75,7 +75,6 @@ Rgb::Rgb(const Hsl& hsl)
   r = g = b = 0.0;
 
   switch (int(hue_prime)) {
-
     case 6:
     case 0:
       r = chroma;
@@ -105,28 +104,28 @@ Rgb::Rgb(const Hsl& hsl)
       break;
   }
 
-  const double m = hsl.lightness() - chroma/2.0;
+  const double m = hsl.lightness() - chroma / 2.0;
   r += m;
   g += m;
   b += m;
 
-  m_red   = int(r*255.0+0.5);
-  m_green = int(g*255.0+0.5);
-  m_blue  = int(b*255.0+0.5);
+  m_red = int(r * 255.0 + 0.5);
+  m_green = int(g * 255.0 + 0.5);
+  m_blue = int(b * 255.0 + 0.5);
 }
 
 int Rgb::maxComponent() const
 {
   if (m_red > m_green)
-    return (m_red > m_blue) ? m_red: m_blue;
-  return (m_green > m_blue) ? m_green: m_blue;
+    return (m_red > m_blue) ? m_red : m_blue;
+  return (m_green > m_blue) ? m_green : m_blue;
 }
 
 int Rgb::minComponent() const
 {
   if (m_red < m_green)
-    return (m_red < m_blue) ? m_red: m_blue;
-  return (m_green < m_blue) ? m_green: m_blue;
+    return (m_red < m_blue) ? m_red : m_blue;
+  return (m_green < m_blue) ? m_green : m_blue;
 }
 
-} // namespace gfx
+}  // namespace gfx

@@ -22,7 +22,8 @@ public:
     : m_hue(0.0)
     , m_saturation(0.0)
     , m_value(0.0)
-  { }
+  {
+  }
 
   Hsv(double hue, double saturation, double value);
 
@@ -30,7 +31,8 @@ public:
     : m_hue(hsv.hue())
     , m_saturation(hsv.saturation())
     , m_value(hsv.value())
-  { }
+  {
+  }
 
   // RGB to HSV conversion
   explicit Hsv(const Rgb& rgb);
@@ -49,29 +51,29 @@ public:
   int saturationInt() const;
   int valueInt() const;
 
-  void hue(double hue) {
-    while (hue < 0.0) hue += 360.0;
+  void hue(double hue)
+  {
+    while (hue < 0.0)
+      hue += 360.0;
     m_hue = std::fmod(hue, 360.0);
   }
 
-  void saturation(double saturation) {
+  void saturation(double saturation)
+  {
     m_saturation = std::clamp(saturation, 0.0, 1.0);
   }
 
-  void value(double value) {
-    m_value = std::clamp(value, 0.0, 1.0);
-  }
+  void value(double value) { m_value = std::clamp(value, 0.0, 1.0); }
 
   // The comparison is done through the integer value of each component.
-  bool operator==(const Hsv& other) const {
+  bool operator==(const Hsv& other) const
+  {
     return (hueInt() == other.hueInt() &&
             saturationInt() == other.saturationInt() &&
             valueInt() == other.valueInt());
   }
 
-  bool operator!=(const Hsv& other) const {
-    return !operator==(other);
-  }
+  bool operator!=(const Hsv& other) const { return !operator==(other); }
 
 private:
   double m_hue;
@@ -79,6 +81,6 @@ private:
   double m_value;
 };
 
-} // namespace gfx
+}  // namespace gfx
 
 #endif

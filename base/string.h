@@ -15,23 +15,24 @@
 
 namespace base {
 
-  std::string string_printf(const char* format, ...);
-  std::string string_vprintf(const char* format, std::va_list ap);
+std::string string_printf(const char* format, ...);
+std::string string_vprintf(const char* format, std::va_list ap);
 
-  std::string string_to_lower(const std::string& original);
-  std::string string_to_upper(const std::string& original);
+std::string string_to_lower(const std::string& original);
+std::string string_to_upper(const std::string& original);
 
-  std::string to_utf8(const wchar_t* src, size_t n);
+std::string to_utf8(const wchar_t* src, size_t n);
 
-  inline std::string to_utf8(const std::wstring& widestring) {
-   return to_utf8(widestring.c_str(), widestring.size());
-  }
-
-  std::wstring from_utf8(const std::string& utf8string);
-
-  int utf8_length(const std::string& utf8string);
-  int utf8_icmp(const std::string& a, const std::string& b, int n = 0);
-
+inline std::string to_utf8(const std::wstring& widestring)
+{
+  return to_utf8(widestring.c_str(), widestring.size());
 }
+
+std::wstring from_utf8(const std::string& utf8string);
+
+int utf8_length(const std::string& utf8string);
+int utf8_icmp(const std::string& a, const std::string& b, int n = 0);
+
+}  // namespace base
 
 #endif

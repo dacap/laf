@@ -20,8 +20,8 @@
 
 #if SK_SUPPORT_GPU
   #if LAF_WINDOWS
-    #include <windows.h>
     #include <GL/gl.h>
+    #include <windows.h>
   #elif LAF_MACOS
     #include <OpenGL/gl.h>
   #endif
@@ -39,39 +39,38 @@ public:
     : T(std::forward<Args&&>(args)...)
     , m_initialized(false)
     , m_surface(new SkiaSurface)
-    , m_colorSpace(nullptr) {
+    , m_colorSpace(nullptr)
+  {
   }
 
-  void initColorSpace() {
+  void initColorSpace()
+  {
     // Needed on macOS because WindowOSX::colorSpace() needs the
     // m_nsWindow created, and that happens after
     // WindowOSX::createWindow() is called.
     m_colorSpace = T::colorSpace();
   }
 
-  bool isInitialized() const {
-    return m_initialized;
-  }
+  bool isInitialized() const { return m_initialized; }
 
-  void resetSkiaSurface() {
+  void resetSkiaSurface()
+  {
     if (m_surface)
       m_surface.reset();
 
     resizeSkiaSurface(this->clientSize());
   }
 
-  void resizeSkiaSurface(const gfx::Size& size) {
+  void resizeSkiaSurface(const gfx::Size& size)
+  {
     if (!m_initialized)
       return;
 
-    gfx::Size newSize(size.w / this->scale(),
-                      size.h / this->scale());
+    gfx::Size newSize(size.w / this->scale(), size.h / this->scale());
     newSize.w = std::max(1, newSize.w);
     newSize.h = std::max(1, newSize.h);
 
-    if (m_initialized &&
-        m_surface &&
-        m_surface->width() == newSize.w &&
+    if (m_initialized && m_surface && m_surface->width() == newSize.w &&
         m_surface->height() == newSize.h) {
       return;
     }
@@ -94,7 +93,8 @@ public:
 
         if (m_gl.attachGL() &&
             m_gl.createRenderTarget(
-              size, this->scale(),
+              size,
+              this->scale(),
               ((SkiaColorSpace*)colorSpace().get())->skColorSpace())) {
           m_surface = make_ref<SkiaSurface>(m_gl.surface());
           m_backend = Backend::GL;
@@ -116,22 +116,19 @@ public:
 
   // Returns the main surface to draw into this window.
   // You must not dispose this surface.
-  Surface* surface() override {
-    return m_surface.get();
-  }
+  Surface* surface() override { return m_surface.get(); }
 
   // Overrides the colorSpace() method to return the cached/stored
   // color space in this instance (instead of asking for the color
   // space to the screen as T::colorSpace() should do).
-  os::ColorSpaceRef colorSpace() const override {
-    return m_colorSpace;
-  }
+  os::ColorSpaceRef colorSpace() const override { return m_colorSpace; }
 
-  void setColorSpace(const os::ColorSpaceRef& colorSpace) override {
+  void setColorSpace(const os::ColorSpaceRef& colorSpace) override
+  {
     if (colorSpace)
       m_colorSpace = colorSpace;
     else
-      m_colorSpace = T::colorSpace(); // Screen color space
+      m_colorSpace = T::colorSpace();  // Screen color space
 
     if (m_surface)
       resetSkiaSurface();
@@ -145,11 +142,10 @@ public:
     os::queue_event(ev);
   }
 
-  void swapBuffers() override {
+  void swapBuffers() override
+  {
 #if SK_SUPPORT_GPU
-    if (m_backend == Backend::NONE ||
-        !m_gl.backbufferSurface() ||
-        !m_glCtx ||
+    if (m_backend == Backend::NONE || !m_gl.backbufferSurface() || !m_glCtx ||
         !m_glCtx->isValid()) {
       return;
     }
@@ -166,20 +162,18 @@ public:
 
       SkCanvas* dstCanvas = m_gl.backbufferSurface()->getCanvas();
       dstCanvas->save();
-      dstCanvas->scale(SkScalar(this->scale()),
-                       SkScalar(this->scale()));
-      m_gl.surface()->draw(
-        dstCanvas,
-        0.0, 0.0, sampling, &paint);
+      dstCanvas->scale(SkScalar(this->scale()), SkScalar(this->scale()));
+      m_gl.surface()->draw(dstCanvas, 0.0, 0.0, sampling, &paint);
       dstCanvas->restore();
     }
 
     m_gl.grCtx()->flushAndSubmit();
     m_glCtx->swapBuffers();
-#endif // SK_SUPPORT_GPU
+#endif  // SK_SUPPORT_GPU
   }
 
-  bool gpuAcceleration() const override {
+  bool gpuAcceleration() const override
+  {
 #if SK_SUPPORT_GPU
     return (m_backend == Backend::GL);
 #else
@@ -187,7 +181,8 @@ public:
 #endif
   }
 
-  void setGpuAcceleration(bool state) override {
+  void setGpuAcceleration(bool state) override
+  {
     m_preferGpuAcceleration = state;
     resetSkiaSurface();
 
@@ -195,18 +190,18 @@ public:
   }
 
 #if SK_SUPPORT_GPU
-  GrDirectContext* sk_grCtx() const override {
-    return m_gl.grCtx();
-  }
+  GrDirectContext* sk_grCtx() const override { return m_gl.grCtx(); }
 #endif
 
 protected:
-  void initializeSurface() {
+  void initializeSurface()
+  {
     m_initialized = true;
     resetSkiaSurface();
   }
 
-  void onResize(const gfx::Size& sz) override {
+  void onResize(const gfx::Size& sz) override
+  {
     resizeSkiaSurface(sz);
 
     if (os::instance()->handleWindowResize &&
@@ -249,6 +244,6 @@ private:
   os::ColorSpaceRef m_colorSpace;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

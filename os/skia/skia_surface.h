@@ -71,21 +71,28 @@ public:
   gfx::Color getPixel(int x, int y) const override;
   void putPixel(gfx::Color color, int x, int y) override;
 
-  void drawLine(const float x0, const float y0,
-                const float x1, const float y1,
+  void drawLine(const float x0,
+                const float y0,
+                const float x1,
+                const float y1,
                 const Paint& paint) override;
 
-  void drawRect(const gfx::RectF& rc,
-                const Paint& paint) override;
+  void drawRect(const gfx::RectF& rc, const Paint& paint) override;
 
-  void drawCircle(const float cx, const float cy,
+  void drawCircle(const float cx,
+                  const float cy,
                   const float radius,
                   const Paint& paint) override;
 
-  void drawPath(const gfx::Path& path,
-                const Paint& paint) override;
+  void drawPath(const gfx::Path& path, const Paint& paint) override;
 
-  void blitTo(Surface* _dst, int srcx, int srcy, int dstx, int dsty, int width, int height) const override;
+  void blitTo(Surface* _dst,
+              int srcx,
+              int srcy,
+              int dstx,
+              int dsty,
+              int width,
+              int height) const override;
   void scrollTo(const gfx::Rect& rc, int dx, int dy) override;
   void drawSurface(const Surface* src, int dstx, int dsty) override;
   void drawSurface(const Surface* src,
@@ -94,8 +101,17 @@ public:
                    const Sampling& sampling,
                    const os::Paint* paint) override;
   void drawRgbaSurface(const Surface* src, int dstx, int dsty) override;
-  void drawRgbaSurface(const Surface* src, int srcx, int srcy, int dstx, int dsty, int w, int h) override;
-  void drawColoredRgbaSurface(const Surface* src, gfx::Color fg, gfx::Color bg, const gfx::Clip& clipbase) override;
+  void drawRgbaSurface(const Surface* src,
+                       int srcx,
+                       int srcy,
+                       int dstx,
+                       int dsty,
+                       int w,
+                       int h) override;
+  void drawColoredRgbaSurface(const Surface* src,
+                              gfx::Color fg,
+                              gfx::Color bg,
+                              const gfx::Clip& clipbase) override;
   void drawSurfaceNine(os::Surface* surface,
                        const gfx::Rect& src,
                        const gfx::Rect& _center,
@@ -103,11 +119,10 @@ public:
                        const bool drawCenter,
                        const os::Paint* paint) override;
 
-  bool isValid() const {
-    return !m_bitmap.isNull();
-  }
+  bool isValid() const { return !m_bitmap.isNull(); }
 
-  SkBitmap& bitmap() {
+  SkBitmap& bitmap()
+  {
     ASSERT(!m_bitmap.isNull());
     return m_bitmap;
   }
@@ -118,33 +133,31 @@ public:
   static SurfaceRef loadSurface(const char* filename);
 
 private:
-  void skDrawSurface(
-    const Surface* src,
-    const gfx::Clip& clip,
-    const SkSamplingOptions& sampling,
-    const SkPaint& paint,
-    SkCanvas::SrcRectConstraint constraint);
-  void skDrawSurface(
-    const Surface* src,
-    const gfx::Rect& srcRect,
-    const gfx::Rect& dstRect,
-    const SkSamplingOptions& sampling,
-    const SkPaint& paint,
-    SkCanvas::SrcRectConstraint constraint);
-  void skDrawSurface(
-    const SkiaSurface* src,
-    const SkRect& srcRect,
-    const SkRect& dstRect,
-    const SkSamplingOptions& sampling,
-    const SkPaint& paint,
-    SkCanvas::SrcRectConstraint constraint);
+  void skDrawSurface(const Surface* src,
+                     const gfx::Clip& clip,
+                     const SkSamplingOptions& sampling,
+                     const SkPaint& paint,
+                     SkCanvas::SrcRectConstraint constraint);
+  void skDrawSurface(const Surface* src,
+                     const gfx::Rect& srcRect,
+                     const gfx::Rect& dstRect,
+                     const SkSamplingOptions& sampling,
+                     const SkPaint& paint,
+                     SkCanvas::SrcRectConstraint constraint);
+  void skDrawSurface(const SkiaSurface* src,
+                     const SkRect& srcRect,
+                     const SkRect& dstRect,
+                     const SkSamplingOptions& sampling,
+                     const SkPaint& paint,
+                     SkCanvas::SrcRectConstraint constraint);
 
 #if SK_SUPPORT_GPU
   const SkImage* getOrCreateTextureImage() const;
   bool uploadBitmapAsTexture() const;
 #endif
 
-  sk_sp<SkColorSpace> skColorSpace() const {
+  sk_sp<SkColorSpace> skColorSpace() const
+  {
     if (m_colorSpace)
       return static_cast<SkiaColorSpace*>(m_colorSpace.get())->skColorSpace();
     return nullptr;
@@ -161,9 +174,8 @@ private:
   SkCanvas* m_canvas;
   SkPaint m_paint;
   std::atomic<int> m_lock;
-
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

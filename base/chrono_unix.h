@@ -9,19 +9,16 @@
 
 class base::Chrono::ChronoImpl {
 public:
-  ChronoImpl() {
-    reset();
-  }
+  ChronoImpl() { reset(); }
 
-  void reset() {
-    gettimeofday(&m_point, NULL);
-  }
+  void reset() { gettimeofday(&m_point, NULL); }
 
-  double elapsed() const {
+  double elapsed() const
+  {
     struct timeval now;
     gettimeofday(&now, NULL);
-    return (double)(now.tv_sec + (double)now.tv_usec/1000000) -
-           (double)(m_point.tv_sec + (double)m_point.tv_usec/1000000);
+    return (double)(now.tv_sec + (double)now.tv_usec / 1000000) -
+           (double)(m_point.tv_sec + (double)m_point.tv_usec / 1000000);
   }
 
 private:

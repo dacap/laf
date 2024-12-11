@@ -11,19 +11,19 @@
 
 #if LAF_WINDOWS
   #include "os/skia/skia_window_win.h"
-  namespace os {
-    using SkiaWindowPlatform = os::SkiaWindowWin;
-  }
+namespace os {
+using SkiaWindowPlatform = os::SkiaWindowWin;
+}
 #elif LAF_MACOS
   #include "os/skia/skia_window_osx.h"
-  namespace os {
-    using SkiaWindowPlatform = os::SkiaWindowOSX;
-  }
+namespace os {
+using SkiaWindowPlatform = os::SkiaWindowOSX;
+}
 #elif LAF_LINUX
   #include "os/skia/skia_window_x11.h"
-  namespace os {
-    using SkiaWindowPlatform = os::SkiaWindowX11;
-  }
+namespace os {
+using SkiaWindowPlatform = os::SkiaWindowX11;
+}
 #endif
 
 #include "os/native_cursor.h"
@@ -49,6 +49,6 @@ private:
   NativeCursor m_nativeCursor;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

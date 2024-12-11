@@ -30,38 +30,41 @@
 //
 //   https://github.com/grisumbras/enum-flags
 //
-#define LAF_ENUM_FLAGS(T)                               \
-  constexpr inline T operator|(const T a, const T b) {  \
-    using U = std::underlying_type_t<T>;                \
-    return static_cast<T>(static_cast<U>(a) |           \
-                          static_cast<U>(b));           \
-  }                                                     \
-                                                        \
-  constexpr inline T operator&(const T a, const T b) {  \
-    using U = std::underlying_type_t<T>;                \
-    return static_cast<T>(static_cast<U>(a) &           \
-                          static_cast<U>(b));           \
-  }                                                     \
-                                                        \
-  constexpr inline T operator^(const T a, const T b) {  \
-    using U = std::underlying_type_t<T>;                \
-    return static_cast<T>(static_cast<U>(a) ^           \
-                          static_cast<U>(b));           \
-  }                                                     \
-                                                        \
-  constexpr inline T& operator|=(T& a, const T b) {     \
-    a = a | b;                                          \
-    return a;                                           \
-  }                                                     \
-                                                        \
-  constexpr inline T& operator&=(T& a, const T b) {     \
-    a = a & b;                                          \
-    return a;                                           \
-  }                                                     \
-                                                        \
-  constexpr inline T& operator^=(T& a, const T b) {     \
-    a = a ^ b;                                          \
-    return a;                                           \
+#define LAF_ENUM_FLAGS(T)                                                      \
+  constexpr inline T operator|(const T a, const T b)                           \
+  {                                                                            \
+    using U = std::underlying_type_t<T>;                                       \
+    return static_cast<T>(static_cast<U>(a) | static_cast<U>(b));              \
+  }                                                                            \
+                                                                               \
+  constexpr inline T operator&(const T a, const T b)                           \
+  {                                                                            \
+    using U = std::underlying_type_t<T>;                                       \
+    return static_cast<T>(static_cast<U>(a) & static_cast<U>(b));              \
+  }                                                                            \
+                                                                               \
+  constexpr inline T operator^(const T a, const T b)                           \
+  {                                                                            \
+    using U = std::underlying_type_t<T>;                                       \
+    return static_cast<T>(static_cast<U>(a) ^ static_cast<U>(b));              \
+  }                                                                            \
+                                                                               \
+  constexpr inline T& operator|=(T& a, const T b)                              \
+  {                                                                            \
+    a = a | b;                                                                 \
+    return a;                                                                  \
+  }                                                                            \
+                                                                               \
+  constexpr inline T& operator&=(T& a, const T b)                              \
+  {                                                                            \
+    a = a & b;                                                                 \
+    return a;                                                                  \
+  }                                                                            \
+                                                                               \
+  constexpr inline T& operator^=(T& a, const T b)                              \
+  {                                                                            \
+    a = a ^ b;                                                                 \
+    return a;                                                                  \
   }
 
 #endif

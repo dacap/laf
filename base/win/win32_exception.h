@@ -14,17 +14,17 @@
 
 namespace base {
 
-  class Win32Exception : public Exception {
-  public:
-    Win32Exception(const std::string& msg) throw();
-    virtual ~Win32Exception() throw();
+class Win32Exception : public Exception {
+public:
+  Win32Exception(const std::string& msg) throw();
+  virtual ~Win32Exception() throw();
 
-    DWORD errorCode() const { return m_errorCode; }
+  DWORD errorCode() const { return m_errorCode; }
 
-  private:
-    DWORD m_errorCode;
-  };
+private:
+  DWORD m_errorCode;
+};
 
-}
+}  // namespace base
 
 #endif

@@ -10,17 +10,18 @@
 
 namespace base {
 
-  template<typename T>
-  int mask_shift(T mask) {
-    int shift = 0;
-    int bit = 1;
-    while (((mask & bit) == 0) && shift < 8*sizeof(mask)) {
-      bit <<= 1;
-      ++shift;
-    }
-    return shift;
+template<typename T>
+int mask_shift(T mask)
+{
+  int shift = 0;
+  int bit = 1;
+  while (((mask & bit) == 0) && shift < 8 * sizeof(mask)) {
+    bit <<= 1;
+    ++shift;
   }
-
+  return shift;
 }
+
+}  // namespace base
 
 #endif

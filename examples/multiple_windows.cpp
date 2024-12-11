@@ -40,14 +40,14 @@ static void redraw_window(os::Window* window)
   int y = 12;
 
   gfx::Rect rc = window->frame();
-  std::snprintf(buf, sizeof(buf),
-                "Frame = (%d %d %d %d)", rc.x, rc.y, rc.w, rc.h);
+  std::snprintf(
+    buf, sizeof(buf), "Frame = (%d %d %d %d)", rc.x, rc.y, rc.w, rc.h);
   os::draw_text(s, nullptr, buf, gfx::Point(0, y), &paint);
   y += 12;
 
   rc = window->contentRect();
-  std::snprintf(buf, sizeof(buf),
-                "Content Rect = (%d %d %d %d)", rc.x, rc.y, rc.w, rc.h);
+  std::snprintf(
+    buf, sizeof(buf), "Content Rect = (%d %d %d %d)", rc.x, rc.y, rc.w, rc.h);
   os::draw_text(s, nullptr, buf, gfx::Point(0, y), &paint);
   y += 12;
 
@@ -61,7 +61,7 @@ static void redraw_window(os::Window* window)
 }
 
 static os::WindowRef add_window(const std::string& title,
-                                  const os::WindowSpec& spec)
+                                const os::WindowSpec& spec)
 {
   os::WindowRef newWindow = os::instance()->makeWindow(spec);
   newWindow->setCursor(os::NativeCursor::Arrow);
@@ -76,15 +76,14 @@ static os::WindowRef add_window(const std::string& title,
 static void check_show_all_windows()
 {
   // If all windows are hidden, show then again
-  auto hidden = std::count_if(windows.begin(), windows.end(),
-                              [](os::WindowRef window){
-                                return !window->isVisible();
-                              });
+  auto hidden =
+    std::count_if(windows.begin(), windows.end(), [](os::WindowRef window) {
+      return !window->isVisible();
+    });
   if (hidden == windows.size()) {
-    std::for_each(windows.begin(), windows.end(),
-                  [](os::WindowRef window){
-                    window->setVisible(true);
-                  });
+    std::for_each(windows.begin(), windows.end(), [](os::WindowRef window) {
+      window->setVisible(true);
+    });
   }
 }
 
@@ -122,8 +121,8 @@ int app_main(int argc, char* argv[])
     for (auto& p : pos) {
       os::WindowSpec s = spec;
       gfx::Rect frame = s.frame();
-      frame.x += frame.w*p.x;
-      frame.y += frame.h*p.y;
+      frame.x += frame.w * p.x;
+      frame.y += frame.h * p.y;
       frame.w /= 2;
       frame.h /= 2;
       s.frame(frame);
@@ -140,9 +139,8 @@ int app_main(int argc, char* argv[])
     queue->getEvent(ev);
 
     switch (ev.type()) {
-
       case os::Event::CloseApp:
-        windows.clear(); // Close all windows
+        windows.clear();  // Close all windows
         break;
 
       case os::Event::CloseWindow:
@@ -156,7 +154,6 @@ int app_main(int argc, char* argv[])
 
       case os::Event::KeyDown:
         switch (ev.scancode()) {
-
           case os::kKeyQ:
             windows.clear();
             break;
@@ -167,10 +164,10 @@ int app_main(int argc, char* argv[])
 
           // Switch between Arrow/Move cursor in this specific window
           case os::kKeyA:
-            ev.window()->setCursor(
-              ev.window()->nativeCursor() == os::NativeCursor::Arrow ?
-                os::NativeCursor::Move:
-                os::NativeCursor::Arrow);
+            ev.window()->setCursor(ev.window()->nativeCursor() ==
+                                       os::NativeCursor::Arrow ?
+                                     os::NativeCursor::Move :
+                                     os::NativeCursor::Arrow);
             break;
 
           case os::kKeyH:
@@ -219,11 +216,20 @@ int app_main(int argc, char* argv[])
           case os::kKeyDown: {
             gfx::Rect rc = ev.window()->frame();
             switch (ev.scancode()) {
-              case os::kKeyLeft:  rc.x -= rc.w; break;
-              case os::kKeyUp:    rc.y -= rc.h; break;
-              case os::kKeyRight: rc.x += rc.w; break;
-              case os::kKeyDown:  rc.y += rc.h; break;
-              default: break;
+              case os::kKeyLeft:
+                rc.x -= rc.w;
+                break;
+              case os::kKeyUp:
+                rc.y -= rc.h;
+                break;
+              case os::kKeyRight:
+                rc.x += rc.w;
+                break;
+              case os::kKeyDown:
+                rc.y += rc.h;
+                break;
+              default:
+                break;
             }
             ev.window()->setFrame(rc);
 

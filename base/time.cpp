@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/time.h"
@@ -46,8 +46,7 @@ Time current_time()
   std::tm t;
   safe_localtime(now, &t);
   return Time(
-    t.tm_year+1900, t.tm_mon+1, t.tm_mday,
-    t.tm_hour, t.tm_min, t.tm_sec);
+    t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
 
 #endif
 }
@@ -70,12 +69,13 @@ tick_t current_tick()
   static mach_timebase_info_data_t timebase = { 0, 0 };
   if (timebase.denom == 0)
     (void)mach_timebase_info(&timebase);
-  return tick_t(double(mach_absolute_time()) * double(timebase.numer) / double(timebase.denom) / 1.0e6);
+  return tick_t(double(mach_absolute_time()) * double(timebase.numer) /
+                double(timebase.denom) / 1.0e6);
 #else
   // TODO use clock_gettime(CLOCK_MONOTONIC, &now); if it's possible
   struct timeval now;
   gettimeofday(&now, nullptr);
-  return now.tv_sec*1000 + now.tv_usec/1000;
+  return now.tv_sec * 1000 + now.tv_usec / 1000;
 #endif
 }
 
@@ -86,8 +86,8 @@ Time& Time::addSeconds(const int seconds)
   tm.tm_min = minute;
   tm.tm_hour = hour;
   tm.tm_mday = day;
-  tm.tm_mon = month-1;
-  tm.tm_year = year-1900;
+  tm.tm_mon = month - 1;
+  tm.tm_year = year - 1900;
   tm.tm_wday = 0;
   tm.tm_yday = 0;
 
@@ -103,8 +103,8 @@ Time& Time::addSeconds(const int seconds)
   std::tm t;
   safe_localtime(tt, &t);
 
-  year = t.tm_year+1900;
-  month = t.tm_mon+1;
+  year = t.tm_year + 1900;
+  month = t.tm_mon + 1;
   day = t.tm_mday;
   hour = t.tm_hour;
   minute = t.tm_min;
@@ -116,21 +116,26 @@ Time& Time::addSeconds(const int seconds)
 bool Time::operator<(const Time& other) const
 {
   int d = year - other.year;
-  if (d != 0) return (d < 0);
+  if (d != 0)
+    return (d < 0);
 
   d = month - other.month;
-  if (d != 0) return (d < 0);
+  if (d != 0)
+    return (d < 0);
 
   d = day - other.day;
-  if (d != 0) return (d < 0);
+  if (d != 0)
+    return (d < 0);
 
   d = hour - other.hour;
-  if (d != 0) return (d < 0);
+  if (d != 0)
+    return (d < 0);
 
   d = minute - other.minute;
-  if (d != 0) return (d < 0);
+  if (d != 0)
+    return (d < 0);
 
   return (second < other.second);
 }
 
-} // namespace base
+}  // namespace base

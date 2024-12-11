@@ -18,38 +18,44 @@ namespace base {
 void encode_base64(const char* input, size_t n, std::string& output);
 void decode_base64(const char* input, size_t n, buffer& output);
 
-inline void encode_base64(const buffer& input, std::string& output) {
+inline void encode_base64(const buffer& input, std::string& output)
+{
   if (!input.empty())
     encode_base64((const char*)&input[0], input.size(), output);
 }
 
-inline std::string encode_base64(const buffer& input) {
+inline std::string encode_base64(const buffer& input)
+{
   std::string output;
   if (!input.empty())
     encode_base64((const char*)&input[0], input.size(), output);
   return output;
 }
 
-inline std::string encode_base64(const std::string& input) {
+inline std::string encode_base64(const std::string& input)
+{
   std::string output;
   if (!input.empty())
     encode_base64((const char*)input.c_str(), input.size(), output);
   return output;
 }
 
-inline void decode_base64(const std::string& input, buffer& output) {
+inline void decode_base64(const std::string& input, buffer& output)
+{
   if (!input.empty())
     decode_base64(input.c_str(), input.size(), output);
 }
 
-inline buffer decode_base64(const std::string& input) {
+inline buffer decode_base64(const std::string& input)
+{
   buffer output;
   if (!input.empty())
     decode_base64(input.c_str(), input.size(), output);
   return output;
 }
 
-inline std::string decode_base64s(const std::string& input) {
+inline std::string decode_base64s(const std::string& input)
+{
   if (input.empty())
     return std::string();
   buffer tmp;
@@ -57,13 +63,14 @@ inline std::string decode_base64s(const std::string& input) {
   return std::string((const char*)&tmp[0], tmp.size());
 }
 
-inline buffer decode_base64(const buffer& input) {
+inline buffer decode_base64(const buffer& input)
+{
   buffer output;
   if (!input.empty())
     decode_base64((const char*)&input[0], input.size(), output);
   return output;
 }
 
-} // namespace base
+}  // namespace base
 
 #endif

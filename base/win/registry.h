@@ -62,6 +62,6 @@ private:
   DISABLE_COPYING(hkey);
 };
 
-} // namespace base
+}  // namespace base
 
 #endif

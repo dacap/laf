@@ -15,7 +15,9 @@ namespace os {
 
 class ScreenWin : public Screen {
 public:
-  ScreenWin(HMONITOR hmonitor) : m_monitor(hmonitor) {
+  ScreenWin(HMONITOR hmonitor)
+    : m_monitor(hmonitor)
+  {
     MONITORINFOEXA mi;
     memset((void*)&mi, 0, sizeof(mi));
     mi.cbSize = sizeof(mi);
@@ -33,18 +35,21 @@ public:
       m_workarea.w = wa.right - rc.left;
       m_workarea.h = wa.bottom - rc.top;
 
-      m_isMainScreen = (mi.dwFlags & MONITORINFOF_PRIMARY ? true: false);
+      m_isMainScreen = (mi.dwFlags & MONITORINFOF_PRIMARY ? true : false);
     }
   }
   bool isMainScreen() const override { return m_isMainScreen; }
-  gfx::Rect bounds() const override { return  m_bounds; }
+  gfx::Rect bounds() const override { return m_bounds; }
   gfx::Rect workarea() const override { return m_workarea; }
-  os::ColorSpaceRef colorSpace() const override {
+  os::ColorSpaceRef colorSpace() const override
+  {
     return get_hmonitor_colorspace(m_monitor);
   }
-  void* nativeHandle() const override {
+  void* nativeHandle() const override
+  {
     return reinterpret_cast<void*>(m_monitor);
   }
+
 private:
   HMONITOR m_monitor;
   gfx::Rect m_bounds;
@@ -52,6 +57,6 @@ private:
   bool m_isMainScreen = false;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

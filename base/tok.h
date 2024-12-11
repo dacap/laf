@@ -14,11 +14,14 @@
 #include <iterator>
 #include <string>
 
-namespace base {
-namespace tok {
+namespace base { namespace tok {
 
-struct ignore_empties { enum { allow_empty = false }; };
-struct include_empties { enum { allow_empty = true }; };
+struct ignore_empties {
+  enum { allow_empty = false };
+};
+struct include_empties {
+  enum { allow_empty = true };
+};
 
 template<typename T, typename EmptyPolicy>
 class token_iterator {
@@ -36,15 +39,17 @@ public:
   token_iterator(const token_iterator&) = default;
   token_iterator(const internal_iterator& begin,
                  const internal_iterator& end,
-                 char_type chr) :
-    begin_(begin),
-    inter_(begin),
-    end_(end),
-    chr_(chr) {
-    operator++(); // Find first word to fill "str_" field
+                 char_type chr)
+    : begin_(begin)
+    , inter_(begin)
+    , end_(end)
+    , chr_(chr)
+  {
+    operator++();  // Find first word to fill "str_" field
   }
 
-  token_iterator& operator++() {
+  token_iterator& operator++()
+  {
     if constexpr (EmptyPolicy::allow_empty) {
       if (inter_ != end_ && *inter_ == chr_) {
         ++inter_;
@@ -63,11 +68,10 @@ public:
     return *this;
   }
 
-  const_reference operator*() {
-    return str_;
-  }
+  const_reference operator*() { return str_; }
 
-  bool operator!=(const token_iterator& that) const {
+  bool operator!=(const token_iterator& that) const
+  {
     return (begin_ != that.end_);
   }
 
@@ -83,7 +87,11 @@ public:
   using char_type = typename T::value_type;
   using iterator = token_iterator<T, Empties>;
 
-  token_range(const T& str, char_type chr) : str_(str), chr_(chr) { }
+  token_range(const T& str, char_type chr)
+    : str_(str)
+    , chr_(chr)
+  {
+  }
 
   iterator begin() const { return iterator(str_.begin(), str_.end(), chr_); }
   iterator end() const { return iterator(str_.end(), str_.end(), chr_); }
@@ -94,20 +102,19 @@ private:
 };
 
 template<typename T>
-token_range<T, ignore_empties>
-split_tokens(const T& str,
-             typename T::value_type chr) {
+token_range<T, ignore_empties> split_tokens(const T& str,
+                                            typename T::value_type chr)
+{
   return token_range<T, ignore_empties>(str, chr);
 }
 
 template<typename T>
-token_range<T, include_empties>
-csv(const T& str,
-    typename T::value_type chr = ',') {
+token_range<T, include_empties> csv(const T& str,
+                                    typename T::value_type chr = ',')
+{
   return token_range<T, include_empties>(str, chr);
 }
 
-} // namespace tok
-} // namespace base
+}}  // namespace base::tok
 
 #endif

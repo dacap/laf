@@ -15,21 +15,21 @@
 
 namespace ft {
 
-  class Lib {
-  public:
-    Lib();
-    ~Lib();
+class Lib {
+public:
+  Lib();
+  ~Lib();
 
-    operator FT_Library() { return m_ft; }
+  operator FT_Library() { return m_ft; }
 
-    FT_Face open(const std::string& filename);
+  FT_Face open(const std::string& filename);
 
-  private:
-    FT_Library m_ft;
+private:
+  FT_Library m_ft;
 
-    DISABLE_COPYING(Lib);
-  };
+  DISABLE_COPYING(Lib);
+};
 
-} // namespace ft
+}  // namespace ft
 
 #endif

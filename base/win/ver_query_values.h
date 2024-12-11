@@ -18,6 +18,6 @@ namespace base {
 std::map<std::string, std::string> ver_query_values(dll lib);
 std::map<std::string, std::string> ver_query_values(const wchar_t* filename);
 
-} // namespace base
+}  // namespace base
 
 #endif

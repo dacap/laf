@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/process.h"
@@ -62,7 +62,7 @@ std::string get_process_name(pid pid)
   HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, TRUE, pid);
   if (handle) {
     WCHAR exeName[MAX_PATH];
-    DWORD len = MAX_PATH-1;
+    DWORD len = MAX_PATH - 1;
     if (QueryFullProcessImageNameW(handle, 0, exeName, &len)) {
       name = base::get_file_name(base::to_utf8(exeName));
     }
@@ -83,17 +83,16 @@ bool is_process_running(pid pid)
   return (kill(pid, 0) == 0);
 }
 
-#if LAF_MACOS
+  #if LAF_MACOS
 
 std::string get_process_name(pid pid)
 {
   struct proc_bsdinfo process;
-  proc_pidinfo(pid, PROC_PIDTBSDINFO, 0,
-               &process, PROC_PIDTBSDINFO_SIZE);
+  proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &process, PROC_PIDTBSDINFO_SIZE);
   return process.pbi_name;
 }
 
-#else
+  #else
 
 std::string get_process_name(pid pid)
 {
@@ -110,8 +109,8 @@ std::string get_process_name(pid pid)
   return exename;
 }
 
-#endif
+  #endif
 
 #endif  // LAF_WINDOWS
 
-} // namespace base
+}  // namespace base

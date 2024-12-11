@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/thread.h"
@@ -15,15 +15,15 @@
   #include "base/dll.h"
   #include "base/string.h"
 
-  #include <windows.h>
-  #include <process.h>
   #include <mutex>
+  #include <process.h>
+  #include <windows.h>
 #else
-  #include <pthread.h>     // Use pthread library in Unix-like systems
+  #include <pthread.h>  // Use pthread library in Unix-like systems
 
-  #include <unistd.h>
-  #include <sys/time.h>
   #include <algorithm>
+  #include <sys/time.h>
+  #include <unistd.h>
 #endif
 
 #if LAF_WINDOWS
@@ -37,11 +37,14 @@ public:
   SetThreadDescription_Func SetThreadDescription = nullptr;
   GetThreadDescription_Func GetThreadDescription = nullptr;
 
-  KernelBaseApi() {
+  KernelBaseApi()
+  {
     m_dll = base::load_dll("KernelBase.dll");
     if (m_dll) {
-      SetThreadDescription = base::get_dll_proc<SetThreadDescription_Func>(m_dll, "SetThreadDescription");
-      GetThreadDescription = base::get_dll_proc<GetThreadDescription_Func>(m_dll, "GetThreadDescription");
+      SetThreadDescription = base::get_dll_proc<SetThreadDescription_Func>(
+        m_dll, "SetThreadDescription");
+      GetThreadDescription = base::get_dll_proc<GetThreadDescription_Func>(
+        m_dll, "GetThreadDescription");
     }
   }
 
@@ -51,7 +54,7 @@ private:
 
 KernelBaseApi kernelBaseApi;
 
-} // anonymous namespace
+}  // anonymous namespace
 #endif
 
 namespace base {
@@ -125,8 +128,8 @@ std::string this_thread::get_name()
   }
 #else
   char name[65];
-  const int result = pthread_getname_np(pthread_self(), name, sizeof(name)-1);
-  if (result == 0) { // Returns 0 if it was successful
+  const int result = pthread_getname_np(pthread_self(), name, sizeof(name) - 1);
+  if (result == 0) {  // Returns 0 if it was successful
     // pthread_getname_np() returns a null terminated name.
     return std::string(name);
   }
@@ -134,4 +137,4 @@ std::string this_thread::get_name()
   return std::string();
 }
 
-} // namespace base
+}  // namespace base

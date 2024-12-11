@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/version.h"
@@ -27,17 +27,16 @@ Version::Version(const std::string& from)
   std::string::size_type j = 0;
   std::string::size_type k = from.find('-', 0);
 
-  while ((j != std::string::npos) &&
-         (k == std::string::npos || j < k)) {
+  while ((j != std::string::npos) && (k == std::string::npos || j < k)) {
     j = from.find('.', i);
 
     std::string number;
     if (j != std::string::npos) {
       number = from.substr(i, j - i);
-      i = j+1;
+      i = j + 1;
     }
     else {
-      if (from.size() == i) // Empty string
+      if (from.size() == i)  // Empty string
         break;
 
       number = from.substr(i);
@@ -59,8 +58,8 @@ Version::Version(const std::string& from)
   }
 
   while (!m_prereleaseLabel.empty() &&
-         m_prereleaseLabel[m_prereleaseLabel.size()-1] == '.')
-    m_prereleaseLabel.erase(m_prereleaseLabel.size()-1);
+         m_prereleaseLabel[m_prereleaseLabel.size() - 1] == '.')
+    m_prereleaseLabel.erase(m_prereleaseLabel.size() - 1);
 }
 
 Version::Version(int major, int minor, int patch, int build)
@@ -76,16 +75,18 @@ Version::Version(int major, int minor, int patch, int build)
 
 bool Version::operator<(const Version& other) const
 {
-  Numbers::const_iterator
-    it1 = m_numbers.begin(), end1 = m_numbers.end(),
-    it2 = other.m_numbers.begin(), end2 = other.m_numbers.end();
+  Numbers::const_iterator it1 = m_numbers.begin(), end1 = m_numbers.end(),
+                          it2 = other.m_numbers.begin(),
+                          end2 = other.m_numbers.end();
 
   while (it1 != end1 || it2 != end2) {
-    int number1 = (it1 != end1 ? *it1++: 0);
-    int number2 = (it2 != end2 ? *it2++: 0);
+    int number1 = (it1 != end1 ? *it1++ : 0);
+    int number2 = (it2 != end2 ? *it2++ : 0);
 
-    if (number1 < number2) return true;
-    if (number1 > number2) return false;
+    if (number1 < number2)
+      return true;
+    if (number1 > number2)
+      return false;
   }
 
   if (m_prereleaseLabel.empty())
@@ -94,8 +95,10 @@ bool Version::operator<(const Version& other) const
     return true;
 
   int res = m_prereleaseLabel.compare(other.m_prereleaseLabel);
-  if (res < 0) return true;
-  if (res > 0) return false;
+  if (res < 0)
+    return true;
+  if (res > 0)
+    return false;
   return (m_prereleaseNumber < other.m_prereleaseNumber);
 }
 
@@ -122,4 +125,4 @@ std::string Version::str() const
   return res;
 }
 
-} // namespace base
+}  // namespace base

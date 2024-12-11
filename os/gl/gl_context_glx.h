@@ -20,18 +20,16 @@ class GLContextGLX : public GLContext {
 public:
   GLContextGLX(::Display* display, ::Window window)
     : m_display(display)
-    , m_window(window) {
+    , m_window(window)
+  {
   }
 
-  ~GLContextGLX() {
-    destroyGLContext();
-  }
+  ~GLContextGLX() { destroyGLContext(); }
 
-  bool isValid() override {
-    return m_glCtx != nullptr;
-  }
+  bool isValid() override { return m_glCtx != nullptr; }
 
-  bool createGLContext() override {
+  bool createGLContext() override
+  {
     GLint attr[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0 };
     XVisualInfo* vi = glXChooseVisual(m_display, 0, attr);
     if (!vi)
@@ -49,28 +47,31 @@ public:
     ::Window root;
     int x, y, w, h;
     unsigned int border_width, depth;
-    XGetGeometry(m_display, m_window, &root,
-                 &x, &y, (unsigned int*)&w, (unsigned int*)&h,
-                 &border_width, &depth);
+    XGetGeometry(m_display,
+                 m_window,
+                 &root,
+                 &x,
+                 &y,
+                 (unsigned int*)&w,
+                 (unsigned int*)&h,
+                 &border_width,
+                 &depth);
     glViewport(0, 0, w, h);
 
     return true;
   }
 
-  void destroyGLContext() override {
+  void destroyGLContext() override
+  {
     if (m_glCtx) {
       glXDestroyContext(m_display, m_glCtx);
       m_glCtx = nullptr;
     }
   }
 
-  void makeCurrent() override {
-    glXMakeCurrent(m_display, m_window, m_glCtx);
-  }
+  void makeCurrent() override { glXMakeCurrent(m_display, m_window, m_glCtx); }
 
-  void swapBuffers() override {
-    glXSwapBuffers(m_display, m_window);
-  }
+  void swapBuffers() override { glXSwapBuffers(m_display, m_window); }
 
 private:
   ::Display* m_display = nullptr;
@@ -78,6 +79,6 @@ private:
   GLXContext m_glCtx = nullptr;
 };
 
-} // namespace os
+}  // namespace os
 
 #endif

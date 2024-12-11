@@ -14,8 +14,8 @@
 inline os::Event generate_drop_files_from_nsarray(NSArray* filenames)
 {
   base::paths files;
-  for (int i=0; i<[filenames count]; ++i) {
-    NSString* fn = [filenames objectAtIndex: i];
+  for (int i = 0; i < [filenames count]; ++i) {
+    NSString* fn = [filenames objectAtIndex:i];
     files.push_back(base::normalize_path([fn UTF8String]));
   }
 

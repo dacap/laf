@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/task.h"
@@ -41,7 +41,7 @@ task_token& task::start(thread_pool& pool)
   m_completed = false;
   m_token.reset();
 
-  pool.execute([this]{ in_worker_thread(); });
+  pool.execute([this] { in_worker_thread(); });
   return m_token;
 }
 
@@ -62,4 +62,4 @@ void task::in_worker_thread()
   m_completed = true;
 }
 
-} // namespace base
+}  // namespace base

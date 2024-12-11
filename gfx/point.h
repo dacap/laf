@@ -20,116 +20,136 @@ class PointT {
 public:
   T x, y;
 
-  PointT() : x(0), y(0) {
+  PointT()
+    : x(0)
+    , y(0)
+  {
   }
 
-  PointT(const T& x, const T& y) : x(x), y(y) {
+  PointT(const T& x, const T& y)
+    : x(x)
+    , y(y)
+  {
   }
 
-  PointT(const PointT& point) : x(point.x), y(point.y) {
+  PointT(const PointT& point)
+    : x(point.x)
+    , y(point.y)
+  {
   }
 
   template<typename U>
-  explicit PointT(const PointT<U>& point) : x(static_cast<T>(point.x)),
-                                            y(static_cast<T>(point.y)) {
+  explicit PointT(const PointT<U>& point)
+    : x(static_cast<T>(point.x))
+    , y(static_cast<T>(point.y))
+  {
   }
 
   template<typename U>
-  explicit PointT(const SizeT<U>& size) : x(size.w), y(size.h) {
+  explicit PointT(const SizeT<U>& size)
+    : x(size.w)
+    , y(size.h)
+  {
   }
 
   template<typename U>
-  PointT& operator=(const PointT<U>& pt) {
+  PointT& operator=(const PointT<U>& pt)
+  {
     x = pt.x;
     y = pt.y;
     return *this;
   }
 
   template<typename U>
-  const PointT& operator+=(const PointT<U>& pt) {
+  const PointT& operator+=(const PointT<U>& pt)
+  {
     x += pt.x;
     y += pt.y;
     return *this;
   }
 
   template<typename U>
-  const PointT& operator-=(const PointT<U>& pt) {
+  const PointT& operator-=(const PointT<U>& pt)
+  {
     x -= pt.x;
     y -= pt.y;
     return *this;
   }
 
-  const PointT& operator+=(const T& value) {
+  const PointT& operator+=(const T& value)
+  {
     x += value;
     y += value;
     return *this;
   }
 
-  const PointT& operator-=(const T& value) {
+  const PointT& operator-=(const T& value)
+  {
     x -= value;
     y -= value;
     return *this;
   }
 
-  const PointT& operator*=(const T& value) {
+  const PointT& operator*=(const T& value)
+  {
     x *= value;
     y *= value;
     return *this;
   }
 
-  const PointT& operator/=(const T& value) {
+  const PointT& operator/=(const T& value)
+  {
     x /= value;
     y /= value;
     return *this;
   }
 
   template<typename U>
-  PointT operator+(const PointT<U>& pt) const {
-    return PointT(x+pt.x, y+pt.y);
+  PointT operator+(const PointT<U>& pt) const
+  {
+    return PointT(x + pt.x, y + pt.y);
   }
 
   template<typename U>
-  PointT operator-(const PointT<U>& pt) const {
-    return PointT(x-pt.x, y-pt.y);
+  PointT operator-(const PointT<U>& pt) const
+  {
+    return PointT(x - pt.x, y - pt.y);
   }
 
-  PointT operator+(const T& value) const {
-    return PointT(x+value, y+value);
+  PointT operator+(const T& value) const
+  {
+    return PointT(x + value, y + value);
   }
 
-  PointT operator-(const T& value) const {
-    return PointT(x-value, y-value);
+  PointT operator-(const T& value) const
+  {
+    return PointT(x - value, y - value);
   }
 
-  PointT operator*(const T& value) const {
-    return PointT(x*value, y*value);
+  PointT operator*(const T& value) const
+  {
+    return PointT(x * value, y * value);
   }
 
-  PointT operator/(const T& value) const {
-    return PointT(x/value, y/value);
+  PointT operator/(const T& value) const
+  {
+    return PointT(x / value, y / value);
   }
 
-  PointT operator-() const {
-    return PointT(-x, -y);
-  }
+  PointT operator-() const { return PointT(-x, -y); }
 
-  bool operator==(const PointT& pt) const {
-    return x == pt.x && y == pt.y;
-  }
+  bool operator==(const PointT& pt) const { return x == pt.x && y == pt.y; }
 
-  bool operator!=(const PointT& pt) const {
-    return x != pt.x || y != pt.y;
-  }
-
+  bool operator!=(const PointT& pt) const { return x != pt.x || y != pt.y; }
 };
 
 typedef PointT<int> Point;
 typedef PointT<double> PointF;
 
-} // namespace gfx
+}  // namespace gfx
 
 #ifdef _DEBUG
-#include "gfx/point_io.h"
+  #include "gfx/point_io.h"
 #endif
 
 #endif

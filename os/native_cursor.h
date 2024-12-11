@@ -13,30 +13,30 @@
 
 namespace os {
 
-  enum class NativeCursor {
-    Hidden,
-    Arrow,
-    Crosshair,
-    IBeam,
-    Wait,
-    Link,
-    Help,
-    Forbidden,
-    Move,
-    SizeNS,
-    SizeWE,
-    SizeN,
-    SizeNE,
-    SizeE,
-    SizeSE,
-    SizeS,
-    SizeSW,
-    SizeW,
-    SizeNW,
+enum class NativeCursor {
+  Hidden,
+  Arrow,
+  Crosshair,
+  IBeam,
+  Wait,
+  Link,
+  Help,
+  Forbidden,
+  Move,
+  SizeNS,
+  SizeWE,
+  SizeN,
+  SizeNE,
+  SizeE,
+  SizeSE,
+  SizeS,
+  SizeSW,
+  SizeW,
+  SizeNW,
 
-    Cursors [[maybe_unused]]
-  };
+  Cursors [[maybe_unused]]
+};
 
-} // namespace os
+}  // namespace os
 
 #endif

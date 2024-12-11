@@ -10,18 +10,18 @@
 
 namespace base {
 
-  class Chrono {
-  public:
-    Chrono();
-    ~Chrono();
-    void reset();
-    double elapsed() const;
+class Chrono {
+public:
+  Chrono();
+  ~Chrono();
+  void reset();
+  double elapsed() const;
 
-  private:
-    class ChronoImpl;
-    ChronoImpl* m_impl;
-  };
+private:
+  class ChronoImpl;
+  ChronoImpl* m_impl;
+};
 
-} // namespace base
+}  // namespace base
 
-#endif // BASE_CHRONO_H_INCLUDED
+#endif  // BASE_CHRONO_H_INCLUDED

@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/window.h"
@@ -111,4 +111,4 @@ void Window::onQueueEvent(Event& ev)
   os::queue_event(ev);
 }
 
-} // namespace os
+}  // namespace os

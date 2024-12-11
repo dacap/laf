@@ -15,105 +15,131 @@
 
 namespace gfx {
 
-  template<typename T> class PointT;
+template<typename T>
+class PointT;
 
-  class Region;
+class Region;
 
-  namespace details {
+namespace details {
 
-  #ifdef PIXMAN_VERSION_MAJOR
-    typedef struct pixman_box32 Box;
-    typedef struct pixman_region32 Region;
-  #else
-    struct Box {
-      int32_t x1, y1, x2, y2;
-    };
-    struct Region {
-      Box extents;
-      void* data;
-    };
-  #endif
+#ifdef PIXMAN_VERSION_MAJOR
+typedef struct pixman_box32 Box;
+typedef struct pixman_region32 Region;
+#else
+struct Box {
+  int32_t x1, y1, x2, y2;
+};
+struct Region {
+  Box extents;
+  void* data;
+};
+#endif
 
-    template<typename T>
-    class RegionIterator {
-    public:
-      using iterator_category = std::forward_iterator_tag;
-      using value_type = T;
-      using difference_type = std::ptrdiff_t;
-      using pointer = T*;
-      using reference = T&;
+template<typename T>
+class RegionIterator {
+public:
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = T;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T*;
+  using reference = T&;
 
-      RegionIterator() : m_ptr(nullptr) { }
-      RegionIterator(const RegionIterator& o) : m_ptr(o.m_ptr) { }
-      template<typename T2>
-      RegionIterator(const RegionIterator<T2>& o) : m_ptr(o.m_ptr) { }
-      RegionIterator& operator=(const RegionIterator& o) { m_ptr = o.m_ptr; return *this; }
-      RegionIterator& operator++() { ++m_ptr; return *this; }
-      RegionIterator operator++(int) { RegionIterator o(*this); ++m_ptr; return o; }
-      bool operator==(const RegionIterator& o) const { return m_ptr == o.m_ptr; }
-      bool operator!=(const RegionIterator& o) const { return m_ptr != o.m_ptr; }
-      reference operator*() {
-        m_rect.x = m_ptr->x1;
-        m_rect.y = m_ptr->y1;
-        m_rect.w = m_ptr->x2 - m_ptr->x1;
-        m_rect.h = m_ptr->y2 - m_ptr->y1;
-        return m_rect;
-      }
-    private:
-      Box* m_ptr;
-      mutable Rect m_rect;
-      template<typename> friend class RegionIterator;
-      friend class ::gfx::Region;
-    };
+  RegionIterator()
+    : m_ptr(nullptr)
+  {
+  }
+  RegionIterator(const RegionIterator& o)
+    : m_ptr(o.m_ptr)
+  {
+  }
+  template<typename T2>
+  RegionIterator(const RegionIterator<T2>& o)
+    : m_ptr(o.m_ptr)
+  {
+  }
+  RegionIterator& operator=(const RegionIterator& o)
+  {
+    m_ptr = o.m_ptr;
+    return *this;
+  }
+  RegionIterator& operator++()
+  {
+    ++m_ptr;
+    return *this;
+  }
+  RegionIterator operator++(int)
+  {
+    RegionIterator o(*this);
+    ++m_ptr;
+    return o;
+  }
+  bool operator==(const RegionIterator& o) const { return m_ptr == o.m_ptr; }
+  bool operator!=(const RegionIterator& o) const { return m_ptr != o.m_ptr; }
+  reference operator*()
+  {
+    m_rect.x = m_ptr->x1;
+    m_rect.y = m_ptr->y1;
+    m_rect.w = m_ptr->x2 - m_ptr->x1;
+    m_rect.h = m_ptr->y2 - m_ptr->y1;
+    return m_rect;
+  }
 
-  } // namespace details
+private:
+  Box* m_ptr;
+  mutable Rect m_rect;
+  template<typename>
+  friend class RegionIterator;
+  friend class ::gfx::Region;
+};
 
-  class Region {
-  public:
-    enum Overlap { Out, In, Part };
+}  // namespace details
 
-    using iterator = details::RegionIterator<Rect>;
-    using const_iterator = details::RegionIterator<const Rect>;
+class Region {
+public:
+  enum Overlap { Out, In, Part };
 
-    Region();
-    Region(const Region& copy);
-    explicit Region(const Rect& rect);
-    Region& operator=(const Rect& rect);
-    Region& operator=(const Region& copy);
-    ~Region();
+  using iterator = details::RegionIterator<Rect>;
+  using const_iterator = details::RegionIterator<const Rect>;
 
-    iterator begin();
-    iterator end();
-    const_iterator begin() const;
-    const_iterator end() const;
+  Region();
+  Region(const Region& copy);
+  explicit Region(const Rect& rect);
+  Region& operator=(const Rect& rect);
+  Region& operator=(const Region& copy);
+  ~Region();
 
-    bool isEmpty() const;
-    bool isRect() const;
-    bool isComplex() const;
-    std::size_t size() const;
-    Rect bounds() const;
+  iterator begin();
+  iterator end();
+  const_iterator begin() const;
+  const_iterator end() const;
 
-    void clear();
+  bool isEmpty() const;
+  bool isRect() const;
+  bool isComplex() const;
+  std::size_t size() const;
+  Rect bounds() const;
 
-    void offset(int dx, int dy);
-    void offset(const PointT<int>& delta);
+  void clear();
 
-    Region& createIntersection(const Region& a, const Region& b);
-    Region& createUnion(const Region& a, const Region& b);
-    Region& createSubtraction(const Region& a, const Region& b);
+  void offset(int dx, int dy);
+  void offset(const PointT<int>& delta);
 
-    bool contains(const PointT<int>& pt) const;
-    Overlap contains(const Rect& rect) const;
+  Region& createIntersection(const Region& a, const Region& b);
+  Region& createUnion(const Region& a, const Region& b);
+  Region& createSubtraction(const Region& a, const Region& b);
 
-    Region& operator+=(const Region& b) { return createUnion(*this, b); }
-    Region& operator|=(const Region& b) { return createUnion(*this, b); }
-    Region& operator&=(const Region& b) { return createIntersection(*this, b); }
-    Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
+  bool contains(const PointT<int>& pt) const;
+  Overlap contains(const Rect& rect) const;
 
-  private:
-    mutable details::Region m_region;
-  };
+  Region& operator+=(const Region& b) { return createUnion(*this, b); }
+  Region& operator|=(const Region& b) { return createUnion(*this, b); }
+  Region& operator&=(const Region& b) { return createIntersection(*this, b); }
+  Region& operator-=(const Region& b) { return createSubtraction(*this, b); }
 
-} // namespace gfx
+private:
+  mutable details::Region m_region;
+};
+
+}  // namespace gfx
 
 #endif

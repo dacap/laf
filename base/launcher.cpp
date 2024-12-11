@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/exception.h"
@@ -17,12 +17,14 @@
 #include <cstdlib>
 
 #if LAF_WINDOWS
-#include <windows.h>
-#ifndef SEE_MASK_DEFAULT
-#define SEE_MASK_DEFAULT 0x00000000
-#endif
+  #include <windows.h>
+  #ifndef SEE_MASK_DEFAULT
+    #define SEE_MASK_DEFAULT 0x00000000
+  #endif
 
-static int win32_shell_execute(const wchar_t* verb, const wchar_t* file, const wchar_t* params)
+static int win32_shell_execute(const wchar_t* verb,
+                               const wchar_t* file,
+                               const wchar_t* params)
 {
   SHELLEXECUTEINFO sh;
   ZeroMemory((LPVOID)&sh, sizeof(sh));
@@ -35,7 +37,7 @@ static int win32_shell_execute(const wchar_t* verb, const wchar_t* file, const w
 
   if (!ShellExecuteEx(&sh)) {
     int ret = GetLastError();
-#if 0
+  #if 0
     if (ret != 0) {
       DWORD flags =
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -53,7 +55,7 @@ static int win32_shell_execute(const wchar_t* verb, const wchar_t* file, const w
         ret = 0;
       }
     }
-#endif
+  #endif
     return ret;
   }
   else
@@ -61,8 +63,7 @@ static int win32_shell_execute(const wchar_t* verb, const wchar_t* file, const w
 }
 #endif  // LAF_WINDOWS
 
-namespace base {
-namespace launcher {
+namespace base { namespace launcher {
 
 bool open_url(const std::string& url)
 {
@@ -75,15 +76,14 @@ bool open_file(const std::string& file)
 
 #if LAF_WINDOWS
 
-  ret = win32_shell_execute(L"open",
-                            base::from_utf8(file).c_str(), NULL);
+  ret = win32_shell_execute(L"open", base::from_utf8(file).c_str(), NULL);
 
 #elif HAVE_SYSTEM
 
   #if __APPLE__
-    ret = std::system(("open \"" + file + "\"").c_str());
+  ret = std::system(("open \"" + file + "\"").c_str());
   #else
-    ret = std::system(("setsid xdg-open \"" + file + "\"").c_str());
+  ret = std::system(("setsid xdg-open \"" + file + "\"").c_str());
   #endif
 
 #endif
@@ -99,11 +99,13 @@ bool open_folder(const std::string& _file)
 
   int ret;
   if (base::is_directory(file)) {
-    ret = win32_shell_execute(NULL, L"explorer",
-      (L"/n,/e,\"" + base::from_utf8(file) + L"\"").c_str());
+    ret = win32_shell_execute(
+      NULL, L"explorer", (L"/n,/e,\"" + base::from_utf8(file) + L"\"").c_str());
   }
   else {
-    ret = win32_shell_execute(NULL, L"explorer",
+    ret = win32_shell_execute(
+      NULL,
+      L"explorer",
       (L"/e,/select,\"" + base::from_utf8(file) + L"\"").c_str());
   }
   return (ret == 0);
@@ -112,20 +114,20 @@ bool open_folder(const std::string& _file)
 
   #if __APPLE__
 
-    int ret;
-    if (base::is_directory(file))
-      ret = std::system(("open \"" + file + "\"").c_str());
-    else
-      ret = std::system(("open --reveal \"" + file + "\"").c_str());
-    return (ret == 0);
+  int ret;
+  if (base::is_directory(file))
+    ret = std::system(("open \"" + file + "\"").c_str());
+  else
+    ret = std::system(("open --reveal \"" + file + "\"").c_str());
+  return (ret == 0);
 
   #else
 
-    if (!base::is_directory(file))
-      file = base::get_file_path(file);
+  if (!base::is_directory(file))
+    file = base::get_file_path(file);
 
-    const int ret = std::system(("setsid xdg-open \"" + file + "\"").c_str());
-    return (ret == 0);
+  const int ret = std::system(("setsid xdg-open \"" + file + "\"").c_str());
+  return (ret == 0);
 
   #endif
 
@@ -136,5 +138,4 @@ bool open_folder(const std::string& _file)
 #endif
 }
 
-} // namespace launcher
-} // namespace base
+}}  // namespace base::launcher

@@ -10,8 +10,8 @@
 
 namespace os {
 
-  enum class AppMode { CLI, GUI };
+enum class AppMode { CLI, GUI };
 
-} // namespace os
+}  // namespace os
 
 #endif

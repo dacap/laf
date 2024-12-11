@@ -21,9 +21,16 @@ int app_main(int argc, char* argv[])
     auto rc = screen->bounds();
     auto wa = screen->workarea();
     std::printf("%sscreen=%d bounds=(%d %d %d %d) workarea=(%d %d %d %d)\n",
-                screen->isMainScreen() ? "main ": "",
-                i++, rc.x, rc.y, rc.w, rc.h,
-                wa.x, wa.y, wa.w, wa.h);
+                screen->isMainScreen() ? "main " : "",
+                i++,
+                rc.x,
+                rc.y,
+                rc.w,
+                rc.h,
+                wa.x,
+                wa.y,
+                wa.w,
+                wa.h);
   }
   return 0;
 }

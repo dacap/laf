@@ -10,31 +10,31 @@
 #pragma once
 
 #if LAF_WINDOWS
-  #include <windows.h>
   #include <dbghelp.h>
+  #include <windows.h>
 #endif
 
 #include "base/string.h"
 
 static std::wstring memoryDumpFile;
 
-class base::MemoryDump::MemoryDumpImpl
-{
+class base::MemoryDump::MemoryDumpImpl {
 public:
-  MemoryDumpImpl() {
+  MemoryDumpImpl()
+  {
     memoryDumpFile = L"memory.dmp";
     ::SetUnhandledExceptionFilter(MemoryDumpImpl::unhandledException);
   }
 
-  ~MemoryDumpImpl() {
-    ::SetUnhandledExceptionFilter(NULL);
-  }
+  ~MemoryDumpImpl() { ::SetUnhandledExceptionFilter(NULL); }
 
-  void setFileName(const std::string& fileName) {
+  void setFileName(const std::string& fileName)
+  {
     memoryDumpFile = base::from_utf8(fileName);
   }
 
-  static LONG WINAPI unhandledException(_EXCEPTION_POINTERS* exceptionPointers) {
+  static LONG WINAPI unhandledException(_EXCEPTION_POINTERS* exceptionPointers)
+  {
     MemoryDumpImpl::createMemoryDump(exceptionPointers);
     return EXCEPTION_EXECUTE_HANDLER;
   }
@@ -42,36 +42,40 @@ public:
 private:
   class MemoryDumpFile {
   public:
-    MemoryDumpFile() {
+    MemoryDumpFile()
+    {
       m_handle = ::CreateFile(memoryDumpFile.c_str(),
-                              GENERIC_WRITE, 0, NULL,
-                              CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+                              GENERIC_WRITE,
+                              0,
+                              NULL,
+                              CREATE_ALWAYS,
+                              FILE_ATTRIBUTE_NORMAL,
+                              NULL);
     }
-    ~MemoryDumpFile() {
-      ::CloseHandle(m_handle);
-    }
+    ~MemoryDumpFile() { ::CloseHandle(m_handle); }
     HANDLE handle() { return m_handle; }
+
   private:
     HANDLE m_handle;
   };
 
-  static void createMemoryDump(_EXCEPTION_POINTERS* exceptionPointers) {
+  static void createMemoryDump(_EXCEPTION_POINTERS* exceptionPointers)
+  {
     MemoryDumpFile file;
 
     MINIDUMP_EXCEPTION_INFORMATION ei;
-    ei.ThreadId           = GetCurrentThreadId();
-    ei.ExceptionPointers  = exceptionPointers;
-    ei.ClientPointers     = FALSE;
+    ei.ThreadId = GetCurrentThreadId();
+    ei.ExceptionPointers = exceptionPointers;
+    ei.ClientPointers = FALSE;
 
     ::MiniDumpWriteDump(::GetCurrentProcess(),
                         ::GetCurrentProcessId(),
                         file.handle(),
                         MiniDumpNormal,
-                        (exceptionPointers ? &ei: NULL),
+                        (exceptionPointers ? &ei : NULL),
                         NULL,
                         NULL);
-
   }
 };
 
-#endif // BASE_MEMORY_DUMP_WIN32_H_INCLUDED
+#endif  // BASE_MEMORY_DUMP_WIN32_H_INCLUDED

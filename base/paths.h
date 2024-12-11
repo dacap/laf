@@ -13,8 +13,8 @@
 
 namespace base {
 
-  typedef std::vector<std::string> paths;
+typedef std::vector<std::string> paths;
 
-} // namespace base
+}  // namespace base
 
 #endif

@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "base/convert_to.h"
@@ -24,14 +24,15 @@ Uuid Uuid::Generate()
     uuid = base::convert_to<Uuid>(std::string((const char*)buf.data()));
 
 #if LAF_BASE_TRACE_UUID
-    if (buf[buf.size()-1] == '\n')
-      buf[buf.size()-1] = 0;
+    if (buf[buf.size() - 1] == '\n')
+      buf[buf.size() - 1] = 0;
     printf("convert_to  = \"%s\"\n"
            "random/uuid = \"%s\"\n",
-           base::convert_to<std::string>(uuid).c_str(), buf.data());
+           base::convert_to<std::string>(uuid).c_str(),
+           buf.data());
 #endif
   }
   return uuid;
 }
 
-} // namespace base
+}  // namespace base

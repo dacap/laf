@@ -5,7 +5,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "pixman.h"
@@ -23,9 +23,7 @@ namespace gfx {
 inline Rect to_rect(const pixman_box32& extends)
 {
   return Rect(
-    extends.x1, extends.y1,
-    extends.x2 - extends.x1,
-    extends.y2 - extends.y1);
+    extends.x1, extends.y1, extends.x2 - extends.x1, extends.y2 - extends.y1);
 }
 
 Region::Region()
@@ -99,7 +97,7 @@ Region::const_iterator Region::end() const
 
 bool Region::isEmpty() const
 {
-  return (pixman_region32_not_empty(&m_region) ? false: true);
+  return (pixman_region32_not_empty(&m_region) ? false : true);
 }
 
 bool Region::isRect() const
@@ -157,18 +155,19 @@ Region& Region::createSubtraction(const Region& a, const Region& b)
 
 bool Region::contains(const PointT<int>& pt) const
 {
-  return pixman_region32_contains_point(&m_region, pt.x, pt.y, NULL) ? true: false;
+  return pixman_region32_contains_point(&m_region, pt.x, pt.y, NULL) ? true :
+                                                                       false;
 }
 
 Region::Overlap Region::contains(const Rect& rect) const
 {
-  static_assert(
-    int(Out)   == int(PIXMAN_REGION_OUT) &&
-    int(In)    == int(PIXMAN_REGION_IN) &&
-    int(Part)  == int(PIXMAN_REGION_PART), "Pixman constants have changed");
+  static_assert(int(Out) == int(PIXMAN_REGION_OUT) &&
+                  int(In) == int(PIXMAN_REGION_IN) &&
+                  int(Part) == int(PIXMAN_REGION_PART),
+                "Pixman constants have changed");
 
   pixman_box32 box = { rect.x, rect.y, rect.x2(), rect.y2() };
   return (Region::Overlap)pixman_region32_contains_rectangle(&m_region, &box);
 }
 
-} // namespace gfx
+}  // namespace gfx

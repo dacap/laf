@@ -12,30 +12,34 @@
 #include "base/string.h"
 #include "ft/face.h"
 
-#include <hb.h>
 #include <hb-ft.h>
+#include <hb.h>
 
 namespace ft {
 
-  template<typename FaceFT>
-  class HBFace : public FaceFT {
-  public:
-    HBFace(FT_Face face) : FaceFT(face) {
-      m_font = (face ? hb_ft_font_create((FT_Face)face, nullptr): nullptr);
-    }
+template<typename FaceFT>
+class HBFace : public FaceFT {
+public:
+  HBFace(FT_Face face)
+    : FaceFT(face)
+  {
+    m_font = (face ? hb_ft_font_create((FT_Face)face, nullptr) : nullptr);
+  }
 
-    ~HBFace() {
-      if (m_font) hb_font_destroy(m_font);
-    }
+  ~HBFace()
+  {
+    if (m_font)
+      hb_font_destroy(m_font);
+  }
 
-    hb_font_t* font() const { return m_font; }
+  hb_font_t* font() const { return m_font; }
 
-  private:
-    hb_font_t* m_font;
-  };
+private:
+  hb_font_t* m_font;
+};
 
-  typedef HBFace<FaceFT<SimpleCache> > Face;
+typedef HBFace<FaceFT<SimpleCache>> Face;
 
-} // namespace ft
+}  // namespace ft
 
 #endif

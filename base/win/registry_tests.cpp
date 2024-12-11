@@ -17,8 +17,7 @@ TEST(Registry, OpenKey)
   try {
     hkey k = hkey::classes_root();
     k = k.open(".txt", hkey::read);
-    EXPECT_TRUE(k.string("") == "txtfile" ||
-                k.string("") == "txtfilelegacy");
+    EXPECT_TRUE(k.string("") == "txtfile" || k.string("") == "txtfilelegacy");
     EXPECT_EQ("text/plain", k.string("Content Type"));
   }
   catch (Win32Exception& ex) {
@@ -50,8 +49,8 @@ TEST(Registry, CreateKey)
     // We cannot use k.delete_tree("") because it does delete the
     // whole tree, but leaves the root key untouched.
 
-    hkey::current_user()
-      .delete_tree("Software\\Classes\\.laf-base-test-extension");
+    hkey::current_user().delete_tree(
+      "Software\\Classes\\.laf-base-test-extension");
   }
   catch (Win32Exception& ex) {
     printf("Win32Exception: %s\nError Code: %d\n", ex.what(), ex.errorCode());

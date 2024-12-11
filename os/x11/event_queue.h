@@ -34,6 +34,6 @@ private:
 
 using EventQueueImpl = EventQueueX11;
 
-} // namespace os
+}  // namespace os
 
 #endif

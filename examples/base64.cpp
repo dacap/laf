@@ -19,7 +19,7 @@ int app_main(int argc, char* argv[])
   std::string fn;
   bool decode = false;
 
-  for (int i=1; i<argc; ++i) {
+  for (int i = 1; i < argc; ++i) {
     if (std::strcmp(argv[i], "-d") == 0)
       decode = true;
     else

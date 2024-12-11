@@ -7,18 +7,19 @@
 
 #include <gtest/gtest.h>
 
-#include "base/version.h"
 #include "base/convert_to.h"
+#include "base/version.h"
 
 using namespace base;
 
 namespace base {
 
-  std::ostream& operator<<(std::ostream& os, const Version& ver) {
-    return os << ver.str();
-  }
-
+std::ostream& operator<<(std::ostream& os, const Version& ver)
+{
+  return os << ver.str();
 }
+
+}  // namespace base
 
 TEST(Version, Ctor)
 {

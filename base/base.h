@@ -36,23 +36,21 @@
 
 #undef ABS
 #undef SGN
-#define ABS(x)       (((x) >= 0) ? (x) : (-(x)))
-#define SGN(x)       (((x) >= 0) ? 1 : -1)
-
-
+#define ABS(x) (((x) >= 0) ? (x) : (-(x)))
+#define SGN(x) (((x) >= 0) ? 1 : -1)
 
 //////////////////////////////////////////////////////////////////////
 // Overloaded new/delete operators to detect memory-leaks
 
 #if defined __cplusplus && defined LAF_MEMLEAK
 
-#include <new>
+  #include <new>
 
-#ifdef _NOEXCEPT
-  #define LAF_NOEXCEPT _NOEXCEPT
-#else
-  #define LAF_NOEXCEPT
-#endif
+  #ifdef _NOEXCEPT
+    #define LAF_NOEXCEPT _NOEXCEPT
+  #else
+    #define LAF_NOEXCEPT
+  #endif
 
 void* operator new(std::size_t size);
 void* operator new[](std::size_t size);

@@ -6,7 +6,7 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "gfx/hsv.h"
@@ -22,7 +22,8 @@ Hsv::Hsv(double hue, double saturation, double value)
   : m_hue(hue)
   , m_saturation(std::clamp(saturation, 0.0, 1.0))
   , m_value(std::clamp(value, 0.0, 1.0))
-{ }
+{
+}
 
 // Reference: http://en.wikipedia.org/wiki/HSL_and_HSV
 Hsv::Hsv(const Rgb& rgb)
@@ -36,13 +37,13 @@ Hsv::Hsv(const Rgb& rgb)
   double h, s;
 
   if (c == 0) {
-    h = 0.0; // Undefined Hue because max == min
+    h = 0.0;  // Undefined Hue because max == min
     s = 0.0;
   }
   else {
-    const double r = double(rgb.red())   / 255.0;
+    const double r = double(rgb.red()) / 255.0;
     const double g = double(rgb.green()) / 255.0;
-    const double b = double(rgb.blue())  / 255.0;
+    const double b = double(rgb.blue()) / 255.0;
 
     if (M == rgb.red()) {
       hue_prime = (g - b) / chroma;
@@ -74,12 +75,12 @@ int Hsv::hueInt() const
 
 int Hsv::saturationInt() const
 {
-  return int(std::floor(m_saturation*100.0 + 0.5));
+  return int(std::floor(m_saturation * 100.0 + 0.5));
 }
 
 int Hsv::valueInt() const
 {
-  return int(std::floor(m_value*100.0 + 0.5));
+  return int(std::floor(m_value * 100.0 + 0.5));
 }
 
-} // namespace gfx
+}  // namespace gfx

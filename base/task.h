@@ -16,71 +16,76 @@
 
 namespace base {
 
-  class task;
-  class thread_pool;
+class task;
+class thread_pool;
 
-  class task_token {
-    friend class task;
-  public:
-    task_token()
-      : m_canceled(false)
-      , m_progress(0.0f)
-      , m_progress_min(0.0f)
-      , m_progress_max(1.0f) { }
+class task_token {
+  friend class task;
 
-    bool canceled() const { return m_canceled; }
-    float progress() const { return m_progress; }
+public:
+  task_token()
+    : m_canceled(false)
+    , m_progress(0.0f)
+    , m_progress_min(0.0f)
+    , m_progress_max(1.0f)
+  {
+  }
 
-    void cancel() { m_canceled = true; }
-    void set_progress(float p) {
-      ASSERT(p >= 0.0f && p <= 1.0f);
-      m_progress = m_progress_min
-        + p * (m_progress_max - m_progress_min);
-    }
-    void set_progress_range(float min, float max) {
-      m_progress_min = min;
-      m_progress_max = max;
-    }
+  bool canceled() const { return m_canceled; }
+  float progress() const { return m_progress; }
 
-  private:
-    void reset() {
-      m_canceled = false;
-      m_progress = 0.0f;
-    }
+  void cancel() { m_canceled = true; }
+  void set_progress(float p)
+  {
+    ASSERT(p >= 0.0f && p <= 1.0f);
+    m_progress = m_progress_min + p * (m_progress_max - m_progress_min);
+  }
+  void set_progress_range(float min, float max)
+  {
+    m_progress_min = min;
+    m_progress_max = max;
+  }
 
-    std::atomic<bool> m_canceled;
-    std::atomic<float> m_progress;
-    float m_progress_min, m_progress_max;
-  };
+private:
+  void reset()
+  {
+    m_canceled = false;
+    m_progress = 0.0f;
+  }
 
-  class task {
-  public:
-    typedef std::function<void(task_token&)> func_t;
+  std::atomic<bool> m_canceled;
+  std::atomic<float> m_progress;
+  float m_progress_min, m_progress_max;
+};
 
-    task();
-    ~task();
+class task {
+public:
+  typedef std::function<void(task_token&)> func_t;
 
-    void on_execute(func_t&& f) { m_execute = std::move(f); }
+  task();
+  ~task();
 
-    task_token& start(thread_pool& pool);
+  void on_execute(func_t&& f) { m_execute = std::move(f); }
 
-    bool running() const { return m_running; }
+  task_token& start(thread_pool& pool);
 
-    // Returns true when the task is completed (whether it was
-    // canceled or not). If this is true, it's safe to delete the task
-    // instance (it will not be used anymore by any othe background
-    // thread).
-    bool completed() const { return m_completed; }
+  bool running() const { return m_running; }
 
-  private:
-    void in_worker_thread();
+  // Returns true when the task is completed (whether it was
+  // canceled or not). If this is true, it's safe to delete the task
+  // instance (it will not be used anymore by any othe background
+  // thread).
+  bool completed() const { return m_completed; }
 
-    std::atomic<bool> m_running;
-    std::atomic<bool> m_completed;
-    task_token m_token;
-    func_t m_execute;
-  };
+private:
+  void in_worker_thread();
 
-} // namespace base
+  std::atomic<bool> m_running;
+  std::atomic<bool> m_completed;
+  task_token m_token;
+  func_t m_execute;
+};
+
+}  // namespace base
 
 #endif

@@ -13,9 +13,12 @@
 
 namespace gfx {
 
-template<typename T> class PointT;
-template<typename T> class SizeT;
-template<typename T> class BorderT;
+template<typename T>
+class PointT;
+template<typename T>
+class SizeT;
+template<typename T>
+class BorderT;
 
 // A rectangle.
 template<typename T>
@@ -23,39 +26,59 @@ class RectT {
 public:
   T x, y, w, h;
 
-  T x2() const { return x+w; }
-  T y2() const { return y+h; }
+  T x2() const { return x + w; }
+  T y2() const { return y + h; }
 
   // Creates a new empty rectangle with the origin in 0,0.
-  RectT() : x(0), y(0), w(0), h(0) {
+  RectT()
+    : x(0)
+    , y(0)
+    , w(0)
+    , h(0)
+  {
   }
 
   // Creates a new rectangle with the specified size with the origin in 0,0.
-  RectT(const T& w, const T& h) :
-    x(0), y(0),
-    w(w), h(h) {
+  RectT(const T& w, const T& h)
+    : x(0)
+    , y(0)
+    , w(w)
+    , h(h)
+  {
   }
 
   // Creates a new rectangle with the specified size with the origin in 0,0.
-  explicit RectT(const SizeT<T>& size) :
-    x(0), y(0),
-    w(size.w), h(size.h) {
+  explicit RectT(const SizeT<T>& size)
+    : x(0)
+    , y(0)
+    , w(size.w)
+    , h(size.h)
+  {
   }
 
-  RectT(const RectT<T>& rect) :
-    x(rect.x), y(rect.y),
-    w(rect.w), h(rect.h) {
+  RectT(const RectT<T>& rect)
+    : x(rect.x)
+    , y(rect.y)
+    , w(rect.w)
+    , h(rect.h)
+  {
   }
 
   template<typename U>
-  RectT(const RectT<U>& rect) :
-    x(static_cast<T>(rect.x)), y(static_cast<T>(rect.y)),
-    w(static_cast<T>(rect.w)), h(static_cast<T>(rect.h)) {
+  RectT(const RectT<U>& rect)
+    : x(static_cast<T>(rect.x))
+    , y(static_cast<T>(rect.y))
+    , w(static_cast<T>(rect.w))
+    , h(static_cast<T>(rect.h))
+  {
   }
 
-  RectT(const PointT<T>& point, const SizeT<T>& size) :
-    x(point.x), y(point.y),
-    w(size.w), h(size.h) {
+  RectT(const PointT<T>& point, const SizeT<T>& size)
+    : x(point.x)
+    , y(point.y)
+    , w(size.w)
+    , h(size.h)
+  {
   }
 
   // Creates a new rectangle with the origin in point1 and size
@@ -71,7 +94,8 @@ public:
   //
   // See that point2 isn't included in the rectangle, it's like the
   // point returned by point2() member function.
-  RectT(const PointT<T>& point1, const PointT<T>& point2) {
+  RectT(const PointT<T>& point1, const PointT<T>& point2)
+  {
     PointT<T> leftTop = point1;
     PointT<T> rightBottom = point2;
     T t;
@@ -94,89 +118,93 @@ public:
     this->h = rightBottom.y - leftTop.y;
   }
 
-  RectT(const T& x, const T& y, const T& w, const T& h) : x(x), y(y), w(w), h(h) {
+  RectT(const T& x, const T& y, const T& w, const T& h)
+    : x(x)
+    , y(y)
+    , w(w)
+    , h(h)
+  {
   }
 
   // Verifies if the width and/or height of the rectangle are less or
   // equal than zero.
-  bool isEmpty() const {
-    return (w <= 0 || h <= 0);
-  }
+  bool isEmpty() const { return (w <= 0 || h <= 0); }
 
   // Returns the middle point of the rectangle (x+w/2, y+h/2).
-  PointT<T> center() const {
-    return PointT<T>(x+w/2, y+h/2);
-  }
+  PointT<T> center() const { return PointT<T>(x + w / 2, y + h / 2); }
 
   // Returns the point in the upper-left corner (that is inside the
   // rectangle).
-  PointT<T> origin() const {
-    return PointT<T>(x, y);
-  }
+  PointT<T> origin() const { return PointT<T>(x, y); }
 
   // Returns point in the lower-right corner that is outside the
   // rectangle (x+w, y+h).
-  PointT<T> point2() const {
-    return PointT<T>(x+w, y+h);
-  }
+  PointT<T> point2() const { return PointT<T>(x + w, y + h); }
 
-  SizeT<T> size() const {
-    return SizeT<T>(w, h);
-  }
+  SizeT<T> size() const { return SizeT<T>(w, h); }
 
-  RectT& setOrigin(const PointT<T>& pt) {
+  RectT& setOrigin(const PointT<T>& pt)
+  {
     x = pt.x;
     y = pt.y;
     return *this;
   }
 
-  RectT& setSize(const SizeT<T>& sz) {
+  RectT& setSize(const SizeT<T>& sz)
+  {
     w = sz.w;
     h = sz.h;
     return *this;
   }
 
   // Moves the rectangle origin in the specified delta.
-  RectT& offset(const T& dx, const T& dy) {
+  RectT& offset(const T& dx, const T& dy)
+  {
     x += dx;
     y += dy;
     return *this;
   }
 
   template<typename U>
-  RectT& offset(const PointT<U>& delta) {
+  RectT& offset(const PointT<U>& delta)
+  {
     x += delta.x;
     y += delta.y;
     return *this;
   }
 
-  RectT& inflate(const T& delta) {
+  RectT& inflate(const T& delta)
+  {
     w += delta;
     h += delta;
     return *this;
   }
 
-  RectT& inflate(const T& dw, const T& dh) {
+  RectT& inflate(const T& dw, const T& dh)
+  {
     w += dw;
     h += dh;
     return *this;
   }
 
-  RectT& inflate(const SizeT<T>& delta) {
+  RectT& inflate(const SizeT<T>& delta)
+  {
     w += delta.w;
     h += delta.h;
     return *this;
   }
 
-  RectT& enlarge(const T& unit) {
+  RectT& enlarge(const T& unit)
+  {
     x -= unit;
     y -= unit;
-    w += unit*2;
-    h += unit*2;
+    w += unit * 2;
+    h += unit * 2;
     return *this;
   }
 
-  RectT& enlarge(const BorderT<T>& br) {
+  RectT& enlarge(const BorderT<T>& br)
+  {
     x -= br.left();
     y -= br.top();
     w += br.left() + br.right();
@@ -184,27 +212,31 @@ public:
     return *this;
   }
 
-  RectT& enlargeXW(const T& unit) {
+  RectT& enlargeXW(const T& unit)
+  {
     x -= unit;
-    w += unit*2;
+    w += unit * 2;
     return *this;
   }
 
-  RectT& enlargeYH(const T& unit) {
+  RectT& enlargeYH(const T& unit)
+  {
     y -= unit;
-    h += unit*2;
+    h += unit * 2;
     return *this;
   }
 
-  RectT& shrink(const T& unit) {
+  RectT& shrink(const T& unit)
+  {
     x += unit;
     y += unit;
-    w -= unit*2;
-    h -= unit*2;
+    w -= unit * 2;
+    h -= unit * 2;
     return *this;
   }
 
-  RectT& shrink(const BorderT<T>& br) {
+  RectT& shrink(const BorderT<T>& br)
+  {
     x += br.left();
     y += br.top();
     w -= br.left() + br.right();
@@ -233,79 +265,80 @@ public:
   //   gfx::Rect bounds = boundsF;
   //   ASSERT(bounds == gfx::Rect(0, 0, 1, 2));
   //
-  RectT& floor() {
+  RectT& floor()
+  {
     x = std::floor(x);
     y = std::floor(y);
     return *this;
   }
 
   // Returns true if this rectangle encloses the pt point.
-  bool contains(const PointT<T>& pt) const {
-    return
-      pt.x >= x && pt.x < x+w &&
-      pt.y >= y && pt.y < y+h;
+  bool contains(const PointT<T>& pt) const
+  {
+    return pt.x >= x && pt.x < x + w && pt.y >= y && pt.y < y + h;
   }
 
-  bool contains(const T& u, const T& v) const {
-    return
-      u >= x && u < x+w &&
-      v >= y && v < y+h;
+  bool contains(const T& u, const T& v) const
+  {
+    return u >= x && u < x + w && v >= y && v < y + h;
   }
 
   // Returns true if this rectangle entirely contains the rc rectangle.
-  bool contains(const RectT& rc) const {
+  bool contains(const RectT& rc) const
+  {
     if (isEmpty() || rc.isEmpty())
       return false;
 
-    return
-      rc.x >= x && rc.x+rc.w <= x+w &&
-      rc.y >= y && rc.y+rc.h <= y+h;
+    return rc.x >= x && rc.x + rc.w <= x + w && rc.y >= y &&
+           rc.y + rc.h <= y + h;
   }
 
   // Returns true if the intersection between this rectangle with rc
   // rectangle is not empty.
-  bool intersects(const RectT& rc) const {
+  bool intersects(const RectT& rc) const
+  {
     if (isEmpty() || rc.isEmpty())
       return false;
 
-    return
-      rc.x < x+w && rc.x+rc.w > x &&
-      rc.y < y+h && rc.y+rc.h > y;
+    return rc.x < x + w && rc.x + rc.w > x && rc.y < y + h && rc.y + rc.h > y;
   }
 
   // Returns the union rectangle between this and rc rectangle.
-  RectT createUnion(const RectT& rc) const {
+  RectT createUnion(const RectT& rc) const
+  {
     if (isEmpty())
       return rc;
     if (rc.isEmpty())
       return *this;
-    return RectT(PointT<T>(x < rc.x ? x: rc.x,
-                           y < rc.y ? y: rc.y),
-                 PointT<T>(x+w > rc.x+rc.w ? x+w: rc.x+rc.w,
-                           y+h > rc.y+rc.h ? y+h: rc.y+rc.h));
+    return RectT(PointT<T>(x < rc.x ? x : rc.x, y < rc.y ? y : rc.y),
+                 PointT<T>(x + w > rc.x + rc.w ? x + w : rc.x + rc.w,
+                           y + h > rc.y + rc.h ? y + h : rc.y + rc.h));
   }
 
   // Returns the intersection rectangle between this and rc rectangles.
-  RectT createIntersection(const RectT& rc) const {
+  RectT createIntersection(const RectT& rc) const
+  {
     if (intersects(rc))
-      return RectT(PointT<T>(x > rc.x ? x: rc.x,
-                             y > rc.y ? y: rc.y),
-                   PointT<T>(x+w < rc.x+rc.w ? x+w: rc.x+rc.w,
-                             y+h < rc.y+rc.h ? y+h: rc.y+rc.h));
+      return RectT(PointT<T>(x > rc.x ? x : rc.x, y > rc.y ? y : rc.y),
+                   PointT<T>(x + w < rc.x + rc.w ? x + w : rc.x + rc.w,
+                             y + h < rc.y + rc.h ? y + h : rc.y + rc.h));
     return RectT();
   }
 
-  const RectT& operator+=(const BorderT<T>& br) {
+  const RectT& operator+=(const BorderT<T>& br)
+  {
     enlarge(br);
     return *this;
   }
 
-  const RectT& operator-=(const BorderT<T>& br) {
+  const RectT& operator-=(const BorderT<T>& br)
+  {
     shrink(br);
     return *this;
   }
 
-  RectT& operator*=(const T factor) {
+  RectT& operator*=(const T factor)
+  {
     x *= factor;
     y *= factor;
     w *= factor;
@@ -313,7 +346,8 @@ public:
     return *this;
   }
 
-  RectT& operator/=(const T factor) {
+  RectT& operator/=(const T factor)
+  {
     x /= factor;
     y /= factor;
     w /= factor;
@@ -321,7 +355,8 @@ public:
     return *this;
   }
 
-  RectT& operator*=(const SizeT<T>& size) {
+  RectT& operator*=(const SizeT<T>& size)
+  {
     x *= size.w;
     y *= size.h;
     w *= size.w;
@@ -329,7 +364,8 @@ public:
     return *this;
   }
 
-  RectT& operator/=(const SizeT<T>& size) {
+  RectT& operator/=(const SizeT<T>& size)
+  {
     x /= size.w;
     y /= size.h;
     w /= size.w;
@@ -337,72 +373,71 @@ public:
     return *this;
   }
 
-  const RectT& operator|=(const RectT& rc) {
-    return *this = createUnion(rc);
-  }
+  const RectT& operator|=(const RectT& rc) { return *this = createUnion(rc); }
 
-  const RectT& operator&=(const RectT& rc) {
+  const RectT& operator&=(const RectT& rc)
+  {
     return *this = createIntersection(rc);
   }
 
-  RectT operator+(const BorderT<T>& br) const {
+  RectT operator+(const BorderT<T>& br) const
+  {
     return RectT(*this).enlarge(br);
   }
 
-  RectT operator-(const BorderT<T>& br) const {
+  RectT operator-(const BorderT<T>& br) const
+  {
     return RectT(*this).shrink(br);
   }
 
-  RectT operator|(const RectT& other) const {
-    return createUnion(other);
-  }
+  RectT operator|(const RectT& other) const { return createUnion(other); }
 
-  RectT operator&(const RectT& other) const {
+  RectT operator&(const RectT& other) const
+  {
     return createIntersection(other);
   }
 
-  RectT operator*(const T factor) const {
-    return RectT(x*factor, y*factor,
-                 w*factor, h*factor);
+  RectT operator*(const T factor) const
+  {
+    return RectT(x * factor, y * factor, w * factor, h * factor);
   }
 
-  RectT operator*(const SizeT<T>& size) const {
-    return RectT(x*size.w, y*size.h,
-                 w*size.w, h*size.h);
+  RectT operator*(const SizeT<T>& size) const
+  {
+    return RectT(x * size.w, y * size.h, w * size.w, h * size.h);
   }
 
-  RectT operator/(const T scale) const {
-    return RectT(x/scale, y/scale,
-                 w/scale, h/scale);
+  RectT operator/(const T scale) const
+  {
+    return RectT(x / scale, y / scale, w / scale, h / scale);
   }
 
-  RectT operator/(const SizeT<T>& size) const {
-    return RectT(x/size.w, y/size.h,
-                 w/size.w, h/size.h);
+  RectT operator/(const SizeT<T>& size) const
+  {
+    return RectT(x / size.w, y / size.h, w / size.w, h / size.h);
   }
 
-  bool operator==(const RectT& rc) const {
-    return
-      x == rc.x && w == rc.w &&
-      y == rc.y && h == rc.h;
+  bool operator==(const RectT& rc) const
+  {
+    return x == rc.x && w == rc.w && y == rc.y && h == rc.h;
   }
 
-  bool operator!=(const RectT& rc) const {
-    return
-      x != rc.x || w != rc.w ||
-      y != rc.y || h != rc.h;
+  bool operator!=(const RectT& rc) const
+  {
+    return x != rc.x || w != rc.w || y != rc.y || h != rc.h;
   }
 
-  RectT& fitIn(const RectT& bounds) {
+  RectT& fitIn(const RectT& bounds)
+  {
     if (w < h) {
       w = w * bounds.h / h;
-      x = bounds.x + bounds.w/2 - w/2;
+      x = bounds.x + bounds.w / 2 - w / 2;
       y = bounds.y;
       h = bounds.h;
     }
     else {
       h = h * bounds.w / w;
-      y = bounds.y + bounds.h/2 - h/2;
+      y = bounds.y + bounds.h / 2 - h / 2;
       x = bounds.x;
       w = bounds.w;
     }
@@ -411,7 +446,8 @@ public:
 
   // Slices vertically this Rect along the provided px coordinate.
   // Sets the left and right rects in the references of the same name.
-  const RectT& sliceV(T px, RectT& left, RectT& right) const {
+  const RectT& sliceV(T px, RectT& left, RectT& right) const
+  {
     if (px < x) {
       left = RectT();
       right = *this;
@@ -430,7 +466,8 @@ public:
 
   // Slices horizontally this Rect along the provided py coordinate.
   // Sets the top and bottom rects in the references of the same name.
-  const RectT& sliceH(T py, RectT& top, RectT& bottom) const {
+  const RectT& sliceH(T py, RectT& top, RectT& bottom) const
+  {
     if (py < y) {
       top = RectT();
       bottom = *this;
@@ -460,7 +497,8 @@ public:
   //     |                     |      |   [6]  | [7] |  [8] |
   //     +---------------------+      +--------+-----+------+
   //
-  const RectT& nineSlice(const RectT& center, RectT slices[9]) const {
+  const RectT& nineSlice(const RectT& center, RectT slices[9]) const
+  {
     gfx::RectT<T> left, middle, right;
 
     {
@@ -469,13 +507,13 @@ public:
       remaining.sliceV(x + center.x2(), middle, right);
     }
 
-    left  .sliceH(y + center.y   , slices[0], left);
-    middle.sliceH(y + center.y   , slices[1], middle);
-    right .sliceH(y + center.y   , slices[2], right);
+    left.sliceH(y + center.y, slices[0], left);
+    middle.sliceH(y + center.y, slices[1], middle);
+    right.sliceH(y + center.y, slices[2], right);
 
-    left  .sliceH(y + center.y2(), slices[3], left);
+    left.sliceH(y + center.y2(), slices[3], left);
     middle.sliceH(y + center.y2(), slices[4], middle);
-    right .sliceH(y + center.y2(), slices[5], right);
+    right.sliceH(y + center.y2(), slices[5], right);
 
     slices[6] = left;
     slices[7] = middle;
@@ -483,16 +521,15 @@ public:
 
     return *this;
   }
-
 };
 
 typedef RectT<int> Rect;
 typedef RectT<double> RectF;
 
-} // namespace gfx
+}  // namespace gfx
 
 #ifdef _DEBUG
-#include "gfx/rect_io.h"
+  #include "gfx/rect_io.h"
 #endif
 
 #endif

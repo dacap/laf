@@ -6,16 +6,16 @@
 // Read LICENSE.txt for more information.
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+  #include "config.h"
 #endif
 
 #include "os/win/window.h"
 
-#include <windowsx.h>
 #include <commctrl.h>
 #include <dwmapi.h>
 #include <shellapi.h>
 #include <shobjidl.h>
+#include <windowsx.h>
 
 #include <algorithm>
 #include <sstream>
@@ -51,37 +51,37 @@
 #define kFingerAsMouseTimeout 50
 
 // Gets the window client are in absolute/screen coordinates
-#define ABS_CLIENT_RC(rc)                               \
-  RECT rc;                                              \
-  GetClientRect(m_hwnd, &rc);                           \
+#define ABS_CLIENT_RC(rc)                                                      \
+  RECT rc;                                                                     \
+  GetClientRect(m_hwnd, &rc);                                                  \
   MapWindowPoints(m_hwnd, NULL, (POINT*)&rc, 2)
 
 #ifndef INTERACTION_CONTEXT_PROPERTY_MEASUREMENT_UNITS_SCREEN
-#define INTERACTION_CONTEXT_PROPERTY_MEASUREMENT_UNITS_SCREEN 1
+  #define INTERACTION_CONTEXT_PROPERTY_MEASUREMENT_UNITS_SCREEN 1
 #endif
 
 #ifndef INTERACTION_CONTEXT_PROPERTY_INTERACTION_UI_FEEDBACK
-#define INTERACTION_CONTEXT_PROPERTY_INTERACTION_UI_FEEDBACK_OFF 0
+  #define INTERACTION_CONTEXT_PROPERTY_INTERACTION_UI_FEEDBACK_OFF 0
 #endif
 
 namespace os {
 
 // Converts an os::Hit to a Win32 hit test value
 static int hit2hittest[] = {
-  HTNOWHERE,                    // os::Hit::None
-  HTCLIENT,                     // os::Hit::Content
-  HTCAPTION,                    // os::Hit::TitleBar
-  HTTOPLEFT,                    // os::Hit::TopLeft
-  HTTOP,                        // os::Hit::Top
-  HTTOPRIGHT,                   // os::Hit::TopRight
-  HTLEFT,                       // os::Hit::Left
-  HTRIGHT,                      // os::Hit::Right
-  HTBOTTOMLEFT,                 // os::Hit::BottomLeft
-  HTBOTTOM,                     // os::Hit::Bottom
-  HTBOTTOMRIGHT,                // os::Hit::BottomRight
-  HTMINBUTTON,                  // os::Hit::MinimizeButton
-  HTMAXBUTTON,                  // os::Hit::MaximizeButton
-  HTCLOSE,                      // os::Hit::CloseButton
+  HTNOWHERE,      // os::Hit::None
+  HTCLIENT,       // os::Hit::Content
+  HTCAPTION,      // os::Hit::TitleBar
+  HTTOPLEFT,      // os::Hit::TopLeft
+  HTTOP,          // os::Hit::Top
+  HTTOPRIGHT,     // os::Hit::TopRight
+  HTLEFT,         // os::Hit::Left
+  HTRIGHT,        // os::Hit::Right
+  HTBOTTOMLEFT,   // os::Hit::BottomLeft
+  HTBOTTOM,       // os::Hit::Bottom
+  HTBOTTOMRIGHT,  // os::Hit::BottomRight
+  HTMINBUTTON,    // os::Hit::MinimizeButton
+  HTMAXBUTTON,    // os::Hit::MaximizeButton
+  HTCLOSE,        // os::Hit::CloseButton
 };
 
 static int hit2hittest_entries = sizeof(hit2hittest) / sizeof(hit2hittest[0]);
@@ -89,11 +89,14 @@ static int hit2hittest_entries = sizeof(hit2hittest) / sizeof(hit2hittest[0]);
 static PointerType wt_packet_pkcursor_to_pointer_type(int pkCursor)
 {
   switch (pkCursor % 3) {
-    case 0: return PointerType::Cursor;
-    case 1: return PointerType::Pen;
-    case 2: return PointerType::Eraser;
-    // TODO check if pkCursor=6 to notify about an inverted
-    //      stylus/eraser if we enable EnableMouseInPointer()
+    case 0:
+      return PointerType::Cursor;
+    case 1:
+      return PointerType::Pen;
+    case 2:
+      return PointerType::Eraser;
+      // TODO check if pkCursor=6 to notify about an inverted
+      //      stylus/eraser if we enable EnableMouseInPointer()
   }
   // Impossible case (negative pkCursor?)
   ASSERT(false);
@@ -104,16 +107,14 @@ static PointerType wt_packet_pkcursor_to_pointer_type(int pkCursor)
 
 static inline bool same_mouse_event(Event& a, Event& b)
 {
-  return (a.type() == b.type() &&
-          a.position() == b.position() &&
-          a.modifiers() == b.modifiers() &&
-          a.button() == b.button() &&
-          a.pointerType() == b.pointerType() &&
-          a.pressure() == b.pressure());
+  return (a.type() == b.type() && a.position() == b.position() &&
+          a.modifiers() == b.modifiers() && a.button() == b.button() &&
+          a.pointerType() == b.pointerType() && a.pressure() == b.pressure());
 }
 
 static BOOL CALLBACK log_monitor_info(HMONITOR monitor,
-                                      HDC hdc, LPRECT rc,
+                                      HDC hdc,
+                                      LPRECT rc,
                                       LPARAM lparam)
 {
   MONITORINFOEXA mi;
@@ -126,7 +127,7 @@ static BOOL CALLBACK log_monitor_info(HMONITOR monitor,
     LOG("WIN: - Monitor %dx%d%s: %s (icc=%s)\n",
         rc.right - rc.left,
         rc.bottom - rc.top,
-        (mi.dwFlags & MONITORINFOF_PRIMARY ? " (primary)": ""),
+        (mi.dwFlags & MONITORINFOF_PRIMARY ? " (primary)" : ""),
         mi.szDevice,
         iccFilename.c_str());
   }
@@ -145,7 +146,8 @@ std::wstring get_wnd_class_name()
 }
 
 // Keys used to detect if the Windows 11 dark mode is selected.
-static constexpr const char* kPersonalizeKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+static constexpr const char* kPersonalizeKey =
+  "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
 static constexpr const char* kAppsUseLightThemeValue = "AppsUseLightTheme";
 
 PointerType WindowWin::m_pointerType = PointerType::Unknown;
@@ -190,11 +192,9 @@ WindowWin::WindowWin(const WindowSpec& spec)
   auto& winApi = system()->winApi();
   if (
 #if OS_USE_POINTER_API_FOR_MOUSE
-      winApi.EnableMouseInPointer &&
-      winApi.IsMouseInPointerEnabled &&
+    winApi.EnableMouseInPointer && winApi.IsMouseInPointerEnabled &&
 #endif
-      winApi.GetPointerInfo &&
-      winApi.GetPointerPenInfo) {
+    winApi.GetPointerInfo && winApi.GetPointerPenInfo) {
     // Do not enable pointer API for mouse events because:
     // - Wacom driver doesn't inform their messages in a correct
     //   pointer API format (events from pen are reported as mouse
@@ -207,8 +207,7 @@ WindowWin::WindowWin(const WindowSpec& spec)
       // Prefer pointer messages (WM_POINTER*) since Windows 8 instead
       // of mouse messages (WM_MOUSE*)
       winApi.EnableMouseInPointer(TRUE);
-      m_emulateDoubleClick =
-        (winApi.IsMouseInPointerEnabled() ? true: false);
+      m_emulateDoubleClick = (winApi.IsMouseInPointerEnabled() ? true : false);
     }
 #endif
 
@@ -226,22 +225,19 @@ WindowWin::WindowWin(const WindowSpec& spec)
         INTERACTION_CONTEXT_CONFIGURATION cfg[] = {
           { INTERACTION_ID_MANIPULATION,
             INTERACTION_CONFIGURATION_FLAG_MANIPULATION |
-            INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_X |
-            INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_Y |
-            INTERACTION_CONFIGURATION_FLAG_MANIPULATION_SCALING |
-            INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_INERTIA |
-            INTERACTION_CONFIGURATION_FLAG_MANIPULATION_SCALING_INERTIA },
+              INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_X |
+              INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_Y |
+              INTERACTION_CONFIGURATION_FLAG_MANIPULATION_SCALING |
+              INTERACTION_CONFIGURATION_FLAG_MANIPULATION_TRANSLATION_INERTIA |
+              INTERACTION_CONFIGURATION_FLAG_MANIPULATION_SCALING_INERTIA },
           { INTERACTION_ID_TAP,
             INTERACTION_CONFIGURATION_FLAG_TAP |
-            INTERACTION_CONFIGURATION_FLAG_TAP_DOUBLE },
+              INTERACTION_CONFIGURATION_FLAG_TAP_DOUBLE },
           { INTERACTION_ID_SECONDARY_TAP,
             INTERACTION_CONFIGURATION_FLAG_SECONDARY_TAP },
-          { INTERACTION_ID_HOLD,
-            INTERACTION_CONFIGURATION_FLAG_NONE },
-          { INTERACTION_ID_DRAG,
-            INTERACTION_CONFIGURATION_FLAG_NONE },
-          { INTERACTION_ID_CROSS_SLIDE,
-            INTERACTION_CONFIGURATION_FLAG_NONE }
+          { INTERACTION_ID_HOLD, INTERACTION_CONFIGURATION_FLAG_NONE },
+          { INTERACTION_ID_DRAG, INTERACTION_CONFIGURATION_FLAG_NONE },
+          { INTERACTION_ID_CROSS_SLIDE, INTERACTION_CONFIGURATION_FLAG_NONE }
         };
         hr = winApi.SetInteractionConfigurationInteractionContext(
           m_ictx, sizeof(cfg) / sizeof(INTERACTION_CONTEXT_CONFIGURATION), cfg);
@@ -272,8 +268,7 @@ WindowWin::WindowWin(const WindowSpec& spec)
   if (!m_hwnd)
     throw std::runtime_error("Error creating window");
 
-  SetWindowLongPtr(m_hwnd, GWLP_USERDATA,
-                   reinterpret_cast<LONG_PTR>(this));
+  SetWindowLongPtr(m_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
   // This flag is used to avoid calling T::resizeImpl() when we
   // add the scrollbars to the window. (As the T type could not be
@@ -289,15 +284,15 @@ WindowWin::WindowWin(const WindowSpec& spec)
   if (base::get_log_level() >= INFO) {
     LOG("WIN: Clean boot: %d\n", GetSystemMetrics(SM_CLEANBOOT));
     LOG("WIN: Special modes:%s%s%s%s%s%s\n",
-        GetSystemMetrics(SM_MOUSEPRESENT) ? " Mouse": "",
-        GetSystemMetrics(SM_SWAPBUTTON) ? " SwappedButtons": "",
-        GetSystemMetrics(SM_TABLETPC) ? " TabletPC": "",
-        GetSystemMetrics(SM_DIGITIZER) ? " Digitizer": "",
-        GetSystemMetrics(SM_SYSTEMDOCKED) ? " Docked": "",
-        GetSystemMetrics(SM_IMMENABLED) ? " IMM": "");
+        GetSystemMetrics(SM_MOUSEPRESENT) ? " Mouse" : "",
+        GetSystemMetrics(SM_SWAPBUTTON) ? " SwappedButtons" : "",
+        GetSystemMetrics(SM_TABLETPC) ? " TabletPC" : "",
+        GetSystemMetrics(SM_DIGITIZER) ? " Digitizer" : "",
+        GetSystemMetrics(SM_SYSTEMDOCKED) ? " Docked" : "",
+        GetSystemMetrics(SM_IMMENABLED) ? " IMM" : "");
     LOG("WIN: Monitors: %d%s:\n",
         GetSystemMetrics(SM_CMONITORS),
-        GetSystemMetrics(SM_SAMEDISPLAYFORMAT) ? ", same display format": "");
+        GetSystemMetrics(SM_SAMEDISPLAYFORMAT) ? ", same display format" : "");
     EnumDisplayMonitors(nullptr, nullptr, log_monitor_info, 0);
   }
 
@@ -367,7 +362,8 @@ os::ColorSpaceRef WindowWin::colorSpace() const
   }
   // sRGB by default
   if (!m_lastColorProfile)
-    m_lastColorProfile = os::instance()->makeColorSpace(gfx::ColorSpace::MakeSRGB());
+    m_lastColorProfile =
+      os::instance()->makeColorSpace(gfx::ColorSpace::MakeSRGB());
   return m_lastColorProfile;
 }
 
@@ -380,8 +376,10 @@ void WindowWin::setScale(int scale)
     RECT rc;
     GetWindowRect(m_hwnd, &rc);
     SendMessage(m_hwnd, WM_SIZING, 0, (LPARAM)&rc);
-    SetWindowPos(m_hwnd, nullptr,
-                 rc.left, rc.top,
+    SetWindowPos(m_hwnd,
+                 nullptr,
+                 rc.left,
+                 rc.top,
                  rc.right - rc.left,
                  rc.bottom - rc.top,
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
@@ -392,7 +390,7 @@ void WindowWin::setScale(int scale)
 
 bool WindowWin::isVisible() const
 {
-  return (IsWindowVisible(m_hwnd) ? true: false);
+  return (IsWindowVisible(m_hwnd) ? true : false);
 }
 
 void WindowWin::setVisible(bool visible)
@@ -429,17 +427,17 @@ void WindowWin::minimize()
 
 bool WindowWin::isMaximized() const
 {
-  return (IsZoomed(m_hwnd) ? true: false);
+  return (IsZoomed(m_hwnd) ? true : false);
 }
 
 bool WindowWin::isMinimized() const
 {
-  return (GetWindowLong(m_hwnd, GWL_STYLE) & WS_MINIMIZE ? true: false);
+  return (GetWindowLong(m_hwnd, GWL_STYLE) & WS_MINIMIZE ? true : false);
 }
 
 bool WindowWin::isTransparent() const
 {
-  return (GetWindowLong(m_hwnd, GWL_EXSTYLE) & WS_EX_LAYERED ? true: false);
+  return (GetWindowLong(m_hwnd, GWL_EXSTYLE) & WS_EX_LAYERED ? true : false);
 }
 
 bool WindowWin::isFullscreen() const
@@ -456,13 +454,13 @@ void WindowWin::setFullscreen(bool state)
   if (!oldFullscreen && state) {
     HMONITOR monitor = MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST);
     if (!monitor)
-      return;                   // No monitor?
+      return;  // No monitor?
 
     MONITORINFOEXA mi;
     memset((void*)&mi, 0, sizeof(mi));
     mi.cbSize = sizeof(mi);
     if (!GetMonitorInfoA(monitor, &mi))
-      return;                   // Invalid monitor info?
+      return;  // Invalid monitor info?
 
     // Save the current window frame position to restore it when we
     // exit the full screen mode.
@@ -473,15 +471,16 @@ void WindowWin::setFullscreen(bool state)
     {
       RECT rc;
       GetWindowRect(m_hwnd, &rc);
-      m_restoredFrame = gfx::Rect(rc.left, rc.top,
-                                  rc.right - rc.left, rc.bottom - rc.top);
+      m_restoredFrame =
+        gfx::Rect(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
     }
 #endif
 
     LONG style = GetWindowLong(m_hwnd, GWL_STYLE);
     style &= ~(WS_CAPTION | WS_THICKFRAME);
     SetWindowLong(m_hwnd, GWL_STYLE, style);
-    SetWindowPos(m_hwnd, nullptr,
+    SetWindowPos(m_hwnd,
+                 nullptr,
                  mi.rcMonitor.left,
                  mi.rcMonitor.top,
                  (mi.rcMonitor.right - mi.rcMonitor.left),
@@ -491,7 +490,8 @@ void WindowWin::setFullscreen(bool state)
   // Exit from full screen mode
   else if (oldFullscreen && !state) {
     LONG style = GetWindowLong(m_hwnd, GWL_STYLE);
-    if (m_titled) style |= WS_CAPTION;
+    if (m_titled)
+      style |= WS_CAPTION;
     style |= WS_THICKFRAME;
     SetWindowLong(m_hwnd, GWL_STYLE, style);
 
@@ -499,9 +499,12 @@ void WindowWin::setFullscreen(bool state)
 #if 0
     SetWindowPlacement(m_hwnd, &m_restoredPlacement);
 #else
-    SetWindowPos(m_hwnd, nullptr,
-                 m_restoredFrame.x, m_restoredFrame.y,
-                 m_restoredFrame.w, m_restoredFrame.h,
+    SetWindowPos(m_hwnd,
+                 nullptr,
+                 m_restoredFrame.x,
+                 m_restoredFrame.y,
+                 m_restoredFrame.w,
+                 m_restoredFrame.h,
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 #endif
   }
@@ -519,12 +522,12 @@ gfx::Rect WindowWin::frame() const
 {
   RECT rc;
   BOOL withShadow = false;
-  if ((DwmIsCompositionEnabled(&withShadow) != S_OK) ||
-      !withShadow ||
+  if ((DwmIsCompositionEnabled(&withShadow) != S_OK) || !withShadow ||
       // DwmGetWindowAttribute() returns the true bounds from the
       // frame edges (not from the shadow) when the DWM composition is
       // enabled.
-      (DwmGetWindowAttribute(m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rc, sizeof(RECT)) != S_OK)) {
+      (DwmGetWindowAttribute(
+         m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rc, sizeof(RECT)) != S_OK)) {
     // In other case we can just use the GetWindowRect() function.
     GetWindowRect(m_hwnd, &rc);
   }
@@ -542,18 +545,21 @@ void WindowWin::setFrame(const gfx::Rect& _bounds)
   // frame from the shadow (not from the window edges).
   RECT inner, outer;
   BOOL withShadow = false;
-  if ((DwmIsCompositionEnabled(&withShadow) == S_OK) &&
-      withShadow &&
-      (DwmGetWindowAttribute(m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &inner, sizeof(RECT)) == S_OK)) {
+  if ((DwmIsCompositionEnabled(&withShadow) == S_OK) && withShadow &&
+      (DwmGetWindowAttribute(
+         m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &inner, sizeof(RECT)) == S_OK)) {
     GetWindowRect(m_hwnd, &outer);
     bounds.enlarge(gfx::Border(inner.left - outer.left,
                                inner.top - outer.top,
                                outer.right - inner.right,
                                outer.bottom - inner.bottom));
   }
-  SetWindowPos(m_hwnd, nullptr,
-               bounds.x, bounds.y,
-               bounds.w, bounds.h,
+  SetWindowPos(m_hwnd,
+               nullptr,
+               bounds.x,
+               bounds.y,
+               bounds.w,
+               bounds.h,
                SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
@@ -610,8 +616,7 @@ void WindowWin::releaseMouse()
 
 void WindowWin::setMousePosition(const gfx::Point& position)
 {
-  POINT pos = { position.x * m_scale,
-                position.y * m_scale };
+  POINT pos = { position.x * m_scale, position.y * m_scale };
   ClientToScreen(m_hwnd, &pos);
   SetCursorPos(pos.x, pos.y);
 
@@ -624,12 +629,15 @@ void WindowWin::onSetDragTarget()
   // Drag target was set, then register for drag and drop.
   if (hasDragTarget()) {
     m_dragTargetAdapter = std::make_unique<DragTargetAdapter>(this);
-    result = RegisterDragDrop(m_hwnd, reinterpret_cast<LPDROPTARGET>(m_dragTargetAdapter.get()));
+    result = RegisterDragDrop(
+      m_hwnd, reinterpret_cast<LPDROPTARGET>(m_dragTargetAdapter.get()));
     if (result != S_OK) {
-      LOG(LogLevel::ERROR, "Could not register window for Drag & Drop: %d\n", result);
+      LOG(LogLevel::ERROR,
+          "Could not register window for Drag & Drop: %d\n",
+          result);
     }
   }
-  else { // Drag target was unset (set to nullptr), then revoke DnD registration.
+  else {  // Drag target was unset (set to nullptr), then revoke DnD registration.
     m_dragTargetAdapter = nullptr;
     result = RevokeDragDrop(m_hwnd);
     if (result != S_OK) {
@@ -702,7 +710,7 @@ bool WindowWin::setCursor(const CursorRef& cursor)
   if (cursor->nativeHandle())
     return setCursor((HCURSOR)cursor->nativeHandle(), cursor);
   else
-    return setCursor(nullptr, nullptr); // Like NativeCursor::Hidden
+    return setCursor(nullptr, nullptr);  // Like NativeCursor::Hidden
 }
 
 void WindowWin::performWindowAction(const WindowAction action,
@@ -711,15 +719,33 @@ void WindowWin::performWindowAction(const WindowAction action,
   int ht = HTNOWHERE;
 
   switch (action) {
-    case WindowAction::Move:                  ht = HTCAPTION;     break;
-    case WindowAction::ResizeFromTopLeft:     ht = HTTOPLEFT;     break;
-    case WindowAction::ResizeFromTop:         ht = HTTOP;         break;
-    case WindowAction::ResizeFromTopRight:    ht = HTTOPRIGHT;    break;
-    case WindowAction::ResizeFromLeft:        ht = HTLEFT;        break;
-    case WindowAction::ResizeFromRight:       ht = HTRIGHT;       break;
-    case WindowAction::ResizeFromBottomLeft:  ht = HTBOTTOMLEFT;  break;
-    case WindowAction::ResizeFromBottom:      ht = HTBOTTOM;      break;
-    case WindowAction::ResizeFromBottomRight: ht = HTBOTTOMRIGHT; break;
+    case WindowAction::Move:
+      ht = HTCAPTION;
+      break;
+    case WindowAction::ResizeFromTopLeft:
+      ht = HTTOPLEFT;
+      break;
+    case WindowAction::ResizeFromTop:
+      ht = HTTOP;
+      break;
+    case WindowAction::ResizeFromTopRight:
+      ht = HTTOPRIGHT;
+      break;
+    case WindowAction::ResizeFromLeft:
+      ht = HTLEFT;
+      break;
+    case WindowAction::ResizeFromRight:
+      ht = HTRIGHT;
+      break;
+    case WindowAction::ResizeFromBottomLeft:
+      ht = HTBOTTOMLEFT;
+      break;
+    case WindowAction::ResizeFromBottom:
+      ht = HTBOTTOM;
+      break;
+    case WindowAction::ResizeFromBottomRight:
+      ht = HTBOTTOMRIGHT;
+      break;
   }
 
   if (ht != HTNOWHERE) {
@@ -741,22 +767,19 @@ void WindowWin::performWindowAction(const WindowAction action,
 
 void WindowWin::invalidateRegion(const gfx::Region& rgn)
 {
-#if 1 // Invalidating the region generates a flicker in Aseprite's
-      // BrushPreview, because it looks like regions are then painted
-      // and refreshed on the screen without synchronization (without
-      // vsync?) or double-buffering (not even WS_EX_COMPOSITED fixes
-      // the issue).
-      //
-      // Anyway we're going to give a try to this fix to improve the
-      // performance in high-resolutions and fix the BrushPreview
-      // later with an alternative solution.
+#if 1  // Invalidating the region generates a flicker in Aseprite's            \
+       // BrushPreview, because it looks like regions are then painted         \
+       // and refreshed on the screen without synchronization (without         \
+       // vsync?) or double-buffering (not even WS_EX_COMPOSITED fixes         \
+       // the issue).                                                          \
+       //                                                                      \
+       // Anyway we're going to give a try to this fix to improve the          \
+       // performance in high-resolutions and fix the BrushPreview             \
+       // later with an alternative solution.
   HRGN hrgn = nullptr;
   for (const gfx::Rect& rc : rgn) {
     HRGN rcHrgn = CreateRectRgn(
-      rc.x*m_scale,
-      rc.y*m_scale,
-      rc.x2()*m_scale,
-      rc.y2()*m_scale);
+      rc.x * m_scale, rc.y * m_scale, rc.x2() * m_scale, rc.y2() * m_scale);
     if (!hrgn)
       hrgn = rcHrgn;
     else {
@@ -768,18 +791,17 @@ void WindowWin::invalidateRegion(const gfx::Region& rgn)
     InvalidateRgn(m_hwnd, hrgn, FALSE);
     DeleteObject(hrgn);
   }
-#elif 0 // Same flicker
+#elif 0  // Same flicker
   gfx::Rect bounds = rgn.bounds();
-  RECT rc = {
-    bounds.x*m_scale,
-    bounds.y*m_scale,
-    bounds.x*m_scale+bounds.w*m_scale,
-    bounds.y*m_scale+bounds.h*m_scale };
+  RECT rc = { bounds.x * m_scale,
+              bounds.y * m_scale,
+              bounds.x * m_scale + bounds.w * m_scale,
+              bounds.y * m_scale + bounds.h * m_scale };
   InvalidateRect(m_hwnd, &rc, FALSE);
-#else  // Only way to avoid the flicker is invalidating the whole window.
-       // TODO we should review this, it's almost sure that flicker
-       //      is a problem from our side and there is a better way
-       //      to handle it.
+#else    // Only way to avoid the flicker is invalidating the whole window.    \
+         // TODO we should review this, it's almost sure that flicker          \
+         //      is a problem from our side and there is a better way          \
+         //      to handle it.
   InvalidateRect(m_hwnd, nullptr, FALSE);
 #endif
 }
@@ -790,16 +812,10 @@ std::string WindowWin::getLayout()
   wp.length = sizeof(WINDOWPLACEMENT);
   if (GetWindowPlacement(m_hwnd, &wp)) {
     std::ostringstream s;
-    s << 1 << ' '
-      << wp.flags << ' '
-      << wp.showCmd << ' '
-      << wp.ptMinPosition.x << ' '
-      << wp.ptMinPosition.y << ' '
-      << wp.ptMaxPosition.x << ' '
-      << wp.ptMaxPosition.y << ' '
-      << wp.rcNormalPosition.left << ' '
-      << wp.rcNormalPosition.top << ' '
-      << wp.rcNormalPosition.right << ' '
+    s << 1 << ' ' << wp.flags << ' ' << wp.showCmd << ' ' << wp.ptMinPosition.x
+      << ' ' << wp.ptMinPosition.y << ' ' << wp.ptMaxPosition.x << ' '
+      << wp.ptMaxPosition.y << ' ' << wp.rcNormalPosition.left << ' '
+      << wp.rcNormalPosition.top << ' ' << wp.rcNormalPosition.right << ' '
       << wp.rcNormalPosition.bottom;
     return s.str();
   }
@@ -815,16 +831,10 @@ void WindowWin::setLayout(const std::string& layout)
   int ver;
   s >> ver;
   if (ver == 1) {
-    s >> wp.flags
-      >> wp.showCmd
-      >> wp.ptMinPosition.x
-      >> wp.ptMinPosition.y
-      >> wp.ptMaxPosition.x
-      >> wp.ptMaxPosition.y
-      >> wp.rcNormalPosition.left
-      >> wp.rcNormalPosition.top
-      >> wp.rcNormalPosition.right
-      >> wp.rcNormalPosition.bottom;
+    s >> wp.flags >> wp.showCmd >> wp.ptMinPosition.x >> wp.ptMinPosition.y >>
+      wp.ptMaxPosition.x >> wp.ptMaxPosition.y >> wp.rcNormalPosition.left >>
+      wp.rcNormalPosition.top >> wp.rcNormalPosition.right >>
+      wp.rcNormalPosition.bottom;
   }
   else
     return;
@@ -868,28 +878,27 @@ void WindowWin::setInterpretOneFingerGestureAsMouseMovement(bool state)
 void WindowWin::onTabletOptionsChange()
 {
   LOG("WIN: On window %p tablet options change tablet API=%d\n",
-      m_hwnd, int(tabletAPI()));
+      m_hwnd,
+      int(tabletAPI()));
 
   closeWintabCtx();
   openWintabCtx();
 }
 
-bool WindowWin::setCursor(HCURSOR hcursor,
-                          const CursorRef& cursor)
+bool WindowWin::setCursor(HCURSOR hcursor, const CursorRef& cursor)
 {
   SetCursor(hcursor);
   m_hcursor = hcursor;
   m_cursor = cursor;
-  return (hcursor ? true: false);
+  return (hcursor ? true : false);
 }
 
 LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 {
   switch (msg) {
-
     case WM_CREATE: {
-      LOG("WIN: Creating window %p (tablet API %d)\n",
-          m_hwnd, int(tabletAPI()));
+      LOG(
+        "WIN: Creating window %p (tablet API %d)\n", m_hwnd, int(tabletAPI()));
       openWintabCtx();
 
       if (m_borderless &&
@@ -906,17 +915,19 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
           // borderless windows (with this option the Windows 11
           // rounded borders disappear)
           DWMNCRENDERINGPOLICY ncrp = DWMNCRP_DISABLED;
-          DwmSetWindowAttribute(m_hwnd, DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
+          DwmSetWindowAttribute(
+            m_hwnd, DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
 
-#else // The DWMWCP_DONOTROUND option doesn't fully work on Windows 11,
-      // we still need to set DWMNCRP_DISABLED for DWMWA_NCRENDERING_POLICY
-      // to disable a 1-pixel border in the non-client area.
+#else  // The DWMWCP_DONOTROUND option doesn't fully work on Windows 11,       \
+       // we still need to set DWMNCRP_DISABLED for DWMWA_NCRENDERING_POLICY   \
+       // to disable a 1-pixel border in the non-client area.
 
           // TODO Use the Windows 11 SDK types/constants
-          uint32_t cornerPref = 1; // DWMWCP_DONOTROUND;
-          DwmSetWindowAttribute(
-            m_hwnd, 33, // DWMWA_WINDOW_CORNER_PREFERENCE,
-            &cornerPref, sizeof(cornerPref));
+          uint32_t cornerPref = 1;  // DWMWCP_DONOTROUND;
+          DwmSetWindowAttribute(m_hwnd,
+                                33,  // DWMWA_WINDOW_CORNER_PREFERENCE,
+                                &cornerPref,
+                                sizeof(cornerPref));
 #endif
         }
       }
@@ -943,7 +954,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         if ((DwmIsCompositionEnabled(&dwmEnabled) == S_OK) && dwmEnabled) {
           RECT rc, exrc;
           GetWindowRect(m_hwnd, &rc);
-          if (DwmGetWindowAttribute(m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &exrc, sizeof(RECT)) != S_OK)
+          if (DwmGetWindowAttribute(
+                m_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &exrc, sizeof(RECT)) !=
+              S_OK)
             exrc = rc;
 
           const int leftEdge = exrc.left - rc.left;
@@ -978,10 +991,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       // the workarea explicitly.
       //
       // This is combined with the handling of WM_NCCALCSIZE message.
-      if (m_borderless &&
-          isMaximized() &&
-          !isFullscreen() &&
-          !m_fixingPos) {
+      if (m_borderless && isMaximized() && !isFullscreen() && !m_fixingPos) {
         gfx::Rect wa = screen()->workarea();
 
         // TODO when we maximize a window from the restored/regular
@@ -991,10 +1001,14 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         //      behavior).
 
         m_fixingPos = true;
-        SetWindowPos(m_hwnd, nullptr,
-                     wa.x, wa.y,
-                     wa.w, wa.h,
-                     SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOSENDCHANGING);
+        SetWindowPos(m_hwnd,
+                     nullptr,
+                     wa.x,
+                     wa.y,
+                     wa.w,
+                     wa.h,
+                     SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED |
+                       SWP_NOSENDCHANGING);
         m_fixingPos = false;
       }
       break;
@@ -1075,8 +1089,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       break;
 
     case WM_ACTIVATE:
-      if (wparam == WA_ACTIVE ||
-          wparam == WA_CLICKACTIVE) {
+      if (wparam == WA_ACTIVE || wparam == WA_CLICKACTIVE) {
         checkColorSpaceChange();
       }
 
@@ -1084,8 +1097,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         if (auto sys = system()) {
           // Handle z-order of Wintab context
           auto& api = sys->wintabApi();
-          api.overlap(m_hpenctx, (wparam == WA_ACTIVE ||
-                                  wparam == WA_CLICKACTIVE) ? TRUE: FALSE);
+          api.overlap(
+            m_hpenctx,
+            (wparam == WA_ACTIVE || wparam == WA_CLICKACTIVE) ? TRUE : FALSE);
         }
       }
       break;
@@ -1123,8 +1137,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       // We align the client area size to the m_scale.
       int w = std::max<int>(rect->right - rect->left, 0) - dx;
       int h = std::max<int>(rect->bottom - rect->top, 0) - dy;
-      w = std::max<int>(w - (w % m_scale), 8*m_scale) + dx;
-      h = std::max<int>(h - (h % m_scale), 8*m_scale) + dy;
+      w = std::max<int>(w - (w % m_scale), 8 * m_scale) + dx;
+      h = std::max<int>(h - (h % m_scale), 8 * m_scale) + dy;
 
       switch (wparam) {
         case WMSZ_LEFT:
@@ -1161,12 +1175,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
     case WM_SIZE:
       if (m_isCreated) {
-        gfx::Size newSize(GET_X_LPARAM(lparam),
-                          GET_Y_LPARAM(lparam));
+        gfx::Size newSize(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
 
-        if (newSize.w > 0 &&
-            newSize.h > 0 &&
-            m_clientSize != newSize) {
+        if (newSize.w > 0 && newSize.h > 0 && m_clientSize != newSize) {
           m_clientSize = newSize;
           onResize(m_clientSize);
           InvalidateRect(m_hwnd, nullptr, FALSE);
@@ -1174,13 +1185,12 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
         WINDOWPLACEMENT pl;
         pl.length = sizeof(pl);
-        if (GetWindowPlacement(m_hwnd, &pl) &&
-            !m_fullscreen) {
-          m_restoredFrame = gfx::Rect(
-            pl.rcNormalPosition.left,
-            pl.rcNormalPosition.top,
-            pl.rcNormalPosition.right - pl.rcNormalPosition.left,
-            pl.rcNormalPosition.bottom - pl.rcNormalPosition.top);
+        if (GetWindowPlacement(m_hwnd, &pl) && !m_fullscreen) {
+          m_restoredFrame =
+            gfx::Rect(pl.rcNormalPosition.left,
+                      pl.rcNormalPosition.top,
+                      pl.rcNormalPosition.right - pl.rcNormalPosition.left,
+                      pl.rcNormalPosition.bottom - pl.rcNormalPosition.top);
         }
       }
       break;
@@ -1198,7 +1208,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       checkDarkModeChange();
       break;
 
-    // Mouse and Trackpad Messages
+      // Mouse and Trackpad Messages
 
     case WM_MOUSEMOVE: {
       Event ev;
@@ -1215,18 +1225,16 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       {
         static HWND lastHwnd = nullptr;
         static gfx::Point lastPoint;
-        if (lastHwnd == m_hwnd &&
-            lastPoint == ev.position()) {
-          MOUSE_TRACE("SAME MOUSEMOVE xy=%d,%d\n",
-                      ev.position().x, ev.position().y);
+        if (lastHwnd == m_hwnd && lastPoint == ev.position()) {
+          MOUSE_TRACE(
+            "SAME MOUSEMOVE xy=%d,%d\n", ev.position().x, ev.position().y);
           break;
         }
         lastHwnd = m_hwnd;
         lastPoint = ev.position();
       }
 
-      MOUSE_TRACE("MOUSEMOVE xy=%d,%d\n",
-                  ev.position().x, ev.position().y);
+      MOUSE_TRACE("MOUSEMOVE xy=%d,%d\n", ev.position().x, ev.position().y);
 
       if (m_ignoreRandomMouseEvents > 0) {
         MOUSE_TRACE(" - IGNORED (random event)\n");
@@ -1243,9 +1251,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         // With custom frames, simulate that we always clicked the
         // client area. So in this way Windows doesn't paint the
         // default Minimize/Maximize/Close buttons.
-        POINT pos = {
-          GET_X_LPARAM(lparam),
-          GET_Y_LPARAM(lparam) };
+        POINT pos = { GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
         ScreenToClient(m_hwnd, &pos);
 
         LPARAM rellparam = MAKELPARAM(pos.x, pos.y);
@@ -1284,13 +1290,14 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       Event ev;
       mouseEvent(lparam, ev);
       ev.setType(Event::MouseDown);
-      ev.setButton(
-        msg == WM_LBUTTONDOWN ? Event::LeftButton:
-        msg == WM_RBUTTONDOWN ? Event::RightButton:
-        msg == WM_MBUTTONDOWN ? Event::MiddleButton:
-        msg == WM_XBUTTONDOWN && GET_XBUTTON_WPARAM(wparam) == 1 ? Event::X1Button:
-        msg == WM_XBUTTONDOWN && GET_XBUTTON_WPARAM(wparam) == 2 ? Event::X2Button:
-        Event::NoneButton);
+      ev.setButton(msg == WM_LBUTTONDOWN ? Event::LeftButton :
+                   msg == WM_RBUTTONDOWN ? Event::RightButton :
+                   msg == WM_MBUTTONDOWN ? Event::MiddleButton :
+                   msg == WM_XBUTTONDOWN && GET_XBUTTON_WPARAM(wparam) == 1 ?
+                                           Event::X1Button :
+                   msg == WM_XBUTTONDOWN && GET_XBUTTON_WPARAM(wparam) == 2 ?
+                                           Event::X2Button :
+                                           Event::NoneButton);
 
       if (m_pointerType != PointerType::Unknown) {
         ev.setPointerType(m_pointerType);
@@ -1298,8 +1305,10 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
 
       MOUSE_TRACE("BUTTONDOWN xy=%d,%d button=%d pointerType=%d\n",
-                  ev.position().x, ev.position().y,
-                  ev.button(), (int)m_pointerType);
+                  ev.position().x,
+                  ev.position().y,
+                  ev.button(),
+                  (int)m_pointerType);
 
       if (tabletAPI() == TabletAPI::WintabPackets &&
           same_mouse_event(ev, m_lastWintabEvent)) {
@@ -1319,13 +1328,14 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       Event ev;
       mouseEvent(lparam, ev);
       ev.setType(Event::MouseUp);
-      ev.setButton(
-        msg == WM_LBUTTONUP ? Event::LeftButton:
-        msg == WM_RBUTTONUP ? Event::RightButton:
-        msg == WM_MBUTTONUP ? Event::MiddleButton:
-        msg == WM_XBUTTONUP && GET_XBUTTON_WPARAM(wparam) == 1 ? Event::X1Button:
-        msg == WM_XBUTTONUP && GET_XBUTTON_WPARAM(wparam) == 2 ? Event::X2Button:
-        Event::NoneButton);
+      ev.setButton(msg == WM_LBUTTONUP ? Event::LeftButton :
+                   msg == WM_RBUTTONUP ? Event::RightButton :
+                   msg == WM_MBUTTONUP ? Event::MiddleButton :
+                   msg == WM_XBUTTONUP && GET_XBUTTON_WPARAM(wparam) == 1 ?
+                                         Event::X1Button :
+                   msg == WM_XBUTTONUP && GET_XBUTTON_WPARAM(wparam) == 2 ?
+                                         Event::X2Button :
+                                         Event::NoneButton);
 
       if (m_pointerType != PointerType::Unknown) {
         ev.setPointerType(m_pointerType);
@@ -1333,7 +1343,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
 
       MOUSE_TRACE("BUTTONUP xy=%d,%d button=%d\n",
-                  ev.position().x, ev.position().y,
+                  ev.position().x,
+                  ev.position().y,
                   ev.button());
 
       if (tabletAPI() == TabletAPI::WintabPackets &&
@@ -1359,13 +1370,14 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       Event ev;
       mouseEvent(lparam, ev);
       ev.setType(Event::MouseDoubleClick);
-      ev.setButton(
-        msg == WM_LBUTTONDBLCLK ? Event::LeftButton:
-        msg == WM_RBUTTONDBLCLK ? Event::RightButton:
-        msg == WM_MBUTTONDBLCLK ? Event::MiddleButton:
-        msg == WM_XBUTTONDBLCLK && GET_XBUTTON_WPARAM(wparam) == 1 ? Event::X1Button:
-        msg == WM_XBUTTONDBLCLK && GET_XBUTTON_WPARAM(wparam) == 2 ? Event::X2Button:
-        Event::NoneButton);
+      ev.setButton(msg == WM_LBUTTONDBLCLK ? Event::LeftButton :
+                   msg == WM_RBUTTONDBLCLK ? Event::RightButton :
+                   msg == WM_MBUTTONDBLCLK ? Event::MiddleButton :
+                   msg == WM_XBUTTONDBLCLK && GET_XBUTTON_WPARAM(wparam) == 1 ?
+                                             Event::X1Button :
+                   msg == WM_XBUTTONDBLCLK && GET_XBUTTON_WPARAM(wparam) == 2 ?
+                                             Event::X2Button :
+                                             Event::NoneButton);
 
       if (m_pointerType != PointerType::Unknown) {
         ev.setPointerType(m_pointerType);
@@ -1373,7 +1385,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
 
       MOUSE_TRACE("BUTTONDBLCLK xy=%d,%d button=%d\n",
-                  ev.position().x, ev.position().y,
+                  ev.position().x,
+                  ev.position().y,
                   ev.button());
       queueEvent(ev);
       break;
@@ -1381,8 +1394,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
     case WM_MOUSEWHEEL:
     case WM_MOUSEHWHEEL: {
-      POINT pos = { GET_X_LPARAM(lparam),
-                    GET_Y_LPARAM(lparam) };
+      POINT pos = { GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
       ScreenToClient(m_hwnd, &pos);
 
       Event ev;
@@ -1399,15 +1411,16 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         z = SGN(z);
       }
 
-      gfx::Point delta(
-        (msg == WM_MOUSEHWHEEL ? z: 0),
-        (msg == WM_MOUSEWHEEL ? -z: 0));
+      gfx::Point delta((msg == WM_MOUSEHWHEEL ? z : 0),
+                       (msg == WM_MOUSEWHEEL ? -z : 0));
       ev.setWheelDelta(delta);
       queueEvent(ev);
 
       MOUSE_TRACE("MOUSEWHEEL xy=%d,%d delta=%d,%d\n",
-                  ev.position().x, ev.position().y,
-                  ev.wheelDelta().x, ev.wheelDelta().y);
+                  ev.position().x,
+                  ev.position().y,
+                  ev.wheelDelta().x,
+                  ev.wheelDelta().y);
       break;
     }
 
@@ -1422,7 +1435,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       ev.setModifiers(get_modifiers_from_last_win32_message());
       ev.setPosition(gfx::Point(pos.x, pos.y) / m_scale);
 
-      int bar = (msg == WM_HSCROLL ? SB_HORZ: SB_VERT);
+      int bar = (msg == WM_HSCROLL ? SB_HORZ : SB_VERT);
       int z = GetScrollPos(m_hwnd, bar);
 
       switch (LOWORD(wparam)) {
@@ -1447,21 +1460,22 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
           break;
       }
 
-      gfx::Point delta(
-        (msg == WM_HSCROLL ? (z-50): 0),
-        (msg == WM_VSCROLL ? (z-50): 0));
+      gfx::Point delta((msg == WM_HSCROLL ? (z - 50) : 0),
+                       (msg == WM_VSCROLL ? (z - 50) : 0));
       ev.setWheelDelta(delta);
 
       SetScrollPos(m_hwnd, bar, 50, FALSE);
       queueEvent(ev);
 
       MOUSE_TRACE("HVSCROLL xy=%d,%d delta=%d,%d\n",
-                  ev.position().x, ev.position().y,
-                  ev.wheelDelta().x, ev.wheelDelta().y);
+                  ev.position().x,
+                  ev.position().y,
+                  ev.wheelDelta().x,
+                  ev.wheelDelta().y);
       break;
     }
 
-    // Pointer API (since Windows 8.0)
+      // Pointer API (since Windows 8.0)
 
     case WM_POINTERCAPTURECHANGED: {
       MOUSE_TRACE("POINTERCAPTURECHANGED\n");
@@ -1476,15 +1490,16 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         break;
 
       MOUSE_TRACE("POINTERENTER id=%d xy=%d,%d\n",
-                  pi.pointerId, ev.position().x, ev.position().y);
+                  pi.pointerId,
+                  ev.position().x,
+                  ev.position().y);
 
       if (pi.pointerType == PT_TOUCH || pi.pointerType == PT_PEN) {
         auto& winApi = system()->winApi();
         if (m_ictx && winApi.AddPointerInteractionContext) {
           winApi.AddPointerInteractionContext(m_ictx, pi.pointerId);
 
-          if (m_touch && pi.pointerType == PT_TOUCH &&
-              !m_touch->asMouse) {
+          if (m_touch && pi.pointerType == PT_TOUCH && !m_touch->asMouse) {
             ++m_touch->fingers;
             TOUCH_TRACE("POINTERENTER fingers=%d\n", m_touch->fingers);
             if (m_touch->fingers == 1) {
@@ -1547,9 +1562,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
       system()->_clearInternalMousePosition();
 
-#if 0 // Don't generate MouseLeave from pen/touch messages
-      // TODO we should generate this message, but after this touch
-      //      messages don't work anymore, so we have to fix that problem.
+#if 0  // Don't generate MouseLeave from pen/touch messages                    \
+       // TODO we should generate this message, but after this touch           \
+       //      messages don't work anymore, so we have to fix that problem.
       if (m_hasMouse) {
         m_hasMouse = false;
 
@@ -1581,7 +1596,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       handlePointerButtonChange(ev, pi);
 
       MOUSE_TRACE("POINTERDOWN id=%d xy=%d,%d button=%d\n",
-                  pi.pointerId, ev.position().x, ev.position().y,
+                  pi.pointerId,
+                  ev.position().x,
+                  ev.position().y,
                   ev.button());
       return 0;
     }
@@ -1604,7 +1621,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       handlePointerButtonChange(ev, pi);
 
       MOUSE_TRACE("POINTERUP id=%d xy=%d,%d button=%d\n",
-                  pi.pointerId, ev.position().x, ev.position().y,
+                  pi.pointerId,
+                  ev.position().x,
+                  ev.position().y,
                   ev.button());
       return 0;
     }
@@ -1658,7 +1677,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       handlePointerButtonChange(ev, pi);
 
       MOUSE_TRACE("POINTERUPDATE id=%d xy=%d,%d\n",
-                  pi.pointerId, ev.position().x, ev.position().y);
+                  pi.pointerId,
+                  ev.position().x,
+                  ev.position().y);
       return 0;
     }
 
@@ -1680,15 +1701,16 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         z = SGN(z);
       }
 
-      gfx::Point delta(
-        (msg == WM_POINTERHWHEEL ? z: 0),
-        (msg == WM_POINTERWHEEL ? -z: 0));
+      gfx::Point delta((msg == WM_POINTERHWHEEL ? z : 0),
+                       (msg == WM_POINTERWHEEL ? -z : 0));
       ev.setWheelDelta(delta);
       queueEvent(ev);
 
       MOUSE_TRACE("POINTERWHEEL xy=%d,%d delta=%d,%d\n",
-                  ev.position().x, ev.position().y,
-                  ev.wheelDelta().x, ev.wheelDelta().y);
+                  ev.position().x,
+                  ev.position().y,
+                  ev.wheelDelta().x,
+                  ev.wheelDelta().y);
 
       return 0;
     }
@@ -1698,9 +1720,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       if (m_touch && m_touch->timerID == wparam) {
         killTouchTimer();
 
-        if (!m_touch->asMouse &&
-            m_touch->canBeMouse &&
-            m_touch->fingers == 1) {
+        if (!m_touch->asMouse && m_touch->canBeMouse && m_touch->fingers == 1) {
           TOUCH_TRACE("-> finger as mouse, sent %d events\n",
                       m_touch->delayedEvents.size());
 
@@ -1712,7 +1732,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
       break;
 
-    // Keyboard Messages
+      // Keyboard Messages
 
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN: {
@@ -1724,8 +1744,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       // We only create one KeyDown event for modifiers. Bit 30
       // indicates the previous state of the key, if the modifier was
       // already pressed don't generate the event.
-      if ((ourScancode >= kKeyFirstModifierScancode) &&
-          (lparam & (1 << 30)))
+      if ((ourScancode >= kKeyFirstModifierScancode) && (lparam & (1 << 30)))
         return 0;
 
       Event ev;
@@ -1733,10 +1752,13 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       ev.setModifiers(get_modifiers_from_last_win32_message());
       ev.setScancode(ourScancode);
       ev.setUnicodeChar(0);
-      ev.setRepeat(lparam & (1 << 30) ? 1: 0);
+      ev.setRepeat(lparam & (1 << 30) ? 1 : 0);
 
       KEY_TRACE("KEYDOWN vk=%d scancode=%d->%d modifiers=%d\n",
-                vk, scancode, ev.scancode(), ev.modifiers());
+                vk,
+                scancode,
+                ev.scancode(),
+                ev.modifiers());
 
       {
         VkToUnicode tu;
@@ -1746,7 +1768,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
             ev.setDeadKey(true);
             ev.setUnicodeChar(tu[0]);
             if (!m_translateDeadKeys)
-              tu.toUnicode(vk, scancode); // Call again to remove dead-key
+              tu.toUnicode(vk, scancode);  // Call again to remove dead-key
           }
           else if (tu.size() > 0) {
             sendMsg = false;
@@ -1756,7 +1778,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
               KEY_TRACE(" -> queued unicode char=%d <%c>\n",
                         ev.unicodeChar(),
-                        ev.unicodeChar() ? ev.unicodeChar(): ' ');
+                        ev.unicodeChar() ? ev.unicodeChar() : ' ');
             }
           }
         }
@@ -1766,7 +1788,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         queueEvent(ev);
         KEY_TRACE(" -> queued unicode char=%d <%c>\n",
                   ev.unicodeChar(),
-                  ev.unicodeChar() ? ev.unicodeChar(): ' ');
+                  ev.unicodeChar() ? ev.unicodeChar() : ' ');
       }
 
       return 0;
@@ -1779,7 +1801,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       ev.setModifiers(get_modifiers_from_last_win32_message());
       ev.setScancode(win32vk_to_scancode(wparam));
       ev.setUnicodeChar(0);
-      ev.setRepeat(lparam & (1 << 30) ? 0: 1);
+      ev.setRepeat(lparam & (1 << 30) ? 0 : 1);
       queueEvent(ev);
 
       // TODO If we use native menus, this message should be given
@@ -1796,10 +1818,10 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       base::paths files;
 
       int count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
-      for (int index=0; index<count; ++index) {
+      for (int index = 0; index < count; ++index) {
         int length = DragQueryFile(hdrop, index, NULL, 0);
         if (length > 0) {
-          std::vector<TCHAR> str(length+1);
+          std::vector<TCHAR> str(length + 1);
           DragQueryFile(hdrop, index, &str[0], str.size());
           files.push_back(base::to_utf8(&str[0]));
         }
@@ -1821,9 +1843,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_NCCALCSIZE: {
       if (wparam) {
         if (m_borderless) {
-#if 0     // TODO this is not working yet because the taskbar is not
-          //      visible (in some way Windows is still hidden the
-          //      taskbar), we've fixed this in WM_WINDOWPOSCHANGED
+#if 0  // TODO this is not working yet because the taskbar is not              \
+       //      visible (in some way Windows is still hidden the                \
+       //      taskbar), we've fixed this in WM_WINDOWPOSCHANGED
           if (isMaximized() && !m_fullscreen) {
             // As a maximized window without WS_CAPTION | WS_THICKFRAME
             // styles is seen as a full screen window, Windows gives us the
@@ -1864,8 +1886,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     }
 
     case WM_NCHITTEST: {
-      gfx::Point pt(GET_X_LPARAM(lparam),
-                    GET_Y_LPARAM(lparam));
+      gfx::Point pt(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
 
       // Custom handler for WM_NCHITTEST when the mouse is inside the
       // windows area.
@@ -1882,10 +1903,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
         // Convert os::Hit values to Win32 HT* values
         const int i = static_cast<int>(this->handleHitTest(this, relPt));
-        return (i >= 0 &&
-                i < hit2hittest_entries ?
-                    static_cast<LRESULT>(hit2hittest[i]):
-                    HTNOWHERE);
+        return (i >= 0 && i < hit2hittest_entries ?
+                  static_cast<LRESULT>(hit2hittest[i]) :
+                  HTNOWHERE);
       }
 
       LRESULT result = DefWindowProc(m_hwnd, msg, wparam, lparam);
@@ -1898,10 +1918,10 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       // we have scroll bars are enabled and visible to receive
       // trackpad messages only.)
       if (result == HTHSCROLL) {
-        result = (area.contains(pt) ? HTCLIENT: HTBOTTOM);
+        result = (area.contains(pt) ? HTCLIENT : HTBOTTOM);
       }
       else if (result == HTVSCROLL) {
-        result = (area.contains(pt) ? HTCLIENT: HTRIGHT);
+        result = (area.contains(pt) ? HTCLIENT : HTRIGHT);
       }
       // Filter the resize grip area of the bottom-right corner, which
       // has the size of the scrollbars and we don't want to use that
@@ -1914,7 +1934,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       return result;
     }
 
-    // Wintab API Messages
+      // Wintab API Messages
 
     case WT_PROXIMITY: {
       HCTX ctx = (HCTX)wparam;
@@ -1924,7 +1944,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       if (m_hpenctx != ctx)
         break;
 
-      bool entering_ctx = (LOWORD(lparam) ? true: false);
+      bool entering_ctx = (LOWORD(lparam) ? true : false);
       if (entering_ctx && ctx) {
         auto& api = system()->wintabApi();
 
@@ -1939,7 +1959,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
 
       MOUSE_TRACE("WT_PROXIMITY entering=%d pointerType=%d\n",
-                  entering_ctx, (int)m_pointerType);
+                  entering_ctx,
+                  (int)m_pointerType);
 
       // Reset last event
       m_lastWintabEvent.setType(Event::None);
@@ -1966,13 +1987,12 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       Event ev;
       ev.setModifiers(get_modifiers_from_last_win32_message());
 
-      for (int i=0; i<n; ++i) {
+      for (int i = 0; i < n; ++i) {
         const PACKET& packet = m_packets[i];
 
         if (api.minPressure() < api.maxPressure()) {
-          m_pressure =
-            float(packet.pkNormalPressure - api.minPressure()) /
-            float(api.maxPressure() - api.minPressure());
+          m_pressure = float(packet.pkNormalPressure - api.minPressure()) /
+                       float(api.maxPressure() - api.minPressure());
         }
         else {
           m_pressure = 0.0f;
@@ -1982,7 +2002,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         if (tabletAPI() == TabletAPI::WintabPackets) {
           POINT pos = { packet.pkX,
                         // Wintab API uses lower-left corner as the origin
-                        (api.outBounds().h-1) - packet.pkY };
+                        (api.outBounds().h - 1) - packet.pkY };
           ScreenToClient(m_hwnd, &pos);
 
           ev.setPosition(gfx::Point(pos.x, pos.y) / m_scale);
@@ -1992,11 +2012,12 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
           // Get mouse button and even type (mouse move/down/up/double-click)
           Event::Type evType;
           Event::MouseButton mouseButton;
-          api.mapCursorButton(packet.pkCursor,
-                              HIWORD(packet.pkButtons), // Logical button
-                              LOWORD(packet.pkButtons), // Relative button flag (down/up)
-                              evType,
-                              mouseButton);
+          api.mapCursorButton(
+            packet.pkCursor,
+            HIWORD(packet.pkButtons),  // Logical button
+            LOWORD(packet.pkButtons),  // Relative button flag (down/up)
+            evType,
+            mouseButton);
 
           ev.setType(evType);
 
@@ -2005,9 +2026,16 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
           if (evType != Event::MouseMove)
             ev.setButton(mouseButton);
 
-          MOUSE_TRACE("  [%d] evType=%d xy=%d,%d pressure=%.4f evButton=%d pkCursor=%d pointerType=%d\n",
-                      i, ev.type(), ev.position().x, ev.position().y, m_pressure,
-                      (int)ev.button(), packet.pkCursor, (int)m_pointerType);
+          MOUSE_TRACE(
+            "  [%d] evType=%d xy=%d,%d pressure=%.4f evButton=%d pkCursor=%d pointerType=%d\n",
+            i,
+            ev.type(),
+            ev.position().x,
+            ev.position().y,
+            m_pressure,
+            (int)ev.button(),
+            packet.pkCursor,
+            (int)m_pointerType);
 
           if (evType != Event::None) {
             queueEvent(ev);
@@ -2038,7 +2066,6 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       openWintabCtx();
       break;
     }
-
   }
 
   LRESULT result = FALSE;
@@ -2051,9 +2078,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 void WindowWin::mouseEvent(LPARAM lparam, Event& ev)
 {
   ev.setModifiers(get_modifiers_from_last_win32_message());
-  ev.setPosition(gfx::Point(
-                   GET_X_LPARAM(lparam) / m_scale,
-                   GET_Y_LPARAM(lparam) / m_scale));
+  ev.setPosition(
+    gfx::Point(GET_X_LPARAM(lparam) / m_scale, GET_Y_LPARAM(lparam) / m_scale));
 }
 
 bool WindowWin::pointerEvent(WPARAM wparam, Event& ev, POINTER_INFO& pi)
@@ -2080,8 +2106,7 @@ bool WindowWin::pointerEvent(WPARAM wparam, Event& ev, POINTER_INFO& pi)
   // the captured mouse position is always obtained through
   // GetCursorPos() but we are in other position with the stylus.
   if (sys->tabletOptions().setCursorFix) {
-    SetCursorPos(pi.ptPixelLocation.x,
-                 pi.ptPixelLocation.y);
+    SetCursorPos(pi.ptPixelLocation.x, pi.ptPixelLocation.y);
   }
 
   switch (pi.pointerType) {
@@ -2117,8 +2142,7 @@ bool WindowWin::pointerEvent(WPARAM wparam, Event& ev, POINTER_INFO& pi)
           ev.setPointerType(PointerType::Eraser);
 
         // Add pressure information
-        ev.setPressure(
-          std::clamp(float(ppi.pressure) / 1024.0f, 0.0f, 1.0f));
+        ev.setPressure(std::clamp(float(ppi.pressure) / 1024.0f, 0.0f, 1.0f));
       }
       break;
     }
@@ -2202,7 +2226,7 @@ void WindowWin::handlePointerButtonChange(Event& ev, POINTER_INFO& pi)
     case POINTER_CHANGE_FIRSTBUTTON_UP:
       button = Event::LeftButton;
       break;
-    case  POINTER_CHANGE_SECONDBUTTON_DOWN:
+    case POINTER_CHANGE_SECONDBUTTON_DOWN:
       down = true;
     case POINTER_CHANGE_SECONDBUTTON_UP:
       button = Event::RightButton;
@@ -2227,7 +2251,7 @@ void WindowWin::handlePointerButtonChange(Event& ev, POINTER_INFO& pi)
   if (button == Event::NoneButton)
     return;
 
-  ev.setType(down ? Event::MouseDown: Event::MouseUp);
+  ev.setType(down ? Event::MouseDown : Event::MouseUp);
   ev.setButton(button);
 
 #if OS_USE_POINTER_API_FOR_MOUSE
@@ -2271,24 +2295,29 @@ void WindowWin::handleInteractionContextOutput(
   const INTERACTION_CONTEXT_OUTPUT* output)
 {
   MOUSE_TRACE("%s (%d) xy=%.16g %.16g flags=%d type=%d\n",
-              output->interactionId == INTERACTION_ID_MANIPULATION ? "INTERACTION_ID_MANIPULATION":
-              output->interactionId == INTERACTION_ID_TAP ? "INTERACTION_ID_TAP":
-              output->interactionId == INTERACTION_ID_SECONDARY_TAP ? "INTERACTION_ID_SECONDARY_TAP":
-              output->interactionId == INTERACTION_ID_HOLD ? "INTERACTION_ID_HOLD": "INTERACTION_ID_???",
+              output->interactionId == INTERACTION_ID_MANIPULATION ?
+                "INTERACTION_ID_MANIPULATION" :
+              output->interactionId == INTERACTION_ID_TAP ?
+                "INTERACTION_ID_TAP" :
+              output->interactionId == INTERACTION_ID_SECONDARY_TAP ?
+                "INTERACTION_ID_SECONDARY_TAP" :
+              output->interactionId == INTERACTION_ID_HOLD ?
+                "INTERACTION_ID_HOLD" :
+                "INTERACTION_ID_???",
               output->interactionId,
-              output->x, output->y,
+              output->x,
+              output->y,
               output->interactionFlags,
               output->inputType);
 
   // We use the InteractionContext to interpret touch gestures only
   // and double tap with pen.
-  if ((output->inputType == PT_TOUCH
-       && (!m_touch
-           || (!m_touch->asMouse && !m_touch->canBeMouse)
-           || (output->arguments.tap.count == 2)))
-      || (output->inputType == PT_PEN &&
-          output->interactionId == INTERACTION_ID_TAP &&
-          output->arguments.tap.count == 2)) {
+  if ((output->inputType == PT_TOUCH &&
+       (!m_touch || (!m_touch->asMouse && !m_touch->canBeMouse) ||
+        (output->arguments.tap.count == 2))) ||
+      (output->inputType == PT_PEN &&
+       output->interactionId == INTERACTION_ID_TAP &&
+       output->arguments.tap.count == 2)) {
     ABS_CLIENT_RC(rc);
 
     gfx::Point pos(int((output->x - rc.left) / m_scale),
@@ -2296,9 +2325,8 @@ void WindowWin::handleInteractionContextOutput(
 
     Event ev;
     // This is PT_PEN or PT_TOUCH
-    ev.setPointerType(output->inputType == PT_PEN ?
-                      PointerType::Pen:
-                      PointerType::Touch);
+    ev.setPointerType(output->inputType == PT_PEN ? PointerType::Pen :
+                                                    PointerType::Touch);
     ev.setModifiers(get_modifiers_from_last_win32_message());
     ev.setPosition(pos);
 
@@ -2311,16 +2339,18 @@ void WindowWin::handleInteractionContextOutput(
 
     switch (output->interactionId) {
       case INTERACTION_ID_MANIPULATION: {
-        MOUSE_TRACE(" - delta xy=%.16g %.16g scale=%.16g expansion=%.16g rotation=%.16g\n",
-                    output->arguments.manipulation.delta.translationX,
-                    output->arguments.manipulation.delta.translationY,
-                    output->arguments.manipulation.delta.scale,
-                    output->arguments.manipulation.delta.expansion,
-                    output->arguments.manipulation.delta.rotation);
+        MOUSE_TRACE(
+          " - delta xy=%.16g %.16g scale=%.16g expansion=%.16g rotation=%.16g\n",
+          output->arguments.manipulation.delta.translationX,
+          output->arguments.manipulation.delta.translationY,
+          output->arguments.manipulation.delta.scale,
+          output->arguments.manipulation.delta.expansion,
+          output->arguments.manipulation.delta.rotation);
 
         // TODO we should not change the sign
-        gfx::Point delta(-int(output->arguments.manipulation.delta.translationX) / m_scale,
-                         -int(output->arguments.manipulation.delta.translationY) / m_scale);
+        gfx::Point delta(
+          -int(output->arguments.manipulation.delta.translationX) / m_scale,
+          -int(output->arguments.manipulation.delta.translationY) / m_scale);
 
         if (output->interactionFlags & INTERACTION_FLAG_BEGIN) {
           ev.setType(Event::MouseMove);
@@ -2342,22 +2372,29 @@ void WindowWin::handleInteractionContextOutput(
         MOUSE_TRACE(" - count=%d\n", output->arguments.tap.count);
 
         ev.setButton(Event::LeftButton);
-        ev.setType(Event::MouseMove); queueEvent(ev);
+        ev.setType(Event::MouseMove);
+        queueEvent(ev);
         if (output->arguments.tap.count == 2) {
-          ev.setType(Event::MouseDoubleClick); queueEvent(ev);
+          ev.setType(Event::MouseDoubleClick);
+          queueEvent(ev);
         }
         else {
-          ev.setType(Event::MouseDown); queueEvent(ev);
-          ev.setType(Event::MouseUp); queueEvent(ev);
+          ev.setType(Event::MouseDown);
+          queueEvent(ev);
+          ev.setType(Event::MouseUp);
+          queueEvent(ev);
         }
         break;
 
       case INTERACTION_ID_SECONDARY_TAP:
       case INTERACTION_ID_HOLD:
         ev.setButton(Event::RightButton);
-        ev.setType(Event::MouseMove); queueEvent(ev);
-        ev.setType(Event::MouseDown); queueEvent(ev);
-        ev.setType(Event::MouseUp); queueEvent(ev);
+        ev.setType(Event::MouseMove);
+        queueEvent(ev);
+        ev.setType(Event::MouseDown);
+        queueEvent(ev);
+        ev.setType(Event::MouseUp);
+        queueEvent(ev);
         break;
     }
   }
@@ -2368,8 +2405,7 @@ void WindowWin::waitTimerToConvertFingerAsMouseMovement()
   ASSERT(m_touch);
   m_touch->canBeMouse = true;
   clearDelayedTouchEvents();
-  SetTimer(m_hwnd, m_touch->timerID = 1,
-           kFingerAsMouseTimeout, nullptr);
+  SetTimer(m_hwnd, m_touch->timerID = 1, kFingerAsMouseTimeout, nullptr);
   TOUCH_TRACE(" - Set timer\n");
 }
 
@@ -2430,8 +2466,8 @@ void WindowWin::checkColorSpaceChange()
 void WindowWin::checkDarkModeChange()
 {
   try {
-    auto key = base::hkey::current_user().open(kPersonalizeKey,
-                                               base::hkey::read);
+    auto key =
+      base::hkey::current_user().open(kPersonalizeKey, base::hkey::read);
 
     // We can check if "AppsUseLightTheme" option is 0 which means
     // that we have to use the dark theme. Not sure why this is not
@@ -2439,9 +2475,10 @@ void WindowWin::checkDarkModeChange()
     // through the manifest for Win32 apps.
     if (key.exists(kAppsUseLightThemeValue)) {
       BOOL value = (key.dword(kAppsUseLightThemeValue) == 0);
-      DwmSetWindowAttribute(
-        m_hwnd, 20, // DWMWA_USE_IMMERSIVE_DARK_MODE,
-        &value, sizeof(BOOL));
+      DwmSetWindowAttribute(m_hwnd,
+                            20,  // DWMWA_USE_IMMERSIVE_DARK_MODE,
+                            &value,
+                            sizeof(BOOL));
     }
   }
   catch (const base::Win32Exception&) {
@@ -2459,9 +2496,9 @@ void WindowWin::openWintabCtx()
       options.api == TabletAPI::WintabPackets) {
     // Attach Wacom context
     auto& api = sys->wintabApi();
-    m_hpenctx = api.open(
-      m_hwnd,
-      true); // We want to move the cursor with the pen in any case
+    m_hpenctx =
+      api.open(m_hwnd,
+               true);  // We want to move the cursor with the pen in any case
 
     if (api.crashedBefore()) {
       options.api = TabletAPI::Default;
@@ -2485,15 +2522,14 @@ void WindowWin::closeWintabCtx()
 void WindowWin::notifyFullScreenStateToShell()
 {
   base::ComPtr<ITaskbarList2> taskbar;
-  HRESULT hr = CoCreateInstance(CLSID_TaskbarList,
-                                nullptr, CLSCTX_INPROC_SERVER,
-                                IID_PPV_ARGS(&taskbar));
+  HRESULT hr = CoCreateInstance(
+    CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
   if (FAILED(hr))
     return;
 
   // Useful to send the taskbar at the bottom when the window is set
   // as fullscreen.
-  taskbar->MarkFullscreenWindow(m_hwnd, m_fullscreen ? TRUE: FALSE);
+  taskbar->MarkFullscreenWindow(m_hwnd, m_fullscreen ? TRUE : FALSE);
 }
 
 TabletAPI WindowWin::tabletAPI() const
@@ -2512,20 +2548,20 @@ void WindowWin::registerClass()
 
   WNDCLASSEX wcex;
   if (GetClassInfoEx(instance, className.c_str(), &wcex))
-    return;                 // Already registered
+    return;  // Already registered
 
-  wcex.cbSize        = sizeof(WNDCLASSEX);
-  wcex.style         = CS_DBLCLKS;
-  wcex.lpfnWndProc   = &WindowWin::staticWndProc;
-  wcex.cbClsExtra    = 0;
-  wcex.cbWndExtra    = 0;
-  wcex.hInstance     = instance;
-  wcex.hIcon         = LoadIcon(instance, L"0");
-  wcex.hCursor       = NULL;
-  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOWFRAME+1);
-  wcex.lpszMenuName  = nullptr;
+  wcex.cbSize = sizeof(WNDCLASSEX);
+  wcex.style = CS_DBLCLKS;
+  wcex.lpfnWndProc = &WindowWin::staticWndProc;
+  wcex.cbClsExtra = 0;
+  wcex.cbWndExtra = 0;
+  wcex.hInstance = instance;
+  wcex.hIcon = LoadIcon(instance, L"0");
+  wcex.hCursor = NULL;
+  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOWFRAME + 1);
+  wcex.lpszMenuName = nullptr;
   wcex.lpszClassName = className.c_str();
-  wcex.hIconSm       = nullptr;
+  wcex.hIconSm = nullptr;
 
   if (RegisterClassEx(&wcex) == 0)
     throw std::runtime_error("Error registering window class");
@@ -2583,12 +2619,16 @@ HWND WindowWin::createHwnd(WindowWin* self, const WindowSpec& spec)
     rc.w = spec.contentRect().w;
     rc.h = spec.contentRect().h;
     RECT ncrc = { 0, 0, rc.w, rc.h };
-    AdjustWindowRectEx(&ncrc, style,
-                       false,     // Add a field to WindowSpec to add native menu bars
-                       exStyle);
+    AdjustWindowRectEx(
+      &ncrc,
+      style,
+      false,  // Add a field to WindowSpec to add native menu bars
+      exStyle);
 
-    if (rc.x != CW_USEDEFAULT) rc.x += ncrc.left;
-    if (rc.y != CW_USEDEFAULT) rc.y += ncrc.top;
+    if (rc.x != CW_USEDEFAULT)
+      rc.x += ncrc.left;
+    if (rc.y != CW_USEDEFAULT)
+      rc.y += ncrc.top;
     rc.w = ncrc.right - ncrc.left;
     rc.h = ncrc.bottom - ncrc.top;
   }
@@ -2607,8 +2647,13 @@ HWND WindowWin::createHwnd(WindowWin* self, const WindowSpec& spec)
     className.c_str(),
     L"",
     style,
-    rc.x, rc.y, rc.w, rc.h,
-    (HWND)(spec.parent() ? static_cast<WindowWin*>(spec.parent())->nativeHandle(): nullptr),
+    rc.x,
+    rc.y,
+    rc.w,
+    rc.h,
+    (HWND)(spec.parent() ?
+             static_cast<WindowWin*>(spec.parent())->nativeHandle() :
+             nullptr),
     nullptr,
     GetModuleHandle(nullptr),
     reinterpret_cast<LPVOID>(self));
@@ -2619,14 +2664,16 @@ HWND WindowWin::createHwnd(WindowWin* self, const WindowSpec& spec)
 }
 
 //static
-LRESULT CALLBACK WindowWin::staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK WindowWin::staticWndProc(HWND hwnd,
+                                          UINT msg,
+                                          WPARAM wparam,
+                                          LPARAM lparam)
 {
   WindowWin* wnd = nullptr;
 
   if (msg == WM_CREATE) {
-    wnd =
-      reinterpret_cast<WindowWin*>(
-        reinterpret_cast<LPCREATESTRUCT>(lparam)->lpCreateParams);
+    wnd = reinterpret_cast<WindowWin*>(
+      reinterpret_cast<LPCREATESTRUCT>(lparam)->lpCreateParams);
 
     if (wnd && wnd->m_hwnd == nullptr)
       wnd->m_hwnd = hwnd;
@@ -2650,8 +2697,7 @@ LRESULT CALLBACK WindowWin::staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LP
 
 //static
 void CALLBACK WindowWin::staticInteractionContextCallback(
-  void* clientData,
-  const INTERACTION_CONTEXT_OUTPUT* output)
+  void* clientData, const INTERACTION_CONTEXT_OUTPUT* output)
 {
   WindowWin* self = reinterpret_cast<WindowWin*>(clientData);
   self->handleInteractionContextOutput(output);
@@ -2663,4 +2709,4 @@ SystemWin* WindowWin::system()
   return static_cast<SystemWin*>(os::instance());
 }
 
-} // namespace os
+}  // namespace os

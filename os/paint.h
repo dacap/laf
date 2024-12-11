@@ -10,65 +10,65 @@
 
 namespace os {
 
-  // Same values as SkBlendMode
-  enum class BlendMode {
-    Clear,
-    Src,
-    Dst,
-    SrcOver,
-    DstOver,
-    SrcIn,
-    DstIn,
-    SrcOut,
-    DstOut,
-    SrcATop,
-    DstATop,
-    Xor,
-    Plus,
-    Modulate,
-    Screen,
-    LastCoeffMode = Screen,
-    Overlay,
-    Darken,
-    Lighten,
-    ColorDodge,
-    ColorBurn,
-    HardLight,
-    SoftLight,
-    Difference,
-    Exclusion,
-    Multiply,
-    LastSeparableMode = Multiply,
-    Hue,
-    Saturation,
-    Color,
-    Luminosity,
-    LastMode = Luminosity,
-  };
-
-  class PaintBase {
-  public:
-    // Same as SkPaint::Style
-    enum Style {
-      Fill,
-      Stroke,
-      StrokeAndFill,
-    };
-
-    // Same as SkCanvas::SrcRectConstraint
-    enum SrcEdges {
-      Strict, // Sample only inside bounds, is slower (don't use mipmaps)
-      Fast,   // Sample outside bounds, is faster (use mipmaps)
-    };
-
-    SrcEdges srcEdges() const { return m_srcEdges; }
-    void srcEdges(const SrcEdges srcEdges) { m_srcEdges = srcEdges; }
-
-  private:
-    SrcEdges m_srcEdges = SrcEdges::Strict;
-  };
-
+// Same values as SkBlendMode
+enum class BlendMode {
+  Clear,
+  Src,
+  Dst,
+  SrcOver,
+  DstOver,
+  SrcIn,
+  DstIn,
+  SrcOut,
+  DstOut,
+  SrcATop,
+  DstATop,
+  Xor,
+  Plus,
+  Modulate,
+  Screen,
+  LastCoeffMode = Screen,
+  Overlay,
+  Darken,
+  Lighten,
+  ColorDodge,
+  ColorBurn,
+  HardLight,
+  SoftLight,
+  Difference,
+  Exclusion,
+  Multiply,
+  LastSeparableMode = Multiply,
+  Hue,
+  Saturation,
+  Color,
+  Luminosity,
+  LastMode = Luminosity,
 };
+
+class PaintBase {
+public:
+  // Same as SkPaint::Style
+  enum Style {
+    Fill,
+    Stroke,
+    StrokeAndFill,
+  };
+
+  // Same as SkCanvas::SrcRectConstraint
+  enum SrcEdges {
+    Strict,  // Sample only inside bounds, is slower (don't use mipmaps)
+    Fast,    // Sample outside bounds, is faster (use mipmaps)
+  };
+
+  SrcEdges srcEdges() const { return m_srcEdges; }
+  void srcEdges(const SrcEdges srcEdges) { m_srcEdges = srcEdges; }
+
+private:
+  SrcEdges m_srcEdges = SrcEdges::Strict;
+};
+
+};  // namespace os
 
 #if LAF_SKIA
   #include "os/skia/paint.h"
