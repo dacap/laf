@@ -57,8 +57,9 @@ char* base_strdup(const char* string)
   #define BACKTRACE_LEVELS 16
 
   #ifdef _MSC_VER
-    #include <dbghelp.h>
     #include <windows.h>
+
+    #include <dbghelp.h>
 
 typedef USHORT(WINAPI* RtlCaptureStackBackTraceType)(ULONG,
                                                      ULONG,

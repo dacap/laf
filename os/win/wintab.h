@@ -16,8 +16,9 @@
 #include <map>
 #include <string>
 
-#include "third_party/wacom/wintab.h"
 #include <windows.h>
+
+#include "third_party/wacom/wintab.h"
 
 #define PACKETDATA (PK_CURSOR | PK_BUTTONS | PK_X | PK_Y | PK_NORMAL_PRESSURE)
 #define PACKETMODE (PK_BUTTONS)

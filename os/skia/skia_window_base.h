@@ -20,8 +20,9 @@
 
 #if SK_SUPPORT_GPU
   #if LAF_WINDOWS
-    #include <GL/gl.h>
     #include <windows.h>
+
+    #include <GL/gl.h>
   #elif LAF_MACOS
     #include <OpenGL/gl.h>
   #endif

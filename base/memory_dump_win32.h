@@ -10,8 +10,9 @@
 #pragma once
 
 #if LAF_WINDOWS
-  #include <dbghelp.h>
   #include <windows.h>
+
+  #include <dbghelp.h>
 #endif
 
 #include "base/string.h"
