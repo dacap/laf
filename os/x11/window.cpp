@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2024  Igara Studio S.A.
+// Copyright (C) 2018-2025  Igara Studio S.A.
 // Copyright (C) 2017-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -502,16 +502,14 @@ os::ScreenRef WindowX11::screen() const
 
 os::ColorSpaceRef WindowX11::colorSpace() const
 {
-  auto system = System::instance();
-  ASSERT(system);
-  if (!system)
-    return nullptr;
-
-  if (auto defaultCS = system->windowsColorSpace())
-    return defaultCS;
+  if (auto cs = Window::colorSpace())
+    return cs;
 
   // TODO get the window color space
-  return system->makeColorSpace(gfx::ColorSpace::MakeSRGB());
+  if (auto system = System::instance())
+    return system->makeColorSpace(gfx::ColorSpace::MakeSRGB());
+
+  return nullptr;
 }
 
 void WindowX11::setScale(const int scale)

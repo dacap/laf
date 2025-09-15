@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2021-2024  Igara Studio S.A.
+// Copyright (C) 2021-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -113,9 +113,9 @@ public:
       m_surface = make_ref<SkiaSurface>();
 
       if (T::isTransparent())
-        m_surface->createRgba(newSize.w, newSize.h, m_colorSpace);
+        m_surface->createRgba(newSize.w, newSize.h, colorSpace());
       else
-        m_surface->create(newSize.w, newSize.h, m_colorSpace);
+        m_surface->create(newSize.w, newSize.h, colorSpace());
     }
   }
 
@@ -126,14 +126,16 @@ public:
   // Overrides the colorSpace() method to return the cached/stored
   // color space in this instance (instead of asking for the color
   // space to the screen as T::colorSpace() should do).
-  os::ColorSpaceRef colorSpace() const override { return m_colorSpace; }
+  os::ColorSpaceRef colorSpace() const override
+  {
+    if (m_colorSpace)
+      return m_colorSpace;
+    return T::colorSpace();
+  }
 
   void setColorSpace(const os::ColorSpaceRef& colorSpace) override
   {
-    if (colorSpace)
-      m_colorSpace = colorSpace;
-    else
-      m_colorSpace = T::colorSpace(); // Screen color space
+    m_colorSpace = colorSpace;
 
     if (m_surface)
       resetSkiaSurface();

@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2019-2024  Igara Studio S.A.
+// Copyright (C) 2019-2025  Igara Studio S.A.
 // Copyright (C) 2012-2017  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -466,8 +466,8 @@ os::ScreenRef WindowOSX::screen() const
 
 os::ColorSpaceRef WindowOSX::colorSpace() const
 {
-  if (auto defaultCS = System::instance()->windowsColorSpace())
-    return defaultCS;
+  if (auto cs = Window::colorSpace())
+    return cs;
 
   ASSERT(m_nsWindow);
   return os::convert_nscolorspace_to_os_colorspace([m_nsWindow colorSpace]);

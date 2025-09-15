@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2019-2021  Igara Studio S.A.
+// Copyright (C) 2019-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -14,6 +14,7 @@
 #include "gfx/region.h"
 #include "os/event.h"
 #include "os/event_queue.h"
+#include "os/system.h"
 
 namespace os {
 
@@ -46,6 +47,19 @@ gfx::Point Window::pointFromScreen(const gfx::Point& screenPosition) const
 void Window::queueEvent(os::Event& ev)
 {
   onQueueEvent(ev);
+}
+
+os::ColorSpaceRef Window::colorSpace() const
+{
+  auto system = System::instance();
+  ASSERT(system);
+  if (!system)
+    return nullptr;
+
+  if (auto defaultCS = system->windowsColorSpace())
+    return defaultCS;
+
+  return nullptr;
 }
 
 void Window::setDragTarget(DragTarget* delegate)

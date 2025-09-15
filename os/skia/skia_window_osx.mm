@@ -188,8 +188,10 @@ void SkiaWindowOSX::onEndResizing()
 
 void SkiaWindowOSX::onChangeBackingProperties()
 {
-  if (m_nsWindow)
-    setColorSpace(colorSpace());
+  if (m_nsWindow) {
+    // Set the monitor color space (bypass SkiaWindowBase::m_colorSpace).
+    setColorSpace(WindowOSX::colorSpace());
+  }
 }
 
 void SkiaWindowOSX::paintGC(const gfx::RectF& rect)

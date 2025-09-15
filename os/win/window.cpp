@@ -347,13 +347,8 @@ os::ScreenRef WindowWin::screen() const
 
 os::ColorSpaceRef WindowWin::colorSpace() const
 {
-  const os::SystemRef system = os::System::instance();
-  ASSERT(system);
-  if (!system)
-    return nullptr;
-
-  if (auto defaultCS = system->windowsColorSpace())
-    return defaultCS;
+  if (auto cs = Window::colorSpace())
+    return cs;
 
   if (m_hwnd) {
     HMONITOR monitor = MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST);
@@ -365,8 +360,11 @@ os::ColorSpaceRef WindowWin::colorSpace() const
     }
   }
   // sRGB by default
-  if (!m_lastColorProfile)
-    m_lastColorProfile = system->makeColorSpace(gfx::ColorSpace::MakeSRGB());
+  if (!m_lastColorProfile) {
+    if (auto system = os::System::instance())
+      m_lastColorProfile = system->makeColorSpace(gfx::ColorSpace::MakeSRGB());
+  }
+
   return m_lastColorProfile;
 }
 
@@ -2399,10 +2397,11 @@ void WindowWin::killTouchTimer()
 
 void WindowWin::checkColorSpaceChange()
 {
-  os::ColorSpaceRef oldColorSpace = m_lastColorProfile;
-  os::ColorSpaceRef newColorSpace = colorSpace();
-  if (oldColorSpace != newColorSpace)
-    onChangeColorSpace();
+  // TODO Compare if CS are different.
+  // os::ColorSpaceRef oldCS = m_lastColorProfile;
+  // os::ColorSpaceRef newCS = colorSpace();
+
+  onChangeColorSpace();
 }
 
 // We only support the Windows 11 dark mode, detecting it and using

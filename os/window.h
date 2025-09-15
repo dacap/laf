@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (c) 2018-2024  Igara Studio S.A.
+// Copyright (c) 2018-2025  Igara Studio S.A.
 // Copyright (c) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -181,7 +181,7 @@ public:
   virtual os::ScreenRef screen() const = 0;
 
   // Returns the color space of the window where the window is located.
-  virtual os::ColorSpaceRef colorSpace() const = 0;
+  virtual os::ColorSpaceRef colorSpace() const;
 
   // Changes the color space to use in this window. Can be nullptr
   // if you want to use the current monitor color space.
