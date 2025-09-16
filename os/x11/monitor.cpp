@@ -14,10 +14,10 @@ namespace os {
 MonitorsX11::MonitorsX11()
 {
   auto x11display = X11::instance()->display();
+  ::Window root = XDefaultRootWindow(x11display);
 
   int numMonitors;
-  XRRMonitorInfo* monitors =
-    XRRGetMonitors(x11display, XDefaultRootWindow(x11display), false, &numMonitors);
+  XRRMonitorInfo* monitors = XRRGetMonitors(x11display, root, false, &numMonitors);
 
   m_numMonitors = numMonitors;
   m_monitors = unique_monitors_ptr(monitors);

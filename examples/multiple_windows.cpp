@@ -1,5 +1,5 @@
 // LAF Library
-// Copyright (c) 2019-2024  Igara Studio S.A.
+// Copyright (c) 2019-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -110,6 +110,9 @@ int app_main(int argc, char* argv[])
   system->listScreens(screens);
   char chr = 'A';
   for (ScreenRef& screen : screens) {
+    const std::string mainScreen = (screen->isMainScreen() ? std::string(" (main screen)") :
+                                                             std::string());
+
     WindowSpec spec;
     spec.titled(true);
     spec.position(WindowSpec::Position::Frame);
@@ -128,7 +131,7 @@ int app_main(int argc, char* argv[])
       frame.w /= 2;
       frame.h /= 2;
       s.frame(frame);
-      add_window(std::string(1, chr++), s, font);
+      add_window(std::string(1, chr++) + mainScreen, s, font);
     }
   }
 

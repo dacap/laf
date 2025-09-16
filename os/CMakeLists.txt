@@ -54,12 +54,12 @@ else()
     x11/dnd.cpp
     x11/event_queue.cpp
     x11/keys.cpp
+    x11/monitor.cpp
+    x11/screen.cpp
     x11/system.cpp
     x11/window.cpp
     x11/x11.cpp
-    x11/xinput.cpp
-    x11/monitor.cpp
-    x11/monitor.h)
+    x11/xinput.cpp)
 endif()
 
 ######################################################################
