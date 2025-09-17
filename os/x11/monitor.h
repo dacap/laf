@@ -26,7 +26,7 @@ public:
   ScreenRef nearestMonitorOf(const gfx::Rect& frame) const;
 
 private:
-  int m_numMonitors;
+  int m_numMonitors = 0;
   unique_monitors_ptr m_monitors;
 };
 

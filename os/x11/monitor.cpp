@@ -16,10 +16,10 @@ MonitorsX11::MonitorsX11()
   auto x11display = X11::instance()->display();
   ::Window root = XDefaultRootWindow(x11display);
 
-  int numMonitors;
-  XRRMonitorInfo* monitors = XRRGetMonitors(x11display, root, false, &numMonitors);
+  int nmonitors = 0;
+  XRRMonitorInfo* monitors = XRRGetMonitors(x11display, root, false, &nmonitors);
 
-  m_numMonitors = numMonitors;
+  m_numMonitors = nmonitors;
   m_monitors = unique_monitors_ptr(monitors);
 }
 
@@ -39,8 +39,8 @@ ScreenRef MonitorsX11::nearestMonitorOf(const gfx::Rect& frame) const
   ScreenRef candidate = nullptr;
   int most_area = INT_MIN;
 
-  for (int nmonitor = 0; nmonitor < m_numMonitors; nmonitor++) {
-    ScreenRef monitor = os::make_ref<ScreenX11>(nmonitor);
+  for (int i = 0; i < m_numMonitors; ++i) {
+    ScreenRef monitor = os::make_ref<ScreenX11>(i);
 
     const gfx::Rect& bounds = monitor->bounds();
     gfx::Rect segment(frame);

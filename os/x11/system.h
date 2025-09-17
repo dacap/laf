@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2021-2024  Igara Studio S.A.
+// Copyright (C) 2021-2025  Igara Studio S.A.
 // Copyright (C) 2016  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -82,23 +82,31 @@ public:
   ScreenRef mainScreen() override
   {
     MonitorsX11* monitors = X11::instance()->monitors();
-    const int numMonitors = monitors->numMonitors();
+    const int nmonitors = monitors->numMonitors();
 
-    // we have to search for the primary monitor
-    for (int monitor = 0; monitor < numMonitors; monitor++) {
-      if (monitors->monitorInfo(monitor).primary) {
-        return make_ref<ScreenX11>(monitor);
-      }
+    // We have to search for the primary monitor
+    for (int i = 0; i < nmonitors; ++i) {
+      if (monitors->monitorInfo(i).primary)
+        return make_ref<ScreenX11>(i);
     }
 
-    return nullptr;
+    // If there is no primary monitor (or Xrandr returns 0 monitors,
+    // or no primary monitor as in the xvfb-run case), we use a dummy
+    // ScreenX11() for the XDefaultScreen() anyway.
+    return make_ref<ScreenX11>(0);
   }
 
   void listScreens(ScreenList& list) override
   {
-    const int numMonitors = X11::instance()->monitors()->numMonitors();
-    for (int monitor = 0; monitor < numMonitors; monitor++)
-      list.push_back(make_ref<ScreenX11>(monitor));
+    const int nmonitors = X11::instance()->monitors()->numMonitors();
+    if (nmonitors > 1) {
+      for (int i = 0; i < nmonitors; ++i)
+        list.push_back(make_ref<ScreenX11>(i));
+    }
+    else {
+      // Dummy screen pointer to interact with the XDefaultScreen()
+      list.push_back(make_ref<ScreenX11>(0));
+    }
   }
 
 private:

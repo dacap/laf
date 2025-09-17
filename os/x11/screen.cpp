@@ -21,21 +21,34 @@
 
 namespace os {
 
-ScreenX11::ScreenX11(int monitorNum) : m_monitorNum(monitorNum)
+ScreenX11::ScreenX11(const int monitorNum) : m_monitorNum(monitorNum)
 {
-  MonitorsX11* monitors = X11::instance()->monitors();
-  const XRRMonitorInfo& monitor = monitors->monitorInfo(monitorNum);
-
-  m_bounds.x = monitor.x;
-  m_bounds.y = monitor.y;
-  m_bounds.w = monitor.width;
-  m_bounds.h = monitor.height;
-  m_workarea = m_bounds;
-  m_isPrimary = (monitor.primary ? true : false);
-
   auto* x11 = X11::instance();
   auto* x11display = x11->display();
   ::Window root = XDefaultRootWindow(x11display);
+  MonitorsX11* monitors = X11::instance()->monitors();
+  int nmonitors = monitors->numMonitors();
+
+  if (monitorNum >= 0 && monitorNum < nmonitors) {
+    const XRRMonitorInfo& monitor = monitors->monitorInfo(monitorNum);
+
+    m_bounds.x = monitor.x;
+    m_bounds.y = monitor.y;
+    m_bounds.w = monitor.width;
+    m_bounds.h = monitor.height;
+    m_workarea = m_bounds;
+    m_isPrimary = (monitor.primary ? true : false);
+  }
+  else {
+    const int screen = XDefaultScreen(x11display);
+    nmonitors = 1; // Use _NET_WORKAREA
+    m_bounds.x = m_bounds.y = 0;
+    m_bounds.w = XDisplayWidth(x11display, screen);
+    m_bounds.h = XDisplayHeight(x11display, screen);
+    m_workarea = m_bounds;
+    m_isPrimary = true;
+  }
+
   Atom actual_type;
   int actual_format;
   unsigned long bytes_after;
@@ -43,7 +56,6 @@ ScreenX11::ScreenX11(int monitorNum) : m_monitorNum(monitorNum)
   gfx::Rect wa = m_bounds;
 
   // _NET_WORKAREA works correctly when we have just one monitor.
-  const int nmonitors = monitors->numMonitors();
   if (nmonitors == 1) {
     Atom _NET_WORKAREA = XInternAtom(x11display, "_NET_WORKAREA", False);
     unsigned long* prop;
