@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (C) 2020-2024  Igara Studio S.A.
+// Copyright (C) 2020-2025  Igara Studio S.A.
 // Copyright (C) 2001-2016  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -11,14 +11,14 @@
 
 #include "base/rw_lock.h"
 
-// Uncomment this line in case that you want TRACE() lock/unlock
-// operations.
-// #define DEBUG_OBJECT_LOCKS
-
 #include "base/debug.h"
 #include "base/thread.h"
 
 #include <algorithm>
+
+// Uncomment this line in case that you want TRACEARGS() lock/unlock
+// operations.
+#define LCK_TRACE(...) // TRACEARGS(__VA_ARGS__)
 
 namespace base {
 
@@ -51,7 +51,8 @@ bool RWLock::canWriteLockFromRead() const
 RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
 {
   // Check for re-entrant write locks (multiple write-lock in the same
-  // thread are allowed).
+  // thread are allowed, even a read lock if we are writing in the
+  // same thread).
   // if (lockType == WriteLock) {
   {
     const std::lock_guard lock(m_mutex);
@@ -92,9 +93,7 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
             m_write_lock = true;
             m_write_thread = std::this_thread::get_id();
 
-#ifdef DEBUG_OBJECT_LOCKS
-            TRACE("LCK: lock: Locked <%p> to write\n", this);
-#endif
+            LCK_TRACE("LCK: lock: Locked", this, "to write in thread", m_write_thread);
             return LockResult::OK;
           }
           break;
@@ -107,24 +106,22 @@ RWLock::LockResult RWLock::lock(LockType lockType, int timeout)
       const int delay = std::min(100, timeout);
       timeout -= delay;
 
-#ifdef DEBUG_OBJECT_LOCKS
-      TRACE("LCK: lock: wait 100 msecs for <%p>\n", this);
-#endif
-
+      LCK_TRACE("LCK: lock: wait 100 msecs for", this);
       base::this_thread::sleep_for(double(delay) / 1000.0);
     }
     else
       break;
   }
 
-#ifdef DEBUG_OBJECT_LOCKS
-  TRACE("LCK: lock: Cannot lock <%p> to %s (has %d read locks and %d write locks)\n",
-        this,
-        (lockType == ReadLock ? "read" : "write"),
-        m_read_locks,
-        m_write_lock);
-#endif
-
+  LCK_TRACE("LCK: lock: Cannot lock",
+            this,
+            "to",
+            (lockType == ReadLock ? "read" : "write"),
+            "(has",
+            m_read_locks,
+            "read locks and",
+            m_write_lock,
+            "write locks)");
   return LockResult::Fail;
 }
 
@@ -222,10 +219,7 @@ RWLock::LockResult RWLock::upgradeToWrite(int timeout)
         m_write_lock = true;
         m_write_thread = std::this_thread::get_id();
 
-#ifdef DEBUG_OBJECT_LOCKS
-        TRACE("LCK: upgradeToWrite: Locked <%p> to write\n", this);
-#endif
-
+        LCK_TRACE("LCK: upgradeToWrite: Locked", this, "to write in thread", m_write_thread);
         return LockResult::OK;
       }
 
@@ -236,24 +230,31 @@ RWLock::LockResult RWLock::upgradeToWrite(int timeout)
       const int delay = std::min(100, timeout);
       timeout -= delay;
 
-#ifdef DEBUG_OBJECT_LOCKS
-      TRACE("LCK: upgradeToWrite: wait 100 msecs for <%p>\n", this);
-#endif
-
+      LCK_TRACE("LCK: upgradeToWrite: wait 100 msecs for", this);
       base::this_thread::sleep_for(double(delay) / 1000.0);
     }
     else
       break;
   }
 
-#ifdef DEBUG_OBJECT_LOCKS
-  TRACE("LCK: upgradeToWrite: Cannot lock <%p> to write (has %d read locks and %d write locks)\n",
-        this,
-        m_read_locks,
-        m_write_lock);
-#endif
-
+  LCK_TRACE("LCK: upgradeToWrite: Cannot lock",
+            this,
+            "to write (has",
+            m_read_locks,
+            "read locks and",
+            m_write_lock,
+            "write locks)");
   return LockResult::Fail;
+}
+
+void RWLock::updateWriterThread()
+{
+  const std::lock_guard lock(m_mutex);
+  if (m_write_lock) {
+    m_write_thread = std::this_thread::get_id();
+
+    LCK_TRACE("LCK: updateWriterThread: Lock", this, "has new writer thread", m_write_thread);
+  }
 }
 
 } // namespace base

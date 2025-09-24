@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (C) 2020-2023  Igara Studio S.A.
+// Copyright (C) 2020-2025  Igara Studio S.A.
 // Copyright (C) 2001-2016  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -54,6 +54,12 @@ public:
   // If you've locked the object to read, using this method you can
   // raise your access level to write it.
   LockResult upgradeToWrite(int timeout);
+
+  // You can use this function when you've write-locked the RWLock in
+  // one thread but want to update the writer thread (m_write_thread)
+  // to the current thread (e.g. a worker thread) that is going to do
+  // the writing.
+  void updateWriterThread();
 
   // If we've locked the object to write, using this method we can
   // lower our access to read-only.
