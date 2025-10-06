@@ -1,5 +1,5 @@
 // LAF Text Library
-// Copyright (c) 2024  Igara Studio S.A.
+// Copyright (c) 2024-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -21,6 +21,7 @@ public:
 
   sk_sp<SkTextBlob> skTextBlob() const { return m_skTextBlob; }
 
+  void setVisitOffset(const gfx::PointF& visitOffset);
   void visitRuns(const RunVisitor& visitor) override;
 
   static TextBlobRef Make(const FontRef& font, const std::string& text);
@@ -33,6 +34,7 @@ public:
 
 private:
   sk_sp<SkTextBlob> m_skTextBlob;
+  gfx::PointF m_visitOffset;
 };
 
 } // namespace text

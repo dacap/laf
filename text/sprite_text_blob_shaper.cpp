@@ -17,6 +17,10 @@
 #include "text/font_mgr.h"
 #include "text/sprite_sheet_font.h"
 
+#if LAF_SKIA
+  #include "text/skia_text_blob.h"
+#endif
+
 namespace text {
 
 namespace {
@@ -211,6 +215,11 @@ TextBlobRef SpriteTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
                                              text.substr(i, j - i), // TODO use std::string_view
                                              &subHandler);
       if (run.subBlob) {
+#if LAF_SKIA
+        if (auto* skiaBlob = dynamic_cast<SkiaTextBlob*>(run.subBlob.get()))
+          skiaBlob->setVisitOffset(alignedPos);
+#endif
+
         run.positions.push_back(pos);
 
         textBounds |= run.subBlob->bounds();

@@ -1,5 +1,5 @@
 // LAF Text Library
-// Copyright (c) 2024  Igara Studio S.A.
+// Copyright (c) 2024-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -23,6 +23,11 @@ SkiaTextBlob::SkiaTextBlob(const sk_sp<SkTextBlob>& skTextBlob, const gfx::RectF
   ASSERT(skTextBlob);
 }
 
+void SkiaTextBlob::setVisitOffset(const gfx::PointF& visitOffset)
+{
+  m_visitOffset = visitOffset;
+}
+
 void SkiaTextBlob::visitRuns(const RunVisitor& visitor)
 {
   SkTextBlob::Iter iter(*m_skTextBlob);
@@ -41,6 +46,7 @@ void SkiaTextBlob::visitRuns(const RunVisitor& visitor)
       positions[i] = gfx::PointF(run.positions[i].x(), run.positions[i].y());
     }
     subInfo.positions = positions.data();
+    subInfo.point = m_visitOffset;
 
     visitor(subInfo);
   }
