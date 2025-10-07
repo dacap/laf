@@ -33,22 +33,25 @@ IMEManagerWin::IMEManagerWin()
 
 void IMEManagerWin::onStartComposition(HWND hwnd) const
 {
-  // Set IME form position
-  RECT windowRect;
   HIMC imc = ImmGetContext(hwnd);
+  if (!imc)
+    return;
 
-  if (imc && GetWindowRect(hwnd, &windowRect)) {
-    // Get caret relative position to the window
-    POINT pos = {
-      m_screenCaretPos.x - windowRect.left,
-      m_screenCaretPos.y - windowRect.top,
-    };
-    // Set IME form position: just below the caret
-    COMPOSITIONFORM cf = { 0 };
-    cf.dwStyle = CFS_FORCE_POSITION;
-    cf.ptCurrentPos = pos;
-    ImmSetCompositionWindow(imc, &cf);
-  }
+  RECT rc;
+  GetClientRect(hwnd, &rc);
+  ClientToScreen(hwnd, (LPPOINT)&rc);
+
+  // Get caret relative position to the window
+  POINT pos = {
+    m_screenCaretPos.x - rc.left,
+    m_screenCaretPos.y - rc.top,
+  };
+
+  // Set IME form position: just below the caret
+  COMPOSITIONFORM cf = { 0 };
+  cf.dwStyle = CFS_POINT;
+  cf.ptCurrentPos = pos;
+  ImmSetCompositionWindow(imc, &cf);
 }
 
 } // namespace os
