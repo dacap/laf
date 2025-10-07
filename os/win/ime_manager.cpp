@@ -17,6 +17,21 @@
 
 namespace os {
 
+class ImmCtx {
+public:
+  ImmCtx(HWND hwnd) : m_hwnd(hwnd), m_imc(ImmGetContext(hwnd)) {}
+  ~ImmCtx()
+  {
+    if (m_imc)
+      ImmReleaseContext(m_hwnd, m_imc);
+  }
+  operator HIMC() { return m_imc; }
+
+private:
+  HWND m_hwnd;
+  HIMC m_imc;
+};
+
 static IMEManagerWin g_imeManager;
 
 IMEManagerWin* IMEManagerWin::instance()
@@ -33,7 +48,7 @@ IMEManagerWin::IMEManagerWin()
 
 void IMEManagerWin::onStartComposition(HWND hwnd) const
 {
-  HIMC imc = ImmGetContext(hwnd);
+  ImmCtx imc(hwnd);
   if (!imc)
     return;
 
