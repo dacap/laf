@@ -20,6 +20,9 @@ namespace os {
 // canvas (stroke, fill or both; stroke width; color, etc.).
 class Paint : public PaintBase {
 public:
+  Paint() {}
+  explicit Paint(const gfx::Color c, const os::ColorSpace* cs = nullptr) { color(c, cs); }
+
   bool antialias() const { return m_skPaint.isAntiAlias(); }
   void antialias(const bool state) { m_skPaint.setAntiAlias(state); }
 

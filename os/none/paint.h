@@ -18,6 +18,9 @@ class ColorSpace;
 // false)
 class Paint : public PaintBase {
 public:
+  Paint() {}
+  explicit Paint(const gfx::Color c, const os::ColorSpace* cs = nullptr) { color(c, cs); }
+
   bool antialias() const { return m_antialias; }
   void antialias(const bool state) { m_antialias = state; }
 
