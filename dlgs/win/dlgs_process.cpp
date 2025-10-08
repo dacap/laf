@@ -16,9 +16,11 @@
   #error LAF_DLGS_PROC_NAME must not be defined for laf-dlgs-proc
 #endif
 
+#include "base/process.h"
 #include "base/program_options.h"
 #include "base/split_string.h"
 #include "base/string.h"
+#include "base/thread.h"
 #include "base/win/coinit.h"
 #include "dlgs/file_dialog.h"
 
@@ -26,6 +28,7 @@
 #include <windows.h>
 
 #include <cstdio>
+#include <thread>
 
 class Delegate : public dlgs::FileDialogDelegate {
 public:
@@ -114,7 +117,30 @@ int wmain(int argc, wchar_t** wargv)
     }
   }
 
+  std::atomic<bool> done = false;
+  std::thread checkParentProc;
+  if (parentHandle) {
+    base::pid parentPid = 0;
+    GetWindowThreadProcessId(parentHandle, (LPDWORD)&parentPid);
+    if (parentPid) {
+      checkParentProc = std::move(std::thread([parentPid, &done] {
+        while (!done) {
+          if (!base::is_process_running(parentPid)) {
+            // If the parent process crashes or is closed, we close
+            // this process too.
+            std::exit(2);
+          }
+          base::this_thread::sleep_for(0.250);
+        }
+      }));
+    }
+  }
+
   dlgs::FileDialog::Result result = dlg->show(parentHandle);
+
+  done = true;
+  if (checkParentProc.joinable())
+    checkParentProc.join();
 
   // Print a "OK" signal so the parent process knowns that native
   // show() impl didn't crash.
