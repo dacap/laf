@@ -71,7 +71,7 @@ jobs:
             -DSKIA_DIR=skia
         else
           cmake . -G Ninja \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DLAF_BACKEND=${{ matrix.backend }} \
             -DSKIA_DIR=skia

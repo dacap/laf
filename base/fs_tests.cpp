@@ -19,7 +19,8 @@
 
 #if COMPARE_WITH_STD_FS
   // We cannot use the <filesystem> on macOS yet because we are
-  // targetting macOS 10.9 platform.
+  // targetting macOS 10.14 platform, and
+  // std::filesystem::current_path() was introduced in 10.15.
   #include <filesystem>
 namespace fs = std::filesystem;
 #endif

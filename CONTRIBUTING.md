@@ -21,5 +21,5 @@ We have some rules for commits that are contributed:
 * For platform-specific commits start the subject line using
   `[win]`, `[osx]`, or `[x11]` prefixes.
 * Check the spelling of your code, comments and commit messages.
-* We're using some C++17 features, targeting macOS 10.9 mainly as the
+* We're using some C++17 features, targeting macOS 10.14 mainly as the
   oldest platform (and the one limiting us to newer C++ standards).

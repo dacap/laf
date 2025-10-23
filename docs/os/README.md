@@ -8,4 +8,4 @@ handle mouse/keyboard input. The graphics are rendered using the
 Minimum platforms:
 
 * Windows Vista
-* macOS 10.9
+* macOS 10.14
