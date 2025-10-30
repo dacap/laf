@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (c) 2021-2023 Igara Studio S.A.
+// Copyright (c) 2021-2025 Igara Studio S.A.
 // Copyright (c) 2017 David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -37,6 +37,7 @@ public:
   ~hkey();
 
   hkey& operator=(hkey&& key);
+  operator bool() const { return (m_hkey != nullptr); }
 
   HKEY handle() const { return m_hkey; }
 
@@ -51,6 +52,8 @@ public:
 
   DWORD dword(const std::string& name);
   void dword(const std::string& name, const DWORD value);
+
+  void delete_value(const std::string& name);
 
   // Deletes keys in the given subkey, if subkey == "", all children
   // keys are deleted but this hkey isn't (the root is kept).

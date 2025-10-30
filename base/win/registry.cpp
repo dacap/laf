@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (c) 2023 Igara Studio S.A.
+// Copyright (c) 2023-2025 Igara Studio S.A.
 // Copyright (c) 2017 David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -213,6 +213,16 @@ void hkey::dword(const std::string& name, const DWORD value)
                                (DWORD)sizeof(DWORD));
   if (result != ERROR_SUCCESS)
     throw Win32Exception("Error setting registry value");
+}
+
+void hkey::delete_value(const std::string& name)
+{
+  if (!m_hkey)
+    return;
+
+  LONG result = RegDeleteValueW(m_hkey, from_utf8(name).c_str());
+  if (result != ERROR_SUCCESS)
+    throw Win32Exception("Error deleting registry value");
 }
 
 void hkey::delete_tree(const std::string& subkey)
