@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2020-2023  Igara Studio S.A.
+// Copyright (C) 2020-2025  Igara Studio S.A.
 // Copyright (C) 2016  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -72,7 +72,7 @@ public:
   void setMousePosition(const gfx::Point& screenPosition) override;
   gfx::Color getColorFromScreen(const gfx::Point& screenPosition) const override;
 
-  ScreenRef mainScreen() override;
+  ScreenRef primaryScreen() override;
   void listScreens(ScreenList& list) override;
 
 private:

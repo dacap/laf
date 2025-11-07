@@ -1,5 +1,5 @@
 // LAF Library
-// Copyright (c) 2020  Igara Studio S.A.
+// Copyright (c) 2020-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -24,7 +24,7 @@ int app_main(int argc, char* argv[])
     auto rc = screen->bounds();
     auto wa = screen->workarea();
     std::printf("%sscreen=%d bounds=(%d %d %d %d) workarea=(%d %d %d %d)\n",
-                screen->isMainScreen() ? "main " : "",
+                screen->isPrimary() ? "primary " : "",
                 i++,
                 rc.x,
                 rc.y,

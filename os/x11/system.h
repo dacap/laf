@@ -79,7 +79,7 @@ public:
     return gfx::ColorNone;
   }
 
-  ScreenRef mainScreen() override
+  ScreenRef primaryScreen() override
   {
     MonitorsX11* monitors = X11::instance()->monitors();
     const int nmonitors = monitors->numMonitors();

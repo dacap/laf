@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2020-2024  Igara Studio S.A.
+// Copyright (C) 2020-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -275,7 +275,7 @@ gfx::Color SystemWin::getColorFromScreen(const gfx::Point& screenPosition) const
   return gfx::rgba(GetRValue(c), GetGValue(c), GetBValue(c));
 }
 
-ScreenRef SystemWin::mainScreen()
+ScreenRef SystemWin::primaryScreen()
 {
   // This is one of three possible ways to get the primary monitor
   // https://devblogs.microsoft.com/oldnewthing/20141106-00/?p=43683

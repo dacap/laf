@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (c) 2020-2021  Igara Studio S.A.
+// Copyright (c) 2020-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -34,10 +34,10 @@ public:
       m_workarea.w = wa.right - rc.left;
       m_workarea.h = wa.bottom - rc.top;
 
-      m_isMainScreen = (mi.dwFlags & MONITORINFOF_PRIMARY ? true : false);
+      m_isPrimary = (mi.dwFlags & MONITORINFOF_PRIMARY ? true : false);
     }
   }
-  bool isMainScreen() const override { return m_isMainScreen; }
+  bool isPrimary() const override { return m_isPrimary; }
   gfx::Rect bounds() const override { return m_bounds; }
   gfx::Rect workarea() const override { return m_workarea; }
   os::ColorSpaceRef colorSpace() const override { return get_hmonitor_colorspace(m_monitor); }
@@ -47,7 +47,7 @@ private:
   HMONITOR m_monitor;
   gfx::Rect m_bounds;
   gfx::Rect m_workarea;
-  bool m_isMainScreen = false;
+  bool m_isPrimary = false;
 };
 
 } // namespace os

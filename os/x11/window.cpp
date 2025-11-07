@@ -501,7 +501,7 @@ os::ScreenRef WindowX11::screen() const
   if (nearestMonitor)
     return nearestMonitor;
   else
-    return os::instance()->mainScreen();
+    return System::instance()->primaryScreen();
 }
 
 os::ColorSpaceRef WindowX11::colorSpace() const

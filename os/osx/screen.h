@@ -23,19 +23,28 @@ public:
   {
     auto rc = screen.frame;
     auto wa = screen.visibleFrame;
-    const int mainScreenHeight = [NSScreen mainScreen].frame.size.height;
+
+    // From:
+    //
+    //   https://developer.apple.com/documentation/appkit/nsscreen/main
+    //
+    // [NSScreen mainScreen] refers to the screen containing the
+    // window that is currently receiving keyboard events. The screen
+    // which has its origin at (0, 0) is the first element of the
+    // screens array.
+    const int primaryScreenHeight = NSScreen.screens[0].frame.size.height;
 
     m_bounds.x = rc.origin.x;
-    m_bounds.y = mainScreenHeight - rc.origin.y - rc.size.height;
+    m_bounds.y = primaryScreenHeight - rc.origin.y - rc.size.height;
     m_bounds.w = rc.size.width;
     m_bounds.h = rc.size.height;
 
     m_workarea.x = wa.origin.x;
-    m_workarea.y = mainScreenHeight - wa.origin.y - wa.size.height;
+    m_workarea.y = primaryScreenHeight - wa.origin.y - wa.size.height;
     m_workarea.w = wa.size.width;
     m_workarea.h = wa.size.height;
   }
-  bool isMainScreen() const override { return m_screen == [NSScreen mainScreen]; }
+  bool isPrimary() const override { return m_screen == NSScreen.screens[0]; }
   gfx::Rect bounds() const override { return m_bounds; }
   gfx::Rect workarea() const override { return m_workarea; }
   os::ColorSpaceRef colorSpace() const override

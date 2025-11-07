@@ -145,8 +145,8 @@ public:
   virtual Menus* menus() = 0;
   virtual EventQueue* eventQueue() = 0;
 
-  // Returns the main screen
-  virtual ScreenRef mainScreen() = 0;
+  // Returns the primary screen, the one with origin at (0, 0).
+  virtual ScreenRef primaryScreen() = 0;
 
   // Returns a list of screens attached to the computer.
   virtual void listScreens(ScreenList& screens) = 0;

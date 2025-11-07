@@ -93,16 +93,16 @@ CursorRef SystemOSX::makeCursor(const Surface* surface, const gfx::Point& focus,
 
 gfx::Point SystemOSX::mousePosition() const
 {
-  NSScreen* menuBarScreen = [NSScreen mainScreen];
+  NSScreen* primaryScreen = NSScreen.screens[0];
   NSPoint pos = [NSEvent mouseLocation];
-  return gfx::Point(pos.x, menuBarScreen.frame.size.height - pos.y);
+  return gfx::Point(pos.x, primaryScreen.frame.size.height - pos.y);
 }
 
 void SystemOSX::setMousePosition(const gfx::Point& screenPosition)
 {
-  NSScreen* menuBarScreen = [NSScreen screens][0];
+  NSScreen* primaryScreen = NSScreen.screens[0];
   CGWarpMouseCursorPosition(
-    CGPointMake(screenPosition.x, menuBarScreen.frame.size.height - screenPosition.y));
+    CGPointMake(screenPosition.x, primaryScreen.frame.size.height - screenPosition.y));
 }
 
 gfx::Color SystemOSX::getColorFromScreen(const gfx::Point& screenPosition) const
@@ -145,9 +145,9 @@ gfx::Color SystemOSX::getColorFromScreen(const gfx::Point& screenPosition) const
   return color;
 }
 
-ScreenRef SystemOSX::mainScreen()
+ScreenRef SystemOSX::primaryScreen()
 {
-  return make_ref<ScreenOSX>([NSScreen mainScreen]);
+  return make_ref<ScreenOSX>(NSScreen.screens[0]);
 }
 
 void SystemOSX::listScreens(ScreenList& list)

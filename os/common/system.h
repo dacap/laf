@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2019-2024  Igara Studio S.A.
+// Copyright (C) 2019-2025  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -42,7 +42,7 @@ public:
   EventQueue* eventQueue() override { return EventQueue::instance(); }
 
   KeyModifiers keyModifiers() override;
-  ScreenRef mainScreen() override { return nullptr; }
+  ScreenRef primaryScreen() override { return nullptr; }
   void listScreens(ScreenList& screens) override {}
   Window* defaultWindow() override { return nullptr; }
   Ref<Window> makeWindow(const WindowSpec&) override { return nullptr; }

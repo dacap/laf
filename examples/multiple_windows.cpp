@@ -110,8 +110,8 @@ int app_main(int argc, char* argv[])
   system->listScreens(screens);
   char chr = 'A';
   for (ScreenRef& screen : screens) {
-    const std::string mainScreen = (screen->isMainScreen() ? std::string(" (main screen)") :
-                                                             std::string());
+    const std::string primary = (screen->isPrimary() ? std::string(" (primary screen)") :
+                                                       std::string());
 
     WindowSpec spec;
     spec.titled(true);
@@ -131,7 +131,7 @@ int app_main(int argc, char* argv[])
       frame.w /= 2;
       frame.h /= 2;
       s.frame(frame);
-      add_window(std::string(1, chr++) + mainScreen, s, font);
+      add_window(std::string(1, chr++) + primary, s, font);
     }
   }
 

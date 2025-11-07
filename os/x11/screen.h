@@ -16,7 +16,7 @@ class ScreenX11 : public Screen {
 public:
   ScreenX11(int monitorNum);
 
-  bool isMainScreen() const override { return m_isPrimary; }
+  bool isPrimary() const override { return m_isPrimary; }
   gfx::Rect bounds() const override { return m_bounds; }
   gfx::Rect workarea() const override { return m_workarea; }
 

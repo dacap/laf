@@ -37,7 +37,7 @@ public:
   void setMousePosition(const gfx::Point& screenPosition) override;
   gfx::Color getColorFromScreen(const gfx::Point& screenPosition) const override;
 
-  ScreenRef mainScreen() override;
+  ScreenRef primaryScreen() override;
   void listScreens(ScreenList& list) override;
 
   void setWintabDelegate(void* delegate) override

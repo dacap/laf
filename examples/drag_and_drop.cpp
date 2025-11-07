@@ -1,5 +1,5 @@
 // LAF Library
-// Copyright (c) 2024  Igara Studio S.A.
+// Copyright (c) 2024-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -181,7 +181,7 @@ static void redraw_window(os::Window* window)
 static os::WindowRef create_window(os::DragTarget& dragTarget)
 {
   auto system = os::System::instance();
-  auto screen = system->mainScreen();
+  auto screen = system->primaryScreen();
   os::WindowSpec spec;
   spec.titled(true);
   spec.position(os::WindowSpec::Position::Frame);

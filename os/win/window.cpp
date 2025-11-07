@@ -342,7 +342,7 @@ os::ScreenRef WindowWin::screen() const
     HMONITOR monitor = MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST);
     return os::make_ref<ScreenWin>(monitor);
   }
-  return os::System::instance()->mainScreen();
+  return os::System::instance()->primaryScreen();
 }
 
 os::ColorSpaceRef WindowWin::colorSpace() const

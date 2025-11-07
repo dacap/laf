@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (c) 2020  Igara Studio S.A.
+// Copyright (c) 2020-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -24,8 +24,11 @@ class Screen : public RefCount {
 public:
   virtual ~Screen() {}
 
-  // Returns true if it's the main screen.
-  virtual bool isMainScreen() const = 0;
+  // Returns true if this is the primary screen. Do not confuse with
+  // the [NSScreen mainScreen] on macOS which is the screen containing
+  // the window with the keyboard focus. In this case we are checking
+  // if this is the screen with origin at (0,0).
+  virtual bool isPrimary() const = 0;
 
   // Returns the size of the whole screen.
   virtual gfx::Rect bounds() const = 0;
