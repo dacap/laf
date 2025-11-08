@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2022  Igara Studio S.A.
+// Copyright (C) 2018-2025  Igara Studio S.A.
 // Copyright (C) 2016-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -111,7 +111,7 @@ private:
   ::XIC m_xic;
   int m_scale;
   gfx::Point m_lastMousePos;
-  gfx::Size m_lastClientSize;
+  gfx::Rect m_lastConfigure;
   gfx::Border m_frameExtents;
   bool m_initializingActions = true;
   bool m_fullscreen = false;

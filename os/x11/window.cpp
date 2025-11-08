@@ -254,7 +254,6 @@ WindowX11::WindowX11(::Display* display, const WindowSpec& spec)
   , m_xic(nullptr)
   , m_scale(spec.scale())
   , m_lastMousePos(-1, -1)
-  , m_lastClientSize(0, 0)
   , m_doubleClickButton(Event::NoneButton)
   , m_borderless(spec.borderless())
   , m_closable(spec.closable())
@@ -1053,9 +1052,13 @@ void WindowX11::processX11Event(XEvent& event)
                          event.xconfigure.width,
                          event.xconfigure.height);
 
-      if (rc.w > 0 && rc.h > 0 && rc.size() != m_lastClientSize) {
-        m_lastClientSize = rc.size();
+      if (rc.w > 0 && rc.h > 0 && rc.size() != m_lastConfigure.size()) {
+        m_lastConfigure = rc;
         onResize(rc.size());
+      }
+      else if (rc.origin() != m_lastConfigure.origin()) {
+        m_lastConfigure = rc;
+        notifyMoving();
       }
       break;
     }

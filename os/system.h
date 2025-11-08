@@ -232,10 +232,8 @@ public:
   // Function called to handle a "live resize"/resizing loop of a
   // native window. If this is nullptr, an Event::ResizeWindow is
   // generated when the resizing is finished.
-  //
-  // TODO I think we should have a SystemDelegate or something
-  //      similar instead of a public property.
   std::function<void(os::Window*)> handleWindowResize = nullptr;
+  std::function<void(os::Window*)> handleWindowMoving = nullptr;
 
 #if LAF_WINDOWS
   // Only useful on Windows, the delegate must be a pointer to a

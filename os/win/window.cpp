@@ -1101,6 +1101,8 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
       }
       break;
 
+    case WM_MOVING: notifyMoving(); break;
+
     case WM_SIZING: {
       RECT* rect = reinterpret_cast<RECT*>(lparam);
 

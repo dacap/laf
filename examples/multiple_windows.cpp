@@ -103,6 +103,10 @@ int app_main(int argc, char* argv[])
 
   system->setAppMode(AppMode::GUI);
   system->handleWindowResize = [&font](Window* w) { redraw_window(w, font); };
+  system->handleWindowMoving = [&font](Window* w) {
+    redraw_window(w, font);
+    w->invalidate();
+  };
 
   // Create four windows for each screen with the bounds of the
   // workarea.

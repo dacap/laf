@@ -88,6 +88,24 @@ void Window::notifyDrop(os::DragEvent& ev)
   onDrop(ev);
 }
 
+void Window::notifyMoving()
+{
+  onMoving();
+}
+
+void Window::onMoving()
+{
+  // If the native handle or the surface aren't yet created we avoid
+  // calling the handleWindowMoving() function.
+  if (!nativeHandle() || !surface())
+    return;
+
+  SystemRef system = System::instance();
+  ASSERT(system);
+  if (system && system->handleWindowMoving)
+    system->handleWindowMoving(this);
+}
+
 void Window::onDragEnter(os::DragEvent& ev)
 {
   if (m_dragTarget)

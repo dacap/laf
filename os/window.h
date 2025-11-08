@@ -219,7 +219,13 @@ public:
   void notifyDragLeave(os::DragEvent& ev);
   void notifyDrop(os::DragEvent& ev);
 
+  void notifyMoving();
+
 protected:
+  // Should be called when the user is moving the window (dragging the
+  // window from its title bar).
+  virtual void onMoving();
+
   virtual void onQueueEvent(Event& ev);
   virtual void onDragEnter(os::DragEvent& ev);
   virtual void onDrag(os::DragEvent& ev);

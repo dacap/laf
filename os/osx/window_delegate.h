@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2020-2024  Igara Studio S.A.
+// Copyright (C) 2020-2025  Igara Studio S.A.
 // Copyright (C) 2015  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -63,6 +63,12 @@ class WindowOSX;
 {
   if (m_impl)
     m_impl->onEndResizing();
+}
+
+- (void)windowDidMove:(NSNotification*)notification
+{
+  if (m_impl)
+    m_impl->notifyMoving();
 }
 
 - (void)windowDidMiniaturize:(NSNotification*)notification
