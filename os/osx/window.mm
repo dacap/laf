@@ -30,6 +30,7 @@
     m_impl = impl;
     m_scale = spec->scale();
 
+    NSScreen* primaryScreen = NSScreen.screens[0];
     NSScreen* nsScreen;
     if (spec->screen())
       nsScreen = (__bridge NSScreen*)spec->screen()->nativeHandle();
@@ -50,16 +51,17 @@
 
     NSRect contentRect;
     if (!spec->contentRect().isEmpty()) {
-      contentRect = NSMakeRect(
-        spec->contentRect().x - nsScreen.frame.origin.x,
-        nsScreen.frame.size.height - spec->contentRect().y2() - nsScreen.frame.origin.y,
-        spec->contentRect().w,
-        spec->contentRect().h);
+      contentRect = NSMakeRect(spec->contentRect().x - nsScreen.frame.origin.x,
+                               (primaryScreen.frame.origin.y + primaryScreen.frame.size.height) -
+                                 spec->contentRect().y2() - nsScreen.frame.origin.y,
+                               spec->contentRect().w,
+                               spec->contentRect().h);
     }
     else if (!spec->frame().isEmpty()) {
       NSRect frameRect = NSMakeRect(
         spec->frame().x - nsScreen.frame.origin.x,
-        nsScreen.frame.size.height - spec->frame().y2() - nsScreen.frame.origin.y,
+        (primaryScreen.frame.origin.y + primaryScreen.frame.size.height) - spec->frame().y2() -
+          nsScreen.frame.origin.y,
         spec->frame().w,
         spec->frame().h);
 
@@ -317,16 +319,22 @@ gfx::Size WindowOSX::clientSize() const
 gfx::Rect WindowOSX::frame() const
 {
   NSRect r = m_nsWindow.frame;
-  return gfx::Rect(r.origin.x,
-                   m_nsWindow.screen.frame.size.height - r.origin.y - r.size.height,
-                   r.size.width,
-                   r.size.height);
+  NSScreen* primaryScreen = NSScreen.screens[0];
+
+  return gfx::Rect(
+    r.origin.x,
+    (primaryScreen.frame.origin.y + primaryScreen.frame.size.height) - (r.origin.y + r.size.height),
+    r.size.width,
+    r.size.height);
 }
 
 void WindowOSX::setFrame(const gfx::Rect& bounds)
 {
+  NSScreen* primaryScreen = NSScreen.screens[0];
+
   [m_nsWindow setFrame:NSMakeRect(bounds.x,
-                                  m_nsWindow.screen.frame.size.height - bounds.y2(),
+                                  (primaryScreen.frame.origin.y + primaryScreen.frame.size.height) -
+                                    bounds.y2(),
                                   bounds.w,
                                   bounds.h)
                display:YES];
@@ -335,10 +343,13 @@ void WindowOSX::setFrame(const gfx::Rect& bounds)
 gfx::Rect WindowOSX::contentRect() const
 {
   NSRect r = [m_nsWindow contentRectForFrameRect:m_nsWindow.frame];
-  return gfx::Rect(r.origin.x,
-                   m_nsWindow.screen.frame.size.height - r.origin.y - r.size.height,
-                   r.size.width,
-                   r.size.height);
+  NSScreen* primaryScreen = NSScreen.screens[0];
+
+  return gfx::Rect(
+    r.origin.x,
+    (primaryScreen.frame.origin.y + primaryScreen.frame.size.height) - (r.origin.y + r.size.height),
+    r.size.width,
+    r.size.height);
 }
 
 gfx::Rect WindowOSX::restoredFrame() const
