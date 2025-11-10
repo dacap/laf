@@ -28,6 +28,9 @@ const char* lines[] = { "A: Switch mouse cursor to Arrow <-> Move",
                         "",
                         "D: Duplicate window",
                         "",
+                        "Arrows: Move window",
+                        "Shift+Arrows: Resize window",
+                        "",
                         "Q: Close all windows",
                         "ESC: Close this window" };
 
@@ -123,17 +126,19 @@ int app_main(int argc, char* argv[])
     spec.frame(screen->workarea());
     spec.screen(screen);
 
-    gfx::PointF pos[4] = { gfx::PointF(0.0, 0.0),
-                           gfx::PointF(0.5, 0.0),
-                           gfx::PointF(0.0, 0.5),
-                           gfx::PointF(0.5, 0.5) };
+    gfx::Point pos[4] = {
+      { 0, 0 },
+      { 1, 0 },
+      { 0, 1 },
+      { 1, 1 }
+    };
     for (auto& p : pos) {
       WindowSpec s = spec;
       gfx::Rect frame = s.frame();
-      frame.x += frame.w * p.x;
-      frame.y += frame.h * p.y;
       frame.w /= 2;
       frame.h /= 2;
+      frame.x = frame.x + frame.w * p.x;
+      frame.y = frame.y + frame.h * p.y;
       s.frame(frame);
       add_window(std::string(1, chr++) + primary, s, font);
     }
@@ -217,12 +222,23 @@ int app_main(int argc, char* argv[])
           case kKeyRight:
           case kKeyDown:  {
             gfx::Rect rc = ev.window()->frame();
-            switch (ev.scancode()) {
-              case kKeyLeft:  rc.x -= rc.w; break;
-              case kKeyUp:    rc.y -= rc.h; break;
-              case kKeyRight: rc.x += rc.w; break;
-              case kKeyDown:  rc.y += rc.h; break;
-              default:        break;
+            if (ev.modifiers() & kKeyShiftModifier) {
+              switch (ev.scancode()) {
+                case kKeyLeft:  rc.w /= 2; break;
+                case kKeyUp:    rc.h /= 2; break;
+                case kKeyRight: rc.w *= 2; break;
+                case kKeyDown:  rc.h *= 2; break;
+                default:        break;
+              }
+            }
+            else {
+              switch (ev.scancode()) {
+                case kKeyLeft:  rc.x -= rc.w; break;
+                case kKeyUp:    rc.y -= rc.h; break;
+                case kKeyRight: rc.x += rc.w; break;
+                case kKeyDown:  rc.y += rc.h; break;
+                default:        break;
+              }
             }
             ev.window()->setFrame(rc);
 
