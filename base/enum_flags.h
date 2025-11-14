@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (C) 2024  Igara Studio S.A.
+// Copyright (C) 2024-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -31,6 +31,12 @@
 //   https://github.com/grisumbras/enum-flags
 //
 #define LAF_ENUM_FLAGS(T)                                                                          \
+  constexpr inline T operator~(const T a)                                                          \
+  {                                                                                                \
+    using U = std::underlying_type_t<T>;                                                           \
+    return static_cast<T>(~static_cast<U>(a));                                                     \
+  }                                                                                                \
+                                                                                                   \
   constexpr inline T operator|(const T a, const T b)                                               \
   {                                                                                                \
     using U = std::underlying_type_t<T>;                                                           \
