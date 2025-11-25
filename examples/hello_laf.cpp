@@ -1,5 +1,5 @@
 // LAF Library
-// Copyright (c) 2019-2024  Igara Studio S.A.
+// Copyright (c) 2019-2025  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -26,12 +26,7 @@ void draw_window(Window* window)
   p.color(gfx::rgba(0, 0, 255));
   surface->drawLine(rc.w, 0, 0, rc.h, p);
 
-  // Invalidates the whole window to show it on the screen.
-  if (window->isVisible())
-    window->invalidateRegion(gfx::Region(rc));
-  else
-    window->setVisible(true);
-
+  window->invalidateRegion(gfx::Region(rc));
   window->swapBuffers();
 }
 
@@ -70,8 +65,13 @@ int app_main(int argc, char* argv[])
   bool redraw = true;
   while (running) {
     if (redraw) {
+      const bool isVisible = window->isVisible();
+
       redraw = false;
       draw_window(window.get());
+
+      if (!isVisible)
+        window->setVisible(true);
     }
     // Wait for an event in the queue, the "true" parameter indicates
     // that we'll wait for a new event, and the next line will not be
