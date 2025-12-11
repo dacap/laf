@@ -79,7 +79,7 @@ protected:
 private:
   bool setCursor(HCURSOR hcursor, const CursorRef& cursor);
   LRESULT wndProc(UINT msg, WPARAM wparam, LPARAM lparam);
-  void mouseEvent(LPARAM lparam, Event& ev);
+  void mouseEvent(WPARAM wparam, LPARAM lparam, Event& ev);
   bool pointerEvent(WPARAM wparam, Event& ev, POINTER_INFO& pi);
   void handleMouseMove(Event& ev);
   void handleMouseLeave();

@@ -18,6 +18,7 @@ namespace os {
 
 KeyScancode win32vk_to_scancode(int vk);
 KeyModifiers get_modifiers_from_last_win32_message();
+KeyModifiers get_modifiers_from_last_win32_message_with_mouse_flags(WPARAM wparam);
 
 class VkToUnicode {
 public:

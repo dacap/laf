@@ -1184,7 +1184,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
     case WM_MOUSEMOVE: {
       Event ev;
-      mouseEvent(lparam, ev);
+      mouseEvent(wparam, lparam, ev);
 
       // Filter spurious mouse move messages out. Sometimes we receive
       // periodic (e.g. each 2 seconds) WM_MOUSEMOVE messages in the
@@ -1259,7 +1259,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_MBUTTONDOWN:
     case WM_XBUTTONDOWN: {
       Event ev;
-      mouseEvent(lparam, ev);
+      mouseEvent(wparam, lparam, ev);
       ev.setType(Event::MouseDown);
       ev.setButton(msg == WM_LBUTTONDOWN                                    ? Event::LeftButton :
                    msg == WM_RBUTTONDOWN                                    ? Event::RightButton :
@@ -1294,7 +1294,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_MBUTTONUP:
     case WM_XBUTTONUP: {
       Event ev;
-      mouseEvent(lparam, ev);
+      mouseEvent(wparam, lparam, ev);
       ev.setType(Event::MouseUp);
       ev.setButton(msg == WM_LBUTTONUP                                    ? Event::LeftButton :
                    msg == WM_RBUTTONUP                                    ? Event::RightButton :
@@ -1330,7 +1330,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_RBUTTONDBLCLK:
     case WM_XBUTTONDBLCLK: {
       Event ev;
-      mouseEvent(lparam, ev);
+      mouseEvent(wparam, lparam, ev);
       ev.setType(Event::MouseDoubleClick);
       ev.setButton(msg == WM_LBUTTONDBLCLK ? Event::LeftButton :
                    msg == WM_RBUTTONDBLCLK ? Event::RightButton :
@@ -1359,7 +1359,7 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
       Event ev;
       ev.setType(Event::MouseWheel);
-      ev.setModifiers(get_modifiers_from_last_win32_message());
+      ev.setModifiers(get_modifiers_from_last_win32_message_with_mouse_flags(wparam));
       ev.setPosition(gfx::Point(pos.x, pos.y) / m_scale);
 
       int z = GET_WHEEL_DELTA_WPARAM(wparam);
@@ -2050,9 +2050,9 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
   return DefWindowProc(m_hwnd, msg, wparam, lparam);
 }
 
-void WindowWin::mouseEvent(LPARAM lparam, Event& ev)
+void WindowWin::mouseEvent(const WPARAM wparam, const LPARAM lparam, Event& ev)
 {
-  ev.setModifiers(get_modifiers_from_last_win32_message());
+  ev.setModifiers(get_modifiers_from_last_win32_message_with_mouse_flags(wparam));
   ev.setPosition(gfx::Point(GET_X_LPARAM(lparam) / m_scale, GET_Y_LPARAM(lparam) / m_scale));
 }
 

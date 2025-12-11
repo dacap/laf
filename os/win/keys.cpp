@@ -309,6 +309,24 @@ KeyModifiers get_modifiers_from_last_win32_message()
   return (KeyModifiers)modifiers;
 }
 
+// Alternative which receives the wparam of a mouse message (like
+// WM_MOUSEMOVE) to avoid unnecessary calls to GetKeyState() function.
+KeyModifiers get_modifiers_from_last_win32_message_with_mouse_flags(const WPARAM wparam)
+{
+  int modifiers = kKeyNoneModifier;
+  if (wparam & MK_SHIFT)
+    modifiers |= kKeyShiftModifier;
+  if (wparam & MK_CONTROL)
+    modifiers |= kKeyCtrlModifier;
+  if ((GetKeyState(VK_LMENU) & 0x8000) || (GetKeyState(VK_RMENU) & 0x8000))
+    modifiers |= kKeyAltModifier;
+  if (GetKeyState(VK_SPACE) & 0x8000)
+    modifiers |= kKeySpaceModifier;
+  if ((GetKeyState(VK_LWIN) & 0x8000) || (GetKeyState(VK_RWIN) & 0x8000))
+    modifiers |= kKeyWinModifier;
+  return (KeyModifiers)modifiers;
+}
+
 static int scancode_to_win32vk(KeyScancode scancode)
 {
   static int initialized = false;
