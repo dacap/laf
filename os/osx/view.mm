@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2024  Igara Studio S.A.
+// Copyright (C) 2018-2025  Igara Studio S.A.
 // Copyright (C) 2015-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -109,6 +109,13 @@ bool osx_is_key_pressed(KeyScancode scancode)
     return (g_pressedKeys[scancode] != 0);
   else
     return false;
+}
+
+void osx_reset_key_pressed()
+{
+  if (std::size(g_pressedKeys) == kKeyScancodes)
+    for (int i = 0; i < kKeyScancodes; i++)
+      g_pressedKeys[i] = 0;
 }
 
 int osx_get_unicode_from_scancode(KeyScancode scancode)
