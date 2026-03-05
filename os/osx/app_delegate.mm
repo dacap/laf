@@ -92,6 +92,13 @@
 {
 }
 
+- (void)applicationDidResignActive:(NSNotification*)notification
+{
+  os::Event ev;
+  ev.setType(os::Event::AppLeave);
+  os::queue_event(ev);
+}
+
 - (void)applicationWillResignActive:(NSNotification*)notification
 {
   for (id window : [NSApp windows]) {
@@ -104,10 +111,6 @@
   NSEvent* event = [NSApp currentEvent];
   if (event != nil)
     [ViewOSX updateKeyFlags:event];
-
-  os::Event ev;
-  ev.setType(os::Event::AppLostFocus);
-  os::queue_event(ev);
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification*)notification
@@ -115,6 +118,13 @@
   // We do not want that the [NSApplication run] call made from
   // AppOSX::Impl::finishLaunching() blocks.
   [NSApp stop:nil];
+}
+
+- (void)applicationWillBecomeActive:(NSNotification*)notification
+{
+  os::Event ev;
+  ev.setType(os::Event::AppEnter);
+  os::queue_event(ev);
 }
 
 - (void)applicationDidBecomeActive:(NSNotification*)notification

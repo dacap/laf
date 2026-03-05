@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2020-2025  Igara Studio S.A.
+// Copyright (C) 2020-present  Igara Studio S.A.
 // Copyright (C) 2015  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -27,6 +27,24 @@ class WindowOSX;
 - (void)removeImpl
 {
   m_impl = nullptr;
+}
+
+- (void)windowDidBecomeKey:(NSNotification*)notification;
+{
+  if (m_impl) {
+    os::Event ev;
+    ev.setType(os::Event::WindowEnter);
+    m_impl->queueEvent(ev);
+  }
+}
+
+- (void)windowDidResignKey:(NSNotification*)notification;
+{
+  if (m_impl) {
+    os::Event ev;
+    ev.setType(os::Event::WindowLeave);
+    m_impl->queueEvent(ev);
+  }
 }
 
 - (BOOL)windowShouldClose:(NSWindow*)sender

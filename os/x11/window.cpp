@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2026  Igara Studio S.A.
+// Copyright (C) 2018-present  Igara Studio S.A.
 // Copyright (C) 2017-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -115,6 +115,10 @@ std::unique_ptr<DndDataX11> g_dndData;
 // information, it looks like the official way to convert a X Window
 // into our own user data pointer (WindowX11 instance) is using a map.
 std::map<::Window, WindowX11*> g_activeWindows;
+
+// True if some application window has the keyboard focus. We use this
+// to send AppEnter/AppLeave events.
+bool g_appFocus = false;
 
 // Last time an XInput event was received, it's used to avoid
 // processing mouse motion events that are generated at the same time
@@ -1071,6 +1075,45 @@ void WindowX11::processX11Event(XEvent& event)
   }
 
   switch (event.type) {
+    case FocusIn:
+      if (event.xfocus.mode == NotifyNormal || event.xfocus.mode == NotifyWhileGrabbed) {
+        // If this is the first FocusIn, we are focusing the app.
+        if (!g_appFocus) {
+          g_appFocus = true;
+          Event ev;
+          ev.setType(Event::AppEnter);
+          os::queue_event(ev);
+        }
+
+        Event ev;
+        ev.setType(Event::WindowEnter);
+        queueEvent(ev);
+      }
+      break;
+
+    case FocusOut:
+      if (event.xfocus.mode == NotifyNormal || event.xfocus.mode == NotifyWhileGrabbed) {
+        Event ev;
+        ev.setType(Event::WindowLeave);
+        queueEvent(ev);
+
+        if (g_appFocus) {
+          ::Window new_window = 0;
+          int revert_to_return = 0;
+          XGetInputFocus(m_display, &new_window, &revert_to_return);
+
+          // If the new focused window is not one of our windows, we
+          // are focusing other app.
+          if (g_activeWindows.find(new_window) == g_activeWindows.end()) {
+            g_appFocus = false;
+            Event ev;
+            ev.setType(Event::AppLeave);
+            os::queue_event(ev);
+          }
+        }
+      }
+      break;
+
     case ConfigureNotify: {
       const gfx::Rect rc(event.xconfigure.x,
                          event.xconfigure.y,

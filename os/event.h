@@ -30,15 +30,20 @@ public:
   enum Type {
     None,
 
+    // When the application is activated/deactivated.
+    AppEnter,
+    AppLeave,
+
     // macOS: When the Quit option is selected from the popup menu
     // of the app icon in the dock bar.
     CloseApp,
 
+    // When the window is activated/deactivated for keyboard input.
+    WindowEnter,
+    WindowLeave,
+
     // When the X is pressed in the current window.
     CloseWindow,
-
-    // When Aseprite loses focus.
-    AppLostFocus,
 
     // When the window is resized/maximized/restored (any time the
     // client area size of the window changes)

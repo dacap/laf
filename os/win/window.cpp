@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2025  Igara Studio S.A.
+// Copyright (C) 2018-present  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -1074,6 +1074,15 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_ACTIVATE:
       if (wparam == WA_ACTIVE || wparam == WA_CLICKACTIVE) {
         checkColorSpaceChange();
+
+        Event ev;
+        ev.setType(Event::WindowEnter);
+        queueEvent(ev);
+      }
+      else if (wparam == WA_INACTIVE) {
+        Event ev;
+        ev.setType(Event::WindowLeave);
+        queueEvent(ev);
       }
 
       if (m_hpenctx) {
@@ -1084,6 +1093,13 @@ LRESULT WindowWin::wndProc(UINT msg, WPARAM wparam, LPARAM lparam)
         }
       }
       break;
+
+    case WM_ACTIVATEAPP: {
+      Event ev;
+      ev.setType(wparam ? Event::AppEnter : Event::AppLeave);
+      queueEvent(ev);
+      break;
+    }
 
     case WM_PAINT:
       if (m_isCreated) {

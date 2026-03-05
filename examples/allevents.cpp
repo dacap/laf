@@ -1,5 +1,5 @@
 // LAF Library
-// Copyright (c) 2019-2024  Igara Studio S.A.
+// Copyright (c) 2019-present  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -20,6 +20,8 @@ using namespace text;
 
 class LogWindow {
 public:
+  WindowRef window() const { return m_window; }
+
   LogWindow(const SystemRef& system)
     : m_system(system)
     , m_window(system->makeWindow(800, 600))
@@ -40,6 +42,11 @@ public:
     switch (ev.type()) {
       case Event::CloseApp:
       case Event::CloseWindow: return false;
+
+      case Event::AppEnter:    logLine("AppEnter"); break;
+      case Event::AppLeave:    logLine("AppLeave"); break;
+      case Event::WindowEnter: logLine("WindowEnter"); break;
+      case Event::WindowLeave: logLine("WindowLeave"); break;
 
       case Event::ResizeWindow:
         logLine("ResizeWindow size=%d,%d", m_window->width(), m_window->height());
@@ -140,7 +147,6 @@ private:
   void scrollAndDrawLog(const int newlines)
   {
     Surface* surface = m_window->surface();
-    SurfaceLock lock(surface);
     const gfx::Rect rc = surface->bounds();
 
     Paint p;
@@ -261,19 +267,35 @@ int app_main(int argc, char* argv[])
   SystemRef system = System::make();
   system->setAppMode(AppMode::GUI);
 
-  LogWindow window(system);
+  LogWindow window1(system);
+  LogWindow window2(system);
 
   system->finishLaunching();
   system->activateApp();
 
   EventQueue* queue = system->eventQueue();
   while (true) {
-    window.flush();
+    window1.flush();
+    window2.flush();
 
     Event ev;
     queue->getEvent(ev);
-    if (!window.processEvent(ev))
-      break;
+    if (ev.window() == window1.window()) {
+      if (!window1.processEvent(ev))
+        break;
+    }
+    else if (ev.window() == window2.window()) {
+      if (!window2.processEvent(ev))
+        break;
+    }
+    // App events
+    else {
+      bool result = true;
+      result &= window1.processEvent(ev);
+      result &= window2.processEvent(ev);
+      if (!result)
+        break;
+    }
   }
 
   return 0;
