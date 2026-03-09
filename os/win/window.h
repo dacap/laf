@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2025  Igara Studio S.A.
+// Copyright (C) 2018-present  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -74,6 +74,7 @@ public:
   NativeHandle nativeHandle() const override { return m_hwnd; }
 
 protected:
+  void onQueueEvent(Event& ev) override;
   void onSetDragTarget() override;
 
 private:
@@ -262,6 +263,11 @@ private:
 
   bool m_firstVisible = false;
   bool m_startMaximized = false;
+
+  // Flag used to avoid enqueueing events for a "dying" window. Before
+  // calling DestroyWindow() we can enable this flag to ensure that no
+  // more events (and no more WindowRef) are enqueued.
+  bool m_destroying = false;
 };
 
 } // namespace os

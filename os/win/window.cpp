@@ -312,6 +312,8 @@ WindowWin::WindowWin(const WindowSpec& spec)
 
 WindowWin::~WindowWin()
 {
+  m_destroying = true;
+
   // We cannot use os::System::instance() here because that would add
   // a new reference to a possible dying System pointer, e.g. when we
   // come from ~System because the last Ref::unref() was called and
@@ -635,6 +637,17 @@ void WindowWin::setMousePosition(const gfx::Point& position)
   SetCursorPos(pos.x, pos.y);
 
   system()->_setInternalMousePosition(gfx::Point(pos.x, pos.y));
+}
+
+void WindowWin::onQueueEvent(Event& ev)
+{
+  // Queue messages only when we're not destroying the window
+  if (m_destroying) {
+    LOG("WIN: Window %p receiving new event %d after being destroyed\n", m_hwnd, ev.type());
+    return;
+  }
+
+  Window::onQueueEvent(ev);
 }
 
 void WindowWin::onSetDragTarget()
