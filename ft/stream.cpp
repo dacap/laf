@@ -1,5 +1,5 @@
 // LAF FreeType Wrapper
-// Copyright (c) 2020 Igara Studio S.A.
+// Copyright (c) 2020-present Igara Studio S.A.
 // Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -7,8 +7,8 @@
 
 #include "ft/stream.h"
 
-#include "base/debug.h"
 #include "base/file_handle.h"
+#include "base/log.h"
 
 #include <ft2build.h>
 
@@ -45,12 +45,12 @@ FT_Stream open_stream(const std::string& utf8Filename)
     return nullptr;
   memset(stream, 0, sizeof(*stream));
 
-  TRACE("FT: Loading font %s... ", utf8Filename.c_str());
+  LOG(VERBOSE, "FT: Loading font '%s'...", utf8Filename.c_str());
 
   FILE* file = base::open_file_raw(utf8Filename, "rb");
   if (!file) {
     free(stream);
-    TRACE("FAIL\n");
+    LOG(VERBOSE, "FAIL\n");
     return nullptr;
   }
 
@@ -59,7 +59,7 @@ FT_Stream open_stream(const std::string& utf8Filename)
   if (!stream->size) {
     fclose(file);
     free(stream);
-    TRACE("FAIL\n");
+    LOG(VERBOSE, "FAIL\n");
     return nullptr;
   }
   fseek(file, 0, SEEK_SET);
@@ -70,7 +70,7 @@ FT_Stream open_stream(const std::string& utf8Filename)
   stream->read = ft_stream_io;
   stream->close = ft_stream_close;
 
-  TRACE("OK\n");
+  LOG(VERBOSE, "OK\n");
   return stream;
 }
 
