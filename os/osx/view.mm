@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2025  Igara Studio S.A.
+// Copyright (C) 2018-present  Igara Studio S.A.
 // Copyright (C) 2015-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -86,7 +86,7 @@ Event::MouseButton get_mouse_buttons(NSEvent* event)
 
 KeyModifiers get_modifiers_from_nsevent(NSEvent* event)
 {
-  int modifiers = kKeyNoneModifier;
+  KeyModifiers modifiers = kKeyNoneModifier;
   NSEventModifierFlags nsFlags = event.modifierFlags;
   if (nsFlags & NSEventModifierFlagShift)
     modifiers |= kKeyShiftModifier;
@@ -98,7 +98,7 @@ KeyModifiers get_modifiers_from_nsevent(NSEvent* event)
     modifiers |= kKeyCmdModifier;
   if (osx_is_key_pressed(kKeySpace))
     modifiers |= kKeySpaceModifier;
-  return (KeyModifiers)modifiers;
+  return modifiers;
 }
 
 } // anonymous namespace
@@ -345,8 +345,8 @@ using namespace os;
                          NSEventModifierFlagCommand };
   static KeyScancode scancodes[] = { kKeyLShift, kKeyLControl, kKeyAlt, kKeyCommand };
 
-  KeyModifiers modifiers = get_modifiers_from_nsevent(event);
-  int newFlags = event.modifierFlags;
+  const KeyModifiers modifiers = get_modifiers_from_nsevent(event);
+  const int newFlags = event.modifierFlags;
 
   for (int i = 0; i < sizeof(flags) / sizeof(flags[0]); ++i) {
     if ((lastFlags & flags[i]) != (newFlags & flags[i])) {

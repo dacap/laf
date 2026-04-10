@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2019-2022  Igara Studio S.A.
+// Copyright (C) 2019-present  Igara Studio S.A.
 // Copyright (C) 2017  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -221,7 +221,7 @@ void MenuItemOSX::setChecked(bool state)
 
 void MenuItemOSX::setShortcut(const Shortcut& shortcut)
 {
-  KeyModifiers mods = shortcut.modifiers();
+  const KeyModifiers mods = shortcut.modifiers();
   NSEventModifierFlags nsFlags = 0;
   if (mods & kKeyShiftModifier)
     nsFlags |= NSEventModifierFlagShift;

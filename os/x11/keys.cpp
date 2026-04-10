@@ -1,4 +1,5 @@
 // LAF OS Library
+// Copyright (C) 2026-present  Igara Studio S.A.
 // Copyright (C) 2016-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -384,7 +385,7 @@ int x11_get_unicode_from_scancode(const KeyScancode scancode)
 
 KeyModifiers get_modifiers_from_x(const int state)
 {
-  int modifiers = kKeyNoneModifier;
+  KeyModifiers modifiers = kKeyNoneModifier;
   if (state & ShiftMask)
     modifiers |= kKeyShiftModifier;
   if (state & ControlMask)
@@ -397,7 +398,7 @@ KeyModifiers get_modifiers_from_x(const int state)
     modifiers |= kKeyWinModifier;
   if (g_spaceBarIsPressed)
     modifiers |= kKeySpaceModifier;
-  return (KeyModifiers)modifiers;
+  return modifiers;
 }
 
 } // namespace os

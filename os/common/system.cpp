@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2019-2025  Igara Studio S.A.
+// Copyright (C) 2019-present  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -84,14 +84,14 @@ CommonSystem::~CommonSystem()
 KeyModifiers CommonSystem::keyModifiers()
 {
   return (
-    KeyModifiers)((isKeyPressed(kKeyLShift) || isKeyPressed(kKeyRShift) ? kKeyShiftModifier : 0) |
-                  (isKeyPressed(kKeyLControl) || isKeyPressed(kKeyRControl) ? kKeyCtrlModifier :
-                                                                              0) |
-                  (isKeyPressed(kKeyAlt) ? kKeyAltModifier : 0) |
-                  (isKeyPressed(kKeyAltGr) ? (kKeyCtrlModifier | kKeyAltModifier) : 0) |
-                  (isKeyPressed(kKeyCommand) ? kKeyCmdModifier : 0) |
-                  (isKeyPressed(kKeySpace) ? kKeySpaceModifier : 0) |
-                  (isKeyPressed(kKeyLWin) || isKeyPressed(kKeyRWin) ? kKeyWinModifier : 0));
+    (isKeyPressed(kKeyLShift) || isKeyPressed(kKeyRShift) ? kKeyShiftModifier : kKeyNoneModifier) |
+    (isKeyPressed(kKeyLControl) || isKeyPressed(kKeyRControl) ? kKeyCtrlModifier :
+                                                                kKeyNoneModifier) |
+    (isKeyPressed(kKeyAlt) ? kKeyAltModifier : kKeyNoneModifier) |
+    (isKeyPressed(kKeyAltGr) ? (kKeyCtrlModifier | kKeyAltModifier) : kKeyNoneModifier) |
+    (isKeyPressed(kKeyCommand) ? kKeyCmdModifier : kKeyNoneModifier) |
+    (isKeyPressed(kKeySpace) ? kKeySpaceModifier : kKeyNoneModifier) |
+    (isKeyPressed(kKeyLWin) || isKeyPressed(kKeyRWin) ? kKeyWinModifier : kKeyNoneModifier));
 }
 
 #if CLIP_ENABLE_IMAGE

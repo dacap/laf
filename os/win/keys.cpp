@@ -1,4 +1,5 @@
 // LAF OS Library
+// Copyright (C) 2026-present  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -295,7 +296,7 @@ KeyScancode win32vk_to_scancode(int vk)
 
 KeyModifiers get_modifiers_from_last_win32_message()
 {
-  int modifiers = kKeyNoneModifier;
+  KeyModifiers modifiers = kKeyNoneModifier;
   if ((GetKeyState(VK_LSHIFT) & 0x8000) || (GetKeyState(VK_RSHIFT) & 0x8000))
     modifiers |= kKeyShiftModifier;
   if ((GetKeyState(VK_LCONTROL) & 0x8000) || (GetKeyState(VK_RCONTROL) & 0x8000))
@@ -306,14 +307,14 @@ KeyModifiers get_modifiers_from_last_win32_message()
     modifiers |= kKeySpaceModifier;
   if ((GetKeyState(VK_LWIN) & 0x8000) || (GetKeyState(VK_RWIN) & 0x8000))
     modifiers |= kKeyWinModifier;
-  return (KeyModifiers)modifiers;
+  return modifiers;
 }
 
 // Alternative which receives the wparam of a mouse message (like
 // WM_MOUSEMOVE) to avoid unnecessary calls to GetKeyState() function.
 KeyModifiers get_modifiers_from_last_win32_message_with_mouse_flags(const WPARAM wparam)
 {
-  int modifiers = kKeyNoneModifier;
+  KeyModifiers modifiers = kKeyNoneModifier;
   if (wparam & MK_SHIFT)
     modifiers |= kKeyShiftModifier;
   if (wparam & MK_CONTROL)
@@ -324,7 +325,7 @@ KeyModifiers get_modifiers_from_last_win32_message_with_mouse_flags(const WPARAM
     modifiers |= kKeySpaceModifier;
   if ((GetKeyState(VK_LWIN) & 0x8000) || (GetKeyState(VK_RWIN) & 0x8000))
     modifiers |= kKeyWinModifier;
-  return (KeyModifiers)modifiers;
+  return modifiers;
 }
 
 static int scancode_to_win32vk(KeyScancode scancode)

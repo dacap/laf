@@ -1,4 +1,5 @@
 // LAF OS Library
+// Copyright (C) 2026-present  Igara Studio S.A.
 // Copyright (C) 2012-2017  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -7,6 +8,8 @@
 #ifndef OS_KEYS_H_INCLUDED
 #define OS_KEYS_H_INCLUDED
 #pragma once
+
+#include "base/enum_flags.h"
 
 namespace os {
 
@@ -20,6 +23,8 @@ enum KeyModifiers {
   kKeyWinModifier = 32,
   kKeyUninitializedModifier = 64,
 };
+
+LAF_ENUM_FLAGS(KeyModifiers)
 
 // TODO These are virtual key code (not scancodes), we should rename
 //      it to KeyCodes or use Unicode directly as on macOS (some

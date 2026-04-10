@@ -1178,7 +1178,7 @@ void WindowX11::processX11Event(XEvent& event)
       if (XFilterEvent(&event, m_window))
         break;
 
-      int modifiers = (int)get_modifiers_from_x(event.xkey.state);
+      KeyModifiers modifiers = get_modifiers_from_x(event.xkey.state);
       switch (keysym) {
         case XK_space: {
           switch (event.type) {
@@ -1233,7 +1233,7 @@ void WindowX11::processX11Event(XEvent& event)
             modifiers &= ~kKeyWinModifier;
           break;
       }
-      ev.setModifiers((KeyModifiers)modifiers);
+      ev.setModifiers(modifiers);
       KEY_TRACE("%s state=%04x keycode=%04x\n",
                 (event.type == KeyPress ? "KeyPress" : "KeyRelease"),
                 event.xkey.state,
