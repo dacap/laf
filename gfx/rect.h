@@ -1,5 +1,5 @@
 // LAF Gfx Library
-// Copyright (C) 2019-2025  Igara Studio S.A.
+// Copyright (C) 2019-present  Igara Studio S.A.
 // Copyright (C) 2001-2017  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -217,6 +217,20 @@ public:
     x += unit;
     y += unit;
     w -= unit * 2;
+    h -= unit * 2;
+    return *this;
+  }
+
+  RectT& shrinkXW(const T& unit)
+  {
+    x += unit;
+    w -= unit * 2;
+    return *this;
+  }
+
+  RectT& shrinkYH(const T& unit)
+  {
+    y += unit;
     h -= unit * 2;
     return *this;
   }
