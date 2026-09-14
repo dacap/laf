@@ -1,5 +1,5 @@
 // LAF OS Library
-// Copyright (C) 2018-2025  Igara Studio S.A.
+// Copyright (C) 2018-present  Igara Studio S.A.
 // Copyright (C) 2016-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -116,7 +116,7 @@ private:
   ::XIC m_xic;
   int m_scale;
   gfx::Point m_lastMousePos;
-  gfx::Rect m_lastConfigure;
+  gfx::Rect m_lastConfigureRc;
   gfx::Border m_frameExtents;
   bool m_initializingActions = true;
   bool m_fullscreen = false;
@@ -129,9 +129,9 @@ private:
 
   // Double-click info
   Event::MouseButton m_doubleClickButton;
-  base::tick_t m_doubleClickTick;
+  base::tick_t m_doubleClickTick = 0;
   gfx::Point m_doubleClickStartPos;
-  static const int kDoubleClickThreshold = 8;
+  static const int kDoubleClickThreshold = 8; // Pixels
 
   static bool g_textInput;
 };

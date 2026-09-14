@@ -28,6 +28,7 @@
 #include "os/window_spec.h"
 #include "os/x11/cursor.h"
 #include "os/x11/dnd.h"
+#include "os/x11/event_queue.h"
 #include "os/x11/keys.h"
 #include "os/x11/screen.h"
 #include "os/x11/system.h"
@@ -38,8 +39,7 @@
 #include <map>
 #include <set>
 
-#define KEY_TRACE(...)
-#define EVENT_TRACE(...)
+#define KEY_TRACE(...)               // TRACE(__VA_ARGS__)
 
 #define LAF_X11_DOUBLE_CLICK_TIMEOUT 250
 
@@ -1145,18 +1145,59 @@ void WindowX11::processX11Event(XEvent& event)
       }
       break;
 
+      // On Linux we receive a lot of ConfigureNotify events one after
+      // another. We should try to avoid processing as many events as
+      // possible and just keep the latest one (because each
+      // ConfigureNotify will resize the window and re-create/re-paint
+      // its surface).
     case ConfigureNotify: {
-      const gfx::Rect rc(event.xconfigure.x,
-                         event.xconfigure.y,
-                         event.xconfigure.width,
-                         event.xconfigure.height);
+      gfx::Rect rc(event.xconfigure.x,
+                   event.xconfigure.y,
+                   event.xconfigure.width,
+                   event.xconfigure.height);
 
-      if (rc.w > 0 && rc.h > 0 && rc.size() != m_lastConfigure.size()) {
-        m_lastConfigure = rc;
+      auto isConfigureEvent = [](Display* d, XEvent* e, XPointer w) -> Bool {
+        return (e->xany.type == ConfigureNotify && e->xproperty.window == (::Window)w);
+      };
+
+      // Check if there are other resize events for this same window and use the latest one
+      XEvent event2;
+      while (XCheckIfEvent(m_display, &event2, isConfigureEvent, (XPointer)m_window)) {
+        rc = gfx::Rect(event2.xconfigure.x,
+                       event2.xconfigure.y,
+                       event2.xconfigure.width,
+                       event2.xconfigure.height);
+      }
+
+      // Join all exposure events in just one
+      gfx::Rect fullExpose;
+      while (XCheckWindowEvent(m_display, m_window, ExposureMask, &event2)) {
+        fullExpose |= gfx::Rect(event2.xexpose.x,
+                                event2.xexpose.y,
+                                event2.xexpose.width,
+                                event2.xexpose.height);
+      }
+      // Re-queue the latest exposure event
+      if (event2.xany.type == Expose && !fullExpose.isEmpty()) {
+        // Limit expose to the future window size.
+        fullExpose &= gfx::Rect(rc.size());
+
+        event2.xexpose.x = fullExpose.x;
+        event2.xexpose.y = fullExpose.y;
+        event2.xexpose.width = fullExpose.w;
+        event2.xexpose.height = fullExpose.h;
+        XPutBackEvent(m_display, &event2);
+      }
+
+      // New window size
+      if (!rc.isEmpty() && rc.size() != m_lastConfigureRc.size()) {
+        m_lastConfigureRc = rc;
         onResize(rc.size());
       }
-      else if (rc.origin() != m_lastConfigure.origin()) {
-        m_lastConfigure = rc;
+
+      // New window position
+      if (rc.origin() != m_lastConfigureRc.origin()) {
+        m_lastConfigureRc = rc;
         notifyMoving();
       }
       break;
@@ -1176,8 +1217,16 @@ void WindowX11::processX11Event(XEvent& event)
       Event ev;
       ev.setType(event.type == KeyPress ? Event::KeyDown : Event::KeyUp);
 
-      const KeySym keysym = XLookupKeysym(&event.xkey, 0);
-      ev.setScancode(x11_keysym_to_scancode(keysym));
+      // Get the first KeySym that can be converted to a well-known scancode for us.
+      KeyScancode scancode = kKeyNil;
+      KeySym keysym = NoSymbol;
+      for (int i = 0; i < 256; ++i) {
+        keysym = XLookupKeysym(&event.xkey, i);
+        scancode = x11_keysym_to_scancode(keysym);
+        if (scancode != kKeyNil || keysym == NoSymbol)
+          break;
+      }
+      ev.setScancode(scancode);
 
       if (m_xic) {
         std::vector<char> buf(16);
