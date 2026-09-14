@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (c) 2022 Igara Studio S.A.
+// Copyright (c) 2022-present Igara Studio S.A.
 // Copyright (c) 2015-2016 David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -91,10 +91,8 @@ void encode_base64(const char* input, size_t n, std::string& output)
   }
 
   if (outIt != outEnd) {
-    if (next) {
-      *outIt = base64Char(next);
-      ++outIt;
-    }
+    *outIt = base64Char(next);
+    ++outIt;
     for (; outIt != outEnd; ++outIt)
       *outIt = '='; // Padding
   }
