@@ -1,5 +1,5 @@
 // LAF Gfx Library
-// Copyright (c) 2020-2024  Igara Studio S.A.
+// Copyright (c) 2020-present  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -9,6 +9,8 @@
 #pragma once
 
 #include "gfx/rect.h"
+
+#include <optional>
 
 namespace gfx {
 
@@ -59,6 +61,8 @@ public:
   Matrix& setConcat(const Matrix& a, const Matrix& b) { return *this; }
   Matrix& preConcat(const Matrix& other) { return *this; }
   Matrix& postConcat(const Matrix& other) { return *this; }
+
+  std::optional<Matrix> invert() const { return {}; }
 
   RectF mapRect(const RectF& src) const { return RectF(); }
 };

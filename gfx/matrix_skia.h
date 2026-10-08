@@ -115,6 +115,14 @@ public:
     return *this;
   }
 
+  std::optional<Matrix> invert() const
+  {
+    std::optional<SkMatrix> inv = m_skMatrix.invert();
+    if (!inv)
+      return {};
+    return { *inv };
+  }
+
   RectF mapRect(const RectF& src) const
   {
     SkRect dst;
