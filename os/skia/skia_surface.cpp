@@ -187,22 +187,20 @@ int SkiaSurface::getSaveCount() const
   return m_canvas->getSaveCount();
 }
 
-gfx::Rect SkiaSurface::getClipBounds() const
+gfx::RectF SkiaSurface::localClipBounds() const
+{
+  SkRect rc;
+  if (m_canvas->getLocalClipBounds(&rc))
+    return gfx::RectF(rc.x(), rc.y(), rc.width(), rc.height());
+  return gfx::RectF();
+}
+
+gfx::Rect SkiaSurface::deviceClipBounds() const
 {
   SkIRect rc;
   if (m_canvas->getDeviceClipBounds(&rc))
     return gfx::Rect(rc.x(), rc.y(), rc.width(), rc.height());
   return gfx::Rect();
-}
-
-void SkiaSurface::saveClip()
-{
-  m_canvas->save();
-}
-
-void SkiaSurface::restoreClip()
-{
-  m_canvas->restore();
 }
 
 bool SkiaSurface::clipRect(const gfx::Rect& rc)

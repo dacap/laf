@@ -43,9 +43,8 @@ public:
   bool isDirectToScreen() const override;
   void setImmutable() override;
   int getSaveCount() const override;
-  gfx::Rect getClipBounds() const override;
-  void saveClip() override;
-  void restoreClip() override;
+  gfx::RectF localClipBounds() const override;
+  gfx::Rect deviceClipBounds() const override;
   bool clipRect(const gfx::Rect& rc) override;
   void clipPath(const gfx::Path& path) override;
   void clipRegion(const gfx::Region& region) override;

@@ -57,11 +57,16 @@ public:
   virtual void setImmutable() = 0;
 
   virtual int getSaveCount() const = 0;
-  virtual gfx::Rect getClipBounds() const = 0;
-  virtual void saveClip() = 0;
-  virtual void restoreClip() = 0;
+  virtual gfx::RectF localClipBounds() const = 0;
+  virtual gfx::Rect deviceClipBounds() const = 0;
+
+  // Adds a rectangle or path to the clip region. These are
+  // transformed by the current matrix.
   virtual bool clipRect(const gfx::Rect& rc) = 0;
   virtual void clipPath(const gfx::Path& path) = 0;
+
+  // Adds a new region to the clipping region. This is unaffected by
+  // the current matrix.
   virtual void clipRegion(const gfx::Region& region) = 0;
 
   virtual void save() = 0;
