@@ -248,7 +248,7 @@ void SkiaSurface::restore()
 
 gfx::Matrix SkiaSurface::matrix() const
 {
-  return m_canvas->getTotalMatrix();
+  return m_canvas->getLocalToDeviceAs3x3();
 }
 
 void SkiaSurface::lock()
