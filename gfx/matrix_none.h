@@ -8,6 +8,8 @@
 #define GFX_MATRIX_NONE_H_INCLUDED
 #pragma once
 
+#include "base/span.h"
+#include "gfx/point.h"
 #include "gfx/rect.h"
 
 #include <optional>
@@ -64,7 +66,9 @@ public:
 
   std::optional<Matrix> invert() const { return {}; }
 
-  RectF mapRect(const RectF& src) const { return RectF(); }
+  RectF mapRect(const RectF& src) const { return src; }
+  PointF mapPoint(const PointF& pt) const { return pt; }
+  void mapPoints(base::span<PointF> pts) const {}
 };
 
 } // namespace gfx

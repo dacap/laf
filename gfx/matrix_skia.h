@@ -1,5 +1,5 @@
 // LAF Gfx Library
-// Copyright (c) 2020-2023  Igara Studio S.A.
+// Copyright (c) 2020-present  Igara Studio S.A.
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -8,10 +8,13 @@
 #define GFX_MATRIX_SKIA_H_INCLUDED
 #pragma once
 
+#include "base/span.h"
 #include "gfx/point.h"
 #include "gfx/rect.h"
 
 #include "include/core/SkMatrix.h"
+
+#include <vector>
 
 namespace gfx {
 
@@ -130,6 +133,22 @@ public:
       &dst,
       SkRect::MakeXYWH(SkScalar(src.x), SkScalar(src.y), SkScalar(src.w), SkScalar(src.h)));
     return RectF(dst.x(), dst.y(), dst.width(), dst.height());
+  }
+
+  PointF mapPoint(const PointF& pt) const
+  {
+    SkPoint skpt = m_skMatrix.mapPoint(SkPoint::Make(pt.x, pt.y));
+    return PointF(skpt.x(), skpt.y());
+  }
+
+  void mapPoints(base::span<PointF> pts) const
+  {
+    std::vector<SkPoint> skpts(pts.size());
+    m_skMatrix.mapPoints(skpts);
+    for (size_t i = 0; i < pts.size(); ++i) {
+      pts[i].x = skpts[i].x();
+      pts[i].y = skpts[i].y();
+    }
   }
 
   const SkMatrix& skMatrix() const { return m_skMatrix; }
