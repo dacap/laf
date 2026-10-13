@@ -1,5 +1,5 @@
 # LAF
-# Copyright (C) 2019-2025  Igara Studio S.A.
+# Copyright (C) 2019-present  Igara Studio S.A.
 # Copyright (C) 2016-2018  David Capello
 
 cmake_minimum_required(VERSION 3.16)
@@ -11,9 +11,6 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cxx_fla
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(laf C CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Search in the "cmake" directory for additional CMake modules.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -31,6 +28,7 @@ endif()
 option(LAF_WITH_EXAMPLES "Enable LAF examples" ON)
 option(LAF_WITH_TESTS "Enable LAF tests" ON)
 option(LAF_WITH_CLIP "Enable clip module (required for future drag-and-drop feature)" ON)
+option(LAF_DEBUG_WITH_STACKTRACE "Enable <stacktrace> for debugging purposes" OFF)
 option(LAF_DEBUG_GPU "[experimental] Try to initialize OpenGL 3.2+ when possible to use GPU debuggers" OFF)
 if(WIN32)
   option(LAF_WITH_IME "Enable IME for CJK input" OFF)
@@ -39,6 +37,14 @@ if(WIN32)
 endif()
 set(LAF_BACKEND ${LAF_DEFAULT_BACKEND} CACHE STRING "Select laf backend")
 set_property(CACHE LAF_BACKEND PROPERTY STRINGS "none" "skia")
+
+# Use C++23 for ASSERT() with <stacktrace>
+if(LAF_DEBUG_WITH_STACKTRACE)
+  set(CMAKE_CXX_STANDARD 23)
+else()
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Testing
 if(LAF_WITH_TESTS)

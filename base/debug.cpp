@@ -1,5 +1,5 @@
 // LAF Base Library
-// Copyright (c) 2021-2025 Igara Studio S.A.
+// Copyright (c) 2021-present Igara Studio S.A.
 // Copyright (c) 2001-2016 David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -27,6 +27,10 @@
 
 #ifdef _DEBUG
 
+  #if LAF_DEBUG_WITH_STACKTRACE
+    #include <stacktrace>
+  #endif
+
 int base_assert(const char* condition, const char* file, int lineNum)
 {
   #if LAF_WINDOWS
@@ -50,6 +54,10 @@ int base_assert(const char* condition, const char* file, int lineNum)
   text += ": Assertion failed: ";
   text += condition;
   std::cerr << text << std::endl;
+    #if LAF_DEBUG_WITH_STACKTRACE
+  std::cerr << std::stacktrace::current() << std::endl;
+    #endif
+
   std::abort();
   return 1;
 

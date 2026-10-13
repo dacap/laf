@@ -128,6 +128,21 @@ else()
   if(DL_LIBRARY)
     target_link_libraries(laf-base ${DL_LIBRARY})
   endif()
+
+  if(LAF_DEBUG_WITH_STACKTRACE AND CMAKE_BUILD_TYPE STREQUAL Debug)
+    include(CheckCXXSourceRuns)
+    set(CMAKE_REQUIRED_LIBRARIES stdc++exp)
+    check_cxx_source_runs([[
+      #include <stacktrace>
+      int main() { auto s = std::stacktrace::current(); }
+    ]]
+      HAVE_STACKTRACE)
+    if(HAVE_STACKTRACE)
+      target_compile_definitions(laf-base PRIVATE LAF_DEBUG_WITH_STACKTRACE)
+      target_link_libraries(laf-base stdc++exp)
+    endif()
+  endif()
+
 endif()
 
 if(LAF_WITH_TESTS)
