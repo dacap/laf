@@ -5,6 +5,7 @@
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckCXXSourceCompiles)
+include(CheckCXXSourceRuns)
 include(TestBigEndian)
 
 check_include_files(stdint.h HAVE_STDINT_H)
@@ -112,6 +113,17 @@ if(WIN32)
   endif()
 
   target_link_libraries(laf-base dbghelp shlwapi version)
+
+  if(LAF_DEBUG_WITH_STACKTRACE AND CMAKE_BUILD_TYPE STREQUAL Debug)
+    check_cxx_source_runs([[
+      #include <stacktrace>
+      int main() { auto s = std::stacktrace::current(); }
+    ]] HAVE_STACKTRACE)
+    if(HAVE_STACKTRACE)
+      target_compile_definitions(laf-base PRIVATE LAF_DEBUG_WITH_STACKTRACE)
+    endif()
+  endif()
+
 else()
   if(APPLE)
     target_compile_options(laf-base PRIVATE -fobjc-arc)
@@ -130,13 +142,11 @@ else()
   endif()
 
   if(LAF_DEBUG_WITH_STACKTRACE AND CMAKE_BUILD_TYPE STREQUAL Debug)
-    include(CheckCXXSourceRuns)
     set(CMAKE_REQUIRED_LIBRARIES stdc++exp)
     check_cxx_source_runs([[
       #include <stacktrace>
       int main() { auto s = std::stacktrace::current(); }
-    ]]
-      HAVE_STACKTRACE)
+    ]] HAVE_STACKTRACE)
     if(HAVE_STACKTRACE)
       target_compile_definitions(laf-base PRIVATE LAF_DEBUG_WITH_STACKTRACE)
       target_link_libraries(laf-base stdc++exp)

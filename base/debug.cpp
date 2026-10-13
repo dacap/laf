@@ -18,6 +18,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -38,11 +39,22 @@ int base_assert(const char* condition, const char* file, int lineNum)
   std::vector<wchar_t> buf(MAX_PATH);
   GetModuleFileNameW(nullptr, &buf[0], MAX_PATH);
 
+  std::string msg = condition;
+
+    #if LAF_DEBUG_WITH_STACKTRACE
+  {
+    std::stringstream ss;
+    ss << std::endl << std::stacktrace::current() << std::endl;
+    msg += ss.str();
+    std::cerr << msg;
+  }
+    #endif
+
   int ret = _CrtDbgReportW(_CRT_ASSERT,
                            base::from_utf8(file).c_str(),
                            lineNum,
                            &buf[0],
-                           base::from_utf8(condition).c_str());
+                           base::from_utf8(msg).c_str());
 
   return (ret == 1 ? 1 : 0);
 
