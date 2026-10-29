@@ -1,5 +1,5 @@
 // laf-dlgs
-// Copyright (C) 2020-2024  Igara Studio S.A.
+// Copyright (C) 2020-present  Igara Studio S.A.
 // Copyright (C) 2012-2018  David Capello
 //
 // This file is released under the terms of the MIT license.
@@ -12,6 +12,7 @@
 
 #include "base/fs.h"
 
+#include <functional>
 #include <map>
 
 namespace {
